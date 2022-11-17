@@ -12,8 +12,8 @@ using TravelMore.Models;
 namespace TravelMore.Migrations
 {
     [DbContext(typeof(TravelMoreDbContext))]
-    [Migration("20221109151203_Update")]
-    partial class Update
+    [Migration("20221117201939_BookingAdded")]
+    partial class BookingAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,6 +158,71 @@ namespace TravelMore.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("TravelMore.Models.Booking", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("BookedHotelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GuestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("HostFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("HostTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookedHotelId");
+
+                    b.ToTable("Bookings");
+                });
+
+            modelBuilder.Entity("TravelMore.Models.Guest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("GuestId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime?>("HostFrom")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("HostTo")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("HotelId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("HotelOwnerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Guests");
+                });
+
             modelBuilder.Entity("TravelMore.Models.Hotel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -168,10 +233,14 @@ namespace TravelMore.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("City")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("DistanceToCenter")
+                        .HasColumnType("int");
 
                     b.Property<double>("Latitude")
                         .HasColumnType("float");
@@ -179,22 +248,13 @@ namespace TravelMore.Migrations
                     b.Property<double>("Longitude")
                         .HasColumnType("float");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("NumberOfBeds")
                         .HasColumnType("int");
 
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Hotels");
                 });
@@ -240,7 +300,7 @@ namespace TravelMore.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
 
-                    b.Property<Guid>("OwnedHotelID")
+                    b.Property<Guid?>("OwnedHotelID")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("PasswordHash")
@@ -326,16 +386,13 @@ namespace TravelMore.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("TravelMore.Models.Hotel", b =>
+            modelBuilder.Entity("TravelMore.Models.Booking", b =>
                 {
-                    b.HasOne("TravelMore.Models.User", null)
-                        .WithMany("BookedHotels")
-                        .HasForeignKey("UserId");
-                });
+                    b.HasOne("TravelMore.Models.Hotel", "BookedHotel")
+                        .WithMany()
+                        .HasForeignKey("BookedHotelId");
 
-            modelBuilder.Entity("TravelMore.Models.User", b =>
-                {
-                    b.Navigation("BookedHotels");
+                    b.Navigation("BookedHotel");
                 });
 #pragma warning restore 612, 618
         }

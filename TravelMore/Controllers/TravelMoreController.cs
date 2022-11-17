@@ -39,5 +39,14 @@ namespace TravelMore.Controllers
             return hotels;
         }
 
+
+        [HttpGet("booked-hotels/{id}")]
+        public IEnumerable<Guest> GetAllBookedHotels(string id)
+        {
+
+            //TODO:
+            //Must be implemented
+            return null;
+        }
     }
 }

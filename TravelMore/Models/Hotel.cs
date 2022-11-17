@@ -18,10 +18,7 @@ namespace TravelMore.Models
         public Guid OwnerId { get; set; }
 
 
-        public Hotel()
-        {
-
-        }
+        
 
         public void Validate()
         {

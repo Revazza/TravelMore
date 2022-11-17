@@ -10,7 +10,7 @@ namespace TravelMore.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class ProfileController : ControllerBase
     {
         private readonly TravelMoreDbContext _context;
@@ -53,8 +53,7 @@ namespace TravelMore.Controllers
             }
             catch (ArgumentException e)
             {
-
-                throw;
+                return BadRequest(e.Message);
             }
 
             hotel.Id = Guid.NewGuid();
@@ -118,5 +117,7 @@ namespace TravelMore.Controllers
 
             return Ok("Updated Successfuly");
         }
+
+        
     }
 }
