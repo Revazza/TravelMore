@@ -1,5 +1,4 @@
 ﻿using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Shared.Models;
 
 namespace TravelMore.Domain.Users.Guests;

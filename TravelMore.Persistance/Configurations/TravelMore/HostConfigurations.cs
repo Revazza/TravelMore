@@ -1,14 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TravelMore.Domain.Users;
+using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Persistance.Configurations.TravelMore;
 
-public class UserConfigurations : IEntityTypeConfiguration<User>
+public class HostConfigurations : IEntityTypeConfiguration<Host>
 {
-    public void Configure(EntityTypeBuilder<User> builder)
+    public void Configure(EntityTypeBuilder<Host> builder)
     {
-        builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedOnAdd();
     }
 }

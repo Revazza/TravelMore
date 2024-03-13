@@ -10,25 +10,29 @@ public sealed class Booking : Entity<Guid>
 {
     public BookingSchedule Schedule { get; } = new();
     public Money TotalPayment { get; } = new(0);
-    public int NumberOfGuests { get; }
+    public short NumberOfGuests { get; }
     public int GuestId { get; }
     public Guest Guest { get; } = null!;
     public Guid BookedHotelId { get; }
     public Hotel BookedHotel { get; } = null!;
+    public BookingStatus Status { get; set; }
 
-    private Booking(Guid id, BookingSchedule schedule, Money totalPayment, int numberOfGuests, Guest guest, Hotel hotel) : base(id)
+    private Booking() : base(Guid.NewGuid()) { }
+
+    private Booking(Guid id, BookingSchedule schedule, Money totalPayment, short numberOfGuests, Guest guest, Hotel hotel) : base(id)
     {
         Schedule = schedule;
         NumberOfGuests = numberOfGuests;
         Guest = guest;
         BookedHotel = hotel;
         TotalPayment = totalPayment;
+        Status = BookingStatus.Pending;
     }
 
     public static Result<Booking> CreateBooking(
         DateTime checkIn,
         DateTime checkOut,
-        int numberOfGuests,
+        short numberOfGuests,
         Guest guest,
         Hotel hotel)
     {

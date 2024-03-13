@@ -8,7 +8,12 @@ public class GuestConfigurations : IEntityTypeConfiguration<Guest>
 {
     public void Configure(EntityTypeBuilder<Guest> builder)
     {
-        builder.HasKey(x => x.Id);
+        builder.Property(x => x.Id).ValueGeneratedOnAdd();
 
+        builder.OwnsOne(x => x.Balance, price =>
+        {
+            price.Property(x => x.Amount)
+                .HasPrecision(18, 10);
+        });
     }
 }
