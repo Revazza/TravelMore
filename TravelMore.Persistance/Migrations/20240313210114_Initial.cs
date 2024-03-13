@@ -18,7 +18,8 @@ namespace TravelMore.Persistance.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Discriminator = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-                    Balance_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: true)
+                    Balance_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -72,6 +73,21 @@ namespace TravelMore.Persistance.Migrations
                         principalTable: "Users",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Discriminator", "Balance_Amount" },
+                values: new object[] { 1, "Guest", 100000m });
+
+            migrationBuilder.InsertData(
+                table: "Users",
+                columns: new[] { "Id", "Discriminator", "Email" },
+                values: new object[] { 2, "Host", "host@gmail.com" });
+
+            migrationBuilder.InsertData(
+                table: "Hotels",
+                columns: new[] { "Id", "Description", "MaxNumberOfGuests", "OwnerId", "Price_Amount" },
+                values: new object[] { new Guid("db37121d-c8fe-4f41-ab6e-34dded72f3b4"), "host@gmail.com", (short)10, 2, 100m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_BookedHotelId",

@@ -59,6 +59,9 @@ public sealed class Booking : Entity<Guid>
             hotel));
     }
 
+    public void Accept() => Status = BookingStatus.Accepted;
+    public void Decline() => Status = BookingStatus.Declined;
+
     public bool IsOverLap(DateTime from, DateTime to) => Schedule.From <= from && to <= Schedule.To;
 
 }

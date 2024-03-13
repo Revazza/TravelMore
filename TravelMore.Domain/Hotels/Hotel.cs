@@ -5,7 +5,7 @@ using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;
 
-public class Hotel(Guid id) : Entity<Guid>(id)
+public class Hotel : Entity<Guid>
 {
     private readonly List<Booking> _bookings = [];
     public IReadOnlyCollection<Booking> Bookings => _bookings;
@@ -14,6 +14,26 @@ public class Hotel(Guid id) : Entity<Guid>(id)
     public Money Price { get; set; } = new(0);
     public int OwnerId { get; }
     public Host Owner { get; } = null!;
+
+    public Hotel(Guid id) : base(id)
+    {
+
+    }
+
+    public Hotel(
+        Guid id,
+        string description,
+        short maxNumberOfGuests,
+        Money price,
+        Host owner)
+        : base(id)
+    {
+        Description = description;
+        MaxNumberOfGuests = maxNumberOfGuests;
+        Price = price;
+        Owner = owner;
+        OwnerId = Owner.Id;
+    }
 
     public bool IsAvailable(BookingSchedule schedule) => AreAllBookingsOutsideSchedule(schedule);
 

@@ -12,7 +12,7 @@ using TravelMore.Persistance.Contexts.TravelMore;
 namespace TravelMore.Persistance.Migrations
 {
     [DbContext(typeof(TravelMoreContext))]
-    [Migration("20240313195207_Initial")]
+    [Migration("20240313210114_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -69,6 +69,15 @@ namespace TravelMore.Persistance.Migrations
                     b.HasIndex("OwnerId");
 
                     b.ToTable("Hotels");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("db37121d-c8fe-4f41-ab6e-34dded72f3b4"),
+                            Description = "host@gmail.com",
+                            MaxNumberOfGuests = (short)10,
+                            OwnerId = 2
+                        });
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Users.User", b =>
@@ -98,13 +107,30 @@ namespace TravelMore.Persistance.Migrations
                     b.HasBaseType("TravelMore.Domain.Users.User");
 
                     b.HasDiscriminator().HasValue("Guest");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1
+                        });
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Users.Hosts.Host", b =>
                 {
                     b.HasBaseType("TravelMore.Domain.Users.User");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasDiscriminator().HasValue("Host");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 2,
+                            Email = "host@gmail.com"
+                        });
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Bookings.Booking", b =>
@@ -191,6 +217,13 @@ namespace TravelMore.Persistance.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("HotelId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    HotelId = new Guid("db37121d-c8fe-4f41-ab6e-34dded72f3b4"),
+                                    Amount = 100m
+                                });
                         });
 
                     b.Navigation("Owner");
@@ -216,6 +249,13 @@ namespace TravelMore.Persistance.Migrations
 
                             b1.WithOwner()
                                 .HasForeignKey("GuestId");
+
+                            b1.HasData(
+                                new
+                                {
+                                    GuestId = 1,
+                                    Amount = 100000m
+                                });
                         });
 
                     b.Navigation("Balance")
