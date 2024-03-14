@@ -1,6 +1,7 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Results;
+using TravelMore.Domain.Errors;
 using TravelMore.Domain.Hotels;
 
 namespace TravelMore.Domain.Users.Guests;
@@ -32,7 +33,7 @@ public class Guest : User
     {
         if (!IsBalanceEnough(hotel.CalculateTotalPayment(numberOfGuests)))
         {
-            return Result.Failure(Error.None);
+            return Result.Failure(DomainErrors.Guest.InsufficientBalance);
         }
 
         return Result.Success();

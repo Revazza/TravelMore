@@ -2,6 +2,7 @@
 using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Results;
+using TravelMore.Domain.Errors;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;
@@ -40,7 +41,7 @@ public class Hotel : Entity<Guid>
     {
         if (!AreAllBookingsOutsideSchedule(schedule))
         {
-            return Result.Failure(Error.None);
+            return Result.Failure(DomainErrors.Hotel.OverlapSchedule);
         }
         return Result.Success();
     }
@@ -48,6 +49,5 @@ public class Hotel : Entity<Guid>
     public Money CalculateTotalPayment(short numberOfGuests) => new(Price.Amount * numberOfGuests);
 
     private bool AreAllBookingsOutsideSchedule(BookingSchedule schedule) => _bookings.All(booking => !booking.IsOverLap(schedule.From, schedule.To));
-
 
 }
