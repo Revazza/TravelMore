@@ -1,6 +1,7 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;
@@ -35,7 +36,14 @@ public class Hotel : Entity<Guid>
         OwnerId = Owner.Id;
     }
 
-    public bool IsAvailable(BookingSchedule schedule) => AreAllBookingsOutsideSchedule(schedule);
+    public Result IsAvailable(BookingSchedule schedule)
+    {
+        if (!AreAllBookingsOutsideSchedule(schedule))
+        {
+            return Result.Failure(Error.None);
+        }
+        return Result.Success();
+    }
 
     public Money CalculateTotalPayment(short numberOfGuests) => new(Price.Amount * numberOfGuests);
 

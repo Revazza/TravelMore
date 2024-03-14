@@ -38,17 +38,19 @@ public sealed class Booking : Entity<Guid>
     {
         var schedule = new BookingSchedule(checkIn, checkOut);
 
-        if (!hotel.IsAvailable(schedule))
+        var isHotelAvailableResult = hotel.IsAvailable(schedule);
+        if (isHotelAvailableResult.IsFailure)
         {
-            return Result<Booking>.Failure(Error.None);
+            return Result.Failure<Booking>(isHotelAvailableResult.Error);
         }
 
-        if (!guest.CanBookHotel(hotel, numberOfGuests))
+        var canBookHotelResult = guest.CanBookHotel(hotel, numberOfGuests);
+        if (canBookHotelResult.IsFailure)
         {
-            return Result<Booking>.Failure(Error.None);
+            return Result.Failure<Booking>(canBookHotelResult.Error);
         }
 
-        return Result<Booking>.Success(new(
+        return Result.Success<Booking>(new(
             Guid.NewGuid(),
             schedule,
             hotel.CalculateTotalPayment(numberOfGuests),

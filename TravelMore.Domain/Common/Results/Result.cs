@@ -1,29 +1,36 @@
 ﻿
 namespace TravelMore.Domain.Common.Results;
 
-public class Result<TValue>
-    where TValue : class
+public class Result
 {
-    public TValue Value { get; }
+    protected internal Result(bool isSuccess, Error error)
+    {
+        if (isSuccess && error != Error.None)
+        {
+            throw new InvalidOperationException();
+        }
+
+        if (!isSuccess && error == Error.None)
+        {
+            throw new InvalidOperationException();
+        }
+
+        IsSuccess = isSuccess;
+        Error = error;
+    }
+
     public bool IsSuccess { get; }
+
     public bool IsFailure => !IsSuccess;
+
     public Error Error { get; }
 
-    private Result(TValue payload)
-    {
-        Value = payload;
-        IsSuccess = true;
-        Error = Error.None;
-    }
+    public static Result Success() => new(true, Error.None);
 
-    private Result(Error error)
-    {
-        IsSuccess = false;
-        Error = error;
-        Value = null!;
-    }
+    public static Result<TValue> Success<TValue>(TValue value) => new(value, true, Error.None);
 
+    public static Result Failure(Error error) => new(false, error);
 
-    public static Result<TValue> Success(TValue value) => new(value);
-    public static Result<TValue> Failure(Error error) => new(error);
+    public static Result<TValue> Failure<TValue>(Error error) => new(default, false, error);
+
 }
