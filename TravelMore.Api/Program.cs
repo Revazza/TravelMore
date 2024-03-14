@@ -1,3 +1,5 @@
+using TravelMore.Application;
+using TravelMore.Infrastructure;
 using TravelMore.Persistance;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +9,10 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddPersistance(builder.Configuration);
+builder.Services
+    .AddApplication(builder.Configuration)
+    .AddInfrastructure(builder.Configuration)
+    .AddPersistance(builder.Configuration);
 
 var app = builder.Build();
 

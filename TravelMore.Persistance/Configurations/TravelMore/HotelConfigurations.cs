@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TravelMore.Domain.Hotels;
-using TravelMore.Domain.Shared.Models;
 
 namespace TravelMore.Persistance.Configurations.TravelMore;
 

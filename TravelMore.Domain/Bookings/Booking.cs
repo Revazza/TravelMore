@@ -1,7 +1,7 @@
 ﻿using TravelMore.Domain.Bookings.BookingSchedules;
+using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Hotels;
-using TravelMore.Domain.Shared.Models;
-using TravelMore.Domain.Shared.Results;
 using TravelMore.Domain.Users.Guests;
 
 namespace TravelMore.Domain.Bookings;
@@ -29,7 +29,7 @@ public sealed class Booking : Entity<Guid>
         Status = BookingStatus.Pending;
     }
 
-    public static Result<Booking> CreateBooking(
+    public static Result<Booking> Create(
         DateTime checkIn,
         DateTime checkOut,
         short numberOfGuests,
@@ -43,9 +43,7 @@ public sealed class Booking : Entity<Guid>
             return Result<Booking>.Failure(Error.None);
         }
 
-        var totalPayment = hotel.CalculateTotalPayment(numberOfGuests);
-
-        if (!guest.CanBookHotel(totalPayment))
+        if (!guest.CanBookHotel(hotel, numberOfGuests))
         {
             return Result<Booking>.Failure(Error.None);
         }
@@ -53,7 +51,7 @@ public sealed class Booking : Entity<Guid>
         return Result<Booking>.Success(new(
             Guid.NewGuid(),
             schedule,
-            totalPayment,
+            hotel.CalculateTotalPayment(numberOfGuests),
             numberOfGuests,
             guest,
             hotel));

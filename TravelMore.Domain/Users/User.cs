@@ -1,4 +1,4 @@
-﻿using TravelMore.Domain.Shared.Models;
+﻿using TravelMore.Domain.Common.Models;
 
 namespace TravelMore.Domain.Users;
 

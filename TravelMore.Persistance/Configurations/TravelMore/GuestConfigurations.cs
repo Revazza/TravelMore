@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TravelMore.Domain.Shared.Models;
 using TravelMore.Domain.Users.Guests;
 
 namespace TravelMore.Persistance.Configurations.TravelMore;

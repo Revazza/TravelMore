@@ -1,6 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.BookingSchedules;
-using TravelMore.Domain.Shared.Models;
+using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;

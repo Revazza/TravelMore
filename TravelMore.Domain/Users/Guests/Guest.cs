@@ -1,5 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Shared.Models;
+using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Hotels;
 
 namespace TravelMore.Domain.Users.Guests;
 
@@ -26,7 +27,7 @@ public class Guest : User
         UserName = userName;
     }
 
-    public bool CanBookHotel(Money totalPayment) => IsBalanceEnough(totalPayment);
+    public bool CanBookHotel(Hotel hotel, short numberOfGuests) => IsBalanceEnough(hotel.CalculateTotalPayment(numberOfGuests));
 
     private bool IsBalanceEnough(Money totalPayment) => Balance >= totalPayment;
 

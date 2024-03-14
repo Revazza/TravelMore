@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\TravelMore.Application\TravelMore.Application.csproj" />
+    <ProjectReference Include="..\TravelMore.Persistance\TravelMore.Persistance.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,4 +1,4 @@
-﻿namespace TravelMore.Domain.Shared.Results;
+﻿namespace TravelMore.Domain.Common.Results;
 
 public record Error(string Code, string Description)
 {

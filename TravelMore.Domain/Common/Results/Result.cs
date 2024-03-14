@@ -1,16 +1,17 @@
-﻿namespace TravelMore.Domain.Shared.Results;
+﻿
+namespace TravelMore.Domain.Common.Results;
 
 public class Result<TValue>
     where TValue : class
 {
-    public TValue Payload { get; }
+    public TValue Value { get; }
     public bool IsSuccess { get; }
     public bool IsFailure => !IsSuccess;
     public Error Error { get; }
 
     private Result(TValue payload)
     {
-        Payload = payload;
+        Value = payload;
         IsSuccess = true;
         Error = Error.None;
     }
@@ -19,7 +20,7 @@ public class Result<TValue>
     {
         IsSuccess = false;
         Error = error;
-        Payload = null!;
+        Value = null!;
     }
 
 
