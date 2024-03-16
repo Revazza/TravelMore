@@ -5,50 +5,48 @@ using TravelMore.Application.Guests.Queries.GetById;
 using TravelMore.Application.Hotels.Queries.GetById;
 using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Common.Results;
+using TravelMore.Domain.Errors;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
-
-public record CreateBookingCommand(
-    Guid HotelId,
-    short NumberOfGuests,
-    DateTime CheckIn,
-    DateTime CheckOut) : IRequest<Result<Booking>>;
 
 public class CreateBookingCommandHandler(
     IUserIdentityService userIdentityService,
     IBookingRepository bookingRepository,
-    ISender sender,
-    IUnitOfWork unitOfWork) : IRequestHandler<CreateBookingCommand, Result<Booking>>
+    IUnitOfWork unitOfWork,
+    IHotelRepository hotelRepository,
+    IGuestRepository guestRepository) : IRequestHandler<CreateBookingCommand, Result<Booking>>
 {
     private readonly IUserIdentityService _userIdentityService = userIdentityService;
     private readonly IBookingRepository _bookingRepository = bookingRepository;
+    private readonly IGuestRepository _guestRepository = guestRepository;
+    private readonly IHotelRepository _hotelRepository = hotelRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
-    private readonly ISender _sender = sender;
 
     public async Task<Result<Booking>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var guestResult = await _sender.Send(new GetGuestByIdQuery(_userIdentityService.GetUserId()), cancellationToken);
-        if (guestResult.IsFailure)
+        var guest = await _guestRepository.GetByIdAsync(_userIdentityService.GetUserId());
+
+        if (guest is null)
         {
-            return Result<Booking>.Failure(guestResult.Error);
+            return Result.Failure<Booking>(DomainErrors.Guest.NotFound);
         }
 
-        var hotelResult = await _sender.Send(new GetHotelByIdQuery(request.HotelId), cancellationToken);
-        if (hotelResult.IsFailure)
+        var hotel = await _hotelRepository.GetHotelByIdWithBookingsAsync(request.HotelId);
+        if (hotel is null)
         {
-            return Result<Booking>.Failure(hotelResult.Error);
+            return Result.Failure<Booking>(DomainErrors.Hotel.NotFound);
         }
 
         var bookingResult = Booking.Create(
             request.CheckIn,
             request.CheckOut,
             request.NumberOfGuests,
-            guestResult.Value,
-            hotelResult.Value);
+            guest,
+            hotel);
 
         if (bookingResult.IsFailure)
         {
-            return Result<Booking>.Failure(bookingResult.Error);
+            return Result.Failure<Booking>(bookingResult.Error);
         }
 
         await _bookingRepository.AddAsync(bookingResult.Value);

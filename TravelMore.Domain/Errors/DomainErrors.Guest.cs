@@ -7,5 +7,6 @@ public static partial class DomainErrors
     public static class Guest
     {
         public static readonly Error InsufficientBalance = new("", "Not enough balance in the account");
+        public static readonly Error NotFound = new("", "Guest not found");
     }
 }

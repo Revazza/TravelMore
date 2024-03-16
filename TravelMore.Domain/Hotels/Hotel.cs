@@ -3,6 +3,7 @@ using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Errors;
+using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;
@@ -13,9 +14,9 @@ public class Hotel : Entity<Guid>
     public IReadOnlyCollection<Booking> Bookings => _bookings;
     public string Description { get; } = string.Empty;
     public short MaxNumberOfGuests { get; set; }
-    public Money Price { get; set; } = new(0);
-    public int OwnerId { get; }
-    public Host Owner { get; } = null!;
+    public Money PricePerNight { get; set; } = Money.Create(0).Value;
+    public int HostId { get; }
+    public Host Host { get; } = null!;
 
     public Hotel(Guid id) : base(id)
     {
@@ -26,28 +27,40 @@ public class Hotel : Entity<Guid>
         Guid id,
         string description,
         short maxNumberOfGuests,
-        Money price,
-        Host owner)
+        Money pricePerNight,
+        Host host)
         : base(id)
     {
         Description = description;
         MaxNumberOfGuests = maxNumberOfGuests;
-        Price = price;
-        Owner = owner;
-        OwnerId = Owner.Id;
+        PricePerNight = pricePerNight;
+        Host = host;
+        HostId = Host.Id;
     }
 
-    public Result IsAvailable(BookingSchedule schedule)
+    public Result IsBookable(BookingSchedule schedule)
     {
-        if (!AreAllBookingsOutsideSchedule(schedule))
+        if (AnyBookingsScheduleOverlaps(schedule))
         {
             return Result.Failure(DomainErrors.Hotel.OverlapSchedule);
         }
         return Result.Success();
     }
 
-    public Money CalculateTotalPayment(short numberOfGuests) => new(Price.Amount * numberOfGuests);
+    public Result SetPricePerNight(decimal price)
+    {
+        var result = Money.Create(price);
+        if (result.IsFailure)
+        {
+            return Result.Failure(result.Error);
+        }
 
-    private bool AreAllBookingsOutsideSchedule(BookingSchedule schedule) => _bookings.All(booking => !booking.IsOverLap(schedule.From, schedule.To));
+        PricePerNight = result.Value;
+        return Result.Success();
+    }
+
+    public void AddBooking(Booking booking) => _bookings.Add(booking);
+
+    public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));
 
 }

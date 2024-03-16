@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.Reflection;
 
 namespace TravelMore.Application;
 
@@ -10,6 +11,10 @@ public static class DependencyInjection
         ConfigurationManager configuration)
     {
 
-        return services;
+        return services
+            .AddMediatR(cfg =>
+                cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly())
+            )
+;
     }
 }

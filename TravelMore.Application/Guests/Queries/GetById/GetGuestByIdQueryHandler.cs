@@ -1,11 +1,10 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Interfaces.Repositories;
 using TravelMore.Domain.Common.Results;
+using TravelMore.Domain.Errors;
 using TravelMore.Domain.Users.Guests;
 
 namespace TravelMore.Application.Guests.Queries.GetById;
-
-public record GetGuestByIdQuery(int Id) : IRequest<Result<Guest>>;
 
 public class GetGuestByIdQueryHandler(IGuestRepository guestRepository) : IRequestHandler<GetGuestByIdQuery, Result<Guest>>
 {
@@ -15,11 +14,11 @@ public class GetGuestByIdQueryHandler(IGuestRepository guestRepository) : IReque
     {
         var guest = await _guestRepository.GetByIdAsync(request.Id);
 
-        if (guest == null)
+        if (guest is null)
         {
-            return Result<Guest>.Failure(Error.None);
+            return Result.Failure<Guest>(DomainErrors.Guest.NotFound);
         }
 
-        return Result<Guest>.Success(guest);
+        return Result.Success(guest);
     }
 }

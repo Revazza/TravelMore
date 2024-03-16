@@ -8,8 +8,6 @@ public class Result<TValue> : Result
         : base(isSuccess, error) =>
         _value = value;
 
-    public TValue Value => IsSuccess
-        ? _value!
-        : throw new InvalidOperationException("The value of a failure result can not be accessed.");
+    public TValue Value => _value!;
 
 }

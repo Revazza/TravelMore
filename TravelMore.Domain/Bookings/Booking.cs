@@ -1,6 +1,9 @@
 ﻿using TravelMore.Domain.Bookings.BookingSchedules;
+using TravelMore.Domain.Calculators;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Common.Requests;
 using TravelMore.Domain.Common.Results;
+using TravelMore.Domain.Errors;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Users.Guests;
 
@@ -8,8 +11,8 @@ namespace TravelMore.Domain.Bookings;
 
 public sealed class Booking : Entity<Guid>
 {
-    public BookingSchedule Schedule { get; } = new();
-    public Money TotalPayment { get; } = new(0);
+    public BookingSchedule Schedule { get; private set; } = new();
+    public Money TotalPayment { get; private set; } = Money.Create(0).Value;
     public short NumberOfGuests { get; }
     public int GuestId { get; }
     public Guest Guest { get; } = null!;
@@ -19,49 +22,87 @@ public sealed class Booking : Entity<Guid>
 
     private Booking() : base(Guid.NewGuid()) { }
 
-    private Booking(Guid id, BookingSchedule schedule, Money totalPayment, short numberOfGuests, Guest guest, Hotel hotel) : base(id)
+    private Booking(BookingRequest request) : base(Guid.NewGuid())
     {
-        Schedule = schedule;
-        NumberOfGuests = numberOfGuests;
-        Guest = guest;
-        BookedHotel = hotel;
-        TotalPayment = totalPayment;
+        Schedule = request.Schedule;
+        TotalPayment = request.Payment;
+        NumberOfGuests = request.NumberOfGuests;
+        Guest = request.Guest;
+        BookedHotel = request.Hotel;
         Status = BookingStatus.Pending;
     }
 
     public static Result<Booking> Create(
-        DateTime checkIn,
-        DateTime checkOut,
+        DateTime from,
+        DateTime to,
         short numberOfGuests,
         Guest guest,
         Hotel hotel)
     {
-        var schedule = new BookingSchedule(checkIn, checkOut);
+        var totalPayment = new HotelPaymentCalculator(hotel, numberOfGuests)
+            .Calculate();
 
-        var isHotelAvailableResult = hotel.IsAvailable(schedule);
-        if (isHotelAvailableResult.IsFailure)
-        {
-            return Result.Failure<Booking>(isHotelAvailableResult.Error);
-        }
+        var request = new BookingRequest(
+            numberOfGuests,
+            totalPayment,
+            new BookingSchedule(from, to),
+            guest,
+            hotel);
 
-        var canBookHotelResult = guest.CanBookHotel(hotel, numberOfGuests);
+        var canBookHotelResult = guest.CanBook(request);
         if (canBookHotelResult.IsFailure)
         {
             return Result.Failure<Booking>(canBookHotelResult.Error);
         }
 
-        return Result.Success<Booking>(new(
-            Guid.NewGuid(),
-            schedule,
-            hotel.CalculateTotalPayment(numberOfGuests),
-            numberOfGuests,
-            guest,
-            hotel));
+        return Result.Success<Booking>(new(request));
     }
 
-    public void Accept() => Status = BookingStatus.Accepted;
-    public void Decline() => Status = BookingStatus.Declined;
+    public Result SetSchedule(BookingSchedule schedule)
+    {
+        if (BookedHotel.AnyBookingsScheduleOverlaps(schedule))
+        {
+            return Result.Failure(DomainErrors.Hotel.OverlapSchedule);
+        }
 
-    public bool IsOverLap(DateTime from, DateTime to) => Schedule.From <= from && to <= Schedule.To;
+        Schedule = schedule;
+
+        return Result.Success();
+    }
+
+    public Result Accept(int hostId)
+    {
+        if (BookedHotel.HostId != hostId)
+        {
+            return Result.Failure(DomainErrors.Booking.IncorrerctHostId);
+        }
+
+        Status = BookingStatus.Accepted;
+        return Result.Success();
+    }
+
+    public Result Decline(int hostId)
+    {
+        if (BookedHotel.HostId != hostId)
+        {
+            return Result.Failure(DomainErrors.Booking.IncorrerctHostId);
+        }
+
+        Status = BookingStatus.Declined;
+        return Result.Success();
+    }
+
+    public Result Cancel(int guestId)
+    {
+        if (Guest.Id != guestId)
+        {
+            return Result.Failure(DomainErrors.Booking.IncorrerctGuestId);
+        }
+
+        Status = BookingStatus.Canceled;
+        return Result.Success();
+    }
+
+    public bool DoesOverLap(DateTime from, DateTime to) => Schedule.From <= to && from <= Schedule.To;
 
 }

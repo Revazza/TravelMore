@@ -7,5 +7,6 @@ public static partial class DomainErrors
     public static class Hotel
     {
         public static readonly Error OverlapSchedule = new(",", "Schedule overlaps with other schdules");
+        public static readonly Error NotFound = new(",", "Hotel not found");
     }
 }
