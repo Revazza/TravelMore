@@ -39,10 +39,14 @@ public sealed class Booking : Entity<Guid>
         Guest guest,
         Hotel hotel)
     {
-        var totalPayment = new HotelPaymentCalculator(hotel, numberOfGuests)
+        var totalPaymentResult = new HotelPaymentCalculator(hotel, numberOfGuests)
             .Calculate();
-        var scheduleResult = BookingSchedule.Create(from, to);
+        if (totalPaymentResult.IsFailure)
+        {
+            return Result.Failure<Booking>(totalPaymentResult.Error);
+        }
 
+        var scheduleResult = BookingSchedule.Create(from, to);
         if (scheduleResult.IsFailure)
         {
             return Result.Failure<Booking>(scheduleResult.Error);
@@ -50,7 +54,7 @@ public sealed class Booking : Entity<Guid>
 
         var request = new BookingRequest(
             numberOfGuests,
-            totalPayment,
+            totalPaymentResult.Value,
             scheduleResult.Value,
             guest,
             hotel);

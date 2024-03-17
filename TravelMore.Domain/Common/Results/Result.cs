@@ -1,22 +1,20 @@
 ﻿
+using static System.Runtime.InteropServices.JavaScript.JSType;
+
 namespace TravelMore.Domain.Common.Results;
 
 public class Result
 {
-    protected internal Result(bool isSuccess, Error error)
+    protected internal Result(Error error)
     {
-        if (isSuccess && error != Error.None)
-        {
-            throw new InvalidOperationException();
-        }
-
-        if (!isSuccess && error == Error.None)
-        {
-            throw new InvalidOperationException();
-        }
-
-        IsSuccess = isSuccess;
+        IsSuccess = false;
         Error = error;
+    }
+
+    protected internal Result()
+    {
+        IsSuccess = true;
+        Error = Error.None;
     }
 
     public bool IsSuccess { get; }
@@ -25,12 +23,14 @@ public class Result
 
     public Error Error { get; }
 
-    public static Result Success() => new(true, Error.None);
+    public static Result Success() => new();
 
-    public static Result<TValue> Success<TValue>(TValue value) => new(value, true, Error.None);
+    public static Result<TValue> Success<TValue>(TValue value) => new(value);
 
-    public static Result Failure(Error error) => new(false, error);
+    public static Result Failure(Error error) => new(error);
 
-    public static Result<TValue> Failure<TValue>(Error error) => new(default, false, error);
+    public static Result<TValue> Failure<TValue>(Error error) => new(error);
+
+    public static implicit operator Result(Error error) => new(error);
 
 }

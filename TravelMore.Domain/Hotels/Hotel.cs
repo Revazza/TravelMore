@@ -3,7 +3,6 @@ using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Errors;
-using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;
@@ -42,7 +41,7 @@ public class Hotel : Entity<Guid>
     {
         if (AnyBookingsScheduleOverlaps(schedule))
         {
-            return Result.Failure(DomainErrors.Hotel.OverlapSchedule);
+            return DomainErrors.Hotel.OverlapSchedule;
         }
         return Result.Success();
     }
@@ -52,7 +51,7 @@ public class Hotel : Entity<Guid>
         var result = Money.Create(price);
         if (result.IsFailure)
         {
-            return Result.Failure(result.Error);
+            return result.Error;
         }
 
         PricePerNight = result.Value;
