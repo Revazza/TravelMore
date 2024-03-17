@@ -48,8 +48,8 @@ public class BookingTests
         _hotel.AddBooking(_booking);
         _host.AddHotel(_hotel);
 
-        _overlappingSchedule = new BookingSchedule(new DateTime(2023, 4, 10), new DateTime(2023, 4, 12));
-        _nonOverlappingSchedule = new BookingSchedule(new DateTime(2023, 4, 16), new DateTime(2023, 4, 20));
+        _overlappingSchedule = BookingSchedule.Create(new DateTime(2023, 4, 10), new DateTime(2023, 4, 12)).Value;
+        _nonOverlappingSchedule = BookingSchedule.Create(new DateTime(2023, 4, 16), new DateTime(2023, 4, 20)).Value;
 
     }
 
@@ -60,7 +60,7 @@ public class BookingTests
     [TestCase("2023-04-16", "2023-04-20")]
     public void SetSchedule_Should_ReturnSuccessResult_WhenNonOverlappingScheduleProvided(DateTime from, DateTime to)
     {
-        var schedule = new BookingSchedule(from, to);
+        var schedule = BookingSchedule.Create(from, to).Value;
 
         var result = _booking.SetSchedule(schedule);
 
@@ -74,7 +74,7 @@ public class BookingTests
     [TestCase("2023-04-12", "2023-04-16")]
     public void SetSchedule_Should_ReturnFailureResult_WhenInvalidScheduleProvided(DateTime from, DateTime to)
     {
-        var schedule = new BookingSchedule(from, to);
+        var schedule = BookingSchedule.Create(from, to).Value;
 
         var result = _booking.SetSchedule(schedule);
 

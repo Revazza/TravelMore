@@ -11,7 +11,7 @@ namespace TravelMore.Domain.Bookings;
 
 public sealed class Booking : Entity<Guid>
 {
-    public BookingSchedule Schedule { get; private set; } = new();
+    public BookingSchedule Schedule { get; private set; } = BookingSchedule.Create();
     public Money TotalPayment { get; private set; } = Money.Create(0).Value;
     public short NumberOfGuests { get; }
     public int GuestId { get; }
@@ -41,11 +41,17 @@ public sealed class Booking : Entity<Guid>
     {
         var totalPayment = new HotelPaymentCalculator(hotel, numberOfGuests)
             .Calculate();
+        var scheduleResult = BookingSchedule.Create(from, to);
+
+        if (scheduleResult.IsFailure)
+        {
+            return Result.Failure<Booking>(scheduleResult.Error);
+        }
 
         var request = new BookingRequest(
             numberOfGuests,
             totalPayment,
-            new BookingSchedule(from, to),
+            scheduleResult.Value,
             guest,
             hotel);
 
