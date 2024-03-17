@@ -2,6 +2,7 @@
 using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Errors;
 using TravelMore.Domain.Hotels;
+using TravelMore.Domain.Tests.TestsCommons;
 
 namespace TravelMore.Domain.Tests.Calculators;
 
@@ -14,10 +15,10 @@ public class HotelPaymentCalculatorTests
     public void SetUp()
     {
         _hotel = new Hotel(new Guid("65834710-ec38-41df-89a0-c1e7290b47d1"));
-        _hotel.SetPricePerNight(50);
-        short numberOfGuests = 5;
 
-        _calculator = new HotelPaymentCalculator(_hotel, numberOfGuests);
+        _hotel.SetPricePerNight(50);
+
+        _calculator = new HotelPaymentCalculator(_hotel, TestsCommon.Valid.NumberOfGuests);
 
     }
 

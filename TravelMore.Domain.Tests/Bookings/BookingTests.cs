@@ -15,12 +15,7 @@ public class BookingTests
     private Hotel _hotel;
     private Guest _guest;
     private Host _host;
-    private DateTime _checkIn;
-    private DateTime _checkOut;
-    private short _validNumberOfGuest;
     private Booking _booking;
-    private BookingSchedule _nonOverlappingSchedule;
-    private BookingSchedule _overlappingSchedule;
 
     [SetUp]
     public void SetUp()
@@ -28,36 +23,29 @@ public class BookingTests
         _guest = TestsCommon.Valid.Guest;
         _guest.SetBalance(1000);
         _host = TestsCommon.Valid.Host;
-        _validNumberOfGuest = 5;
         _hotel = new Hotel(
             id: new Guid("af9b9df3-a6a3-4f4b-bb1d-2fde6c4fcb40"),
             description: "Hotel Description",
-            maxNumberOfGuests: _validNumberOfGuest,
+            maxNumberOfGuests: TestsCommon.Valid.MaxNumberOfGuests,
             pricePerNight: Money.Create(100).Value,
             host: _host);
 
-        _checkIn = new DateTime(2023, 4, 8);
-        _checkOut = new DateTime(2023, 4, 15);
-
         _booking = Booking.Create(
-            from: _checkIn,
-            to: _checkOut,
-            numberOfGuests: _validNumberOfGuest,
+            from: TestsCommon.FirstOfApril2023,
+            to: TestsCommon.FifteenthOfApril2023,
+            numberOfGuests: TestsCommon.Valid.NumberOfGuests,
             guest: _guest,
             hotel: _hotel).Value;
 
         _hotel.AddBooking(_booking);
         _host.AddHotel(_hotel);
 
-        _overlappingSchedule = BookingSchedule.Create(new DateTime(2023, 4, 10), new DateTime(2023, 4, 12)).Value;
-        _nonOverlappingSchedule = BookingSchedule.Create(new DateTime(2023, 4, 16), new DateTime(2023, 4, 20)).Value;
-
     }
 
 
     #region SetSchedule
 
-    [TestCase("2023-04-5", "2023-04-7")]
+    [TestCase("2023-03-19", "2023-03-31")]
     [TestCase("2023-04-16", "2023-04-20")]
     public void SetSchedule_Should_ReturnSuccessResult_WhenNonOverlappingScheduleProvided(DateTime from, DateTime to)
     {
@@ -94,10 +82,11 @@ public class BookingTests
     [Test]
     public void Create_ShouldReturnFailureResult_WhenGuestCantBook_DueToScheduleOverlap()
     {
+        var schedule = TestsCommon.OverlapingSchedule;
         var bookingResult = Booking.Create(
-            from: _overlappingSchedule.From,
-            to: _overlappingSchedule.To,
-            numberOfGuests: _validNumberOfGuest,
+            from: schedule.From,
+            to: schedule.To,
+            numberOfGuests: TestsCommon.Valid.NumberOfGuests,
             guest: _guest,
             hotel: _hotel);
 
@@ -112,11 +101,12 @@ public class BookingTests
     [Test]
     public void Create_ShouldReturnFailureResult_WhenGuestCantBook_DueToInsufficientBalance()
     {
+        var schedule = TestsCommon.NonOverlapingSchedule;
         _guest.SetBalance(0);
         var bookingResult = Booking.Create(
-            from: _nonOverlappingSchedule.From,
-            to: _nonOverlappingSchedule.To,
-            numberOfGuests: _validNumberOfGuest,
+            from: schedule.From,
+            to: schedule.To,
+            numberOfGuests: TestsCommon.Valid.NumberOfGuests,
             guest: _guest,
             hotel: _hotel);
 
@@ -131,10 +121,12 @@ public class BookingTests
     [Test]
     public void Create_ShouldReturnSuccessResult_WhenGuestCanBook()
     {
+        var schedule = TestsCommon.NonOverlapingSchedule;
+
         var bookingResult = Booking.Create(
-            from: _nonOverlappingSchedule.From,
-            to: _nonOverlappingSchedule.To,
-            numberOfGuests: _validNumberOfGuest,
+            from: schedule.From,
+            to: schedule.To,
+            numberOfGuests: TestsCommon.Valid.NumberOfGuests,
             guest: _guest,
             hotel: _hotel);
 
@@ -149,10 +141,12 @@ public class BookingTests
     [Test]
     public void Create_ShouldCreateBookingWithPendingStatus_WhenGuestCanBook()
     {
+        var schedule = TestsCommon.NonOverlapingSchedule;
+
         var result = Booking.Create(
-            _nonOverlappingSchedule.From,
-            _nonOverlappingSchedule.To,
-            _validNumberOfGuest,
+            schedule.From,
+            schedule.To,
+            TestsCommon.Valid.NumberOfGuests,
             _guest,
             _hotel);
 
@@ -267,7 +261,8 @@ public class BookingTests
     [Test]
     public void DoesOverlap_ShouldReturnTrue_WhenScheduleOverlaps()
     {
-        var result = _booking.DoesOverLap(_overlappingSchedule.From, _overlappingSchedule.To);
+        var schedule = TestsCommon.OverlapingSchedule;
+        var result = _booking.DoesOverLap(schedule.From, schedule.To);
 
         Assert.That(result, Is.True);
     }
@@ -275,7 +270,8 @@ public class BookingTests
     [Test]
     public void DoesOverlap_ShouldReturnFalse_WhenScheduleDoesntOverlap()
     {
-        var result = _booking.DoesOverLap(_nonOverlappingSchedule.From, _nonOverlappingSchedule.To);
+        var schedule = TestsCommon.NonOverlapingSchedule;
+        var result = _booking.DoesOverLap(schedule.From, schedule.To);
 
         Assert.That(result, Is.False);
     }
