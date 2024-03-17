@@ -43,13 +43,13 @@ public sealed class Booking : Entity<Guid>
             .Calculate();
         if (totalPaymentResult.IsFailure)
         {
-            return Result.Failure<Booking>(totalPaymentResult.Error);
+            return totalPaymentResult.Error;
         }
 
         var scheduleResult = BookingSchedule.Create(from, to);
         if (scheduleResult.IsFailure)
         {
-            return Result.Failure<Booking>(scheduleResult.Error);
+            return scheduleResult.Error;
         }
 
         var request = new BookingRequest(
@@ -62,17 +62,16 @@ public sealed class Booking : Entity<Guid>
         var canBookHotelResult = guest.CanBook(request);
         if (canBookHotelResult.IsFailure)
         {
-            return Result.Failure<Booking>(canBookHotelResult.Error);
+            return canBookHotelResult.Error;
         }
-
-        return Result.Success<Booking>(new(request));
+        return new Booking(request);
     }
 
     public Result SetSchedule(BookingSchedule schedule)
     {
         if (BookedHotel.AnyBookingsScheduleOverlaps(schedule))
         {
-            return Result.Failure(DomainErrors.Hotel.OverlapSchedule);
+            return DomainErrors.Hotel.OverlapSchedule;
         }
 
         Schedule = schedule;
@@ -84,7 +83,7 @@ public sealed class Booking : Entity<Guid>
     {
         if (BookedHotel.HostId != hostId)
         {
-            return Result.Failure(DomainErrors.Booking.IncorrerctHostId);
+            return DomainErrors.Booking.IncorrerctHostId;
         }
 
         Status = BookingStatus.Accepted;
@@ -95,7 +94,7 @@ public sealed class Booking : Entity<Guid>
     {
         if (BookedHotel.HostId != hostId)
         {
-            return Result.Failure(DomainErrors.Booking.IncorrerctHostId);
+            return DomainErrors.Booking.IncorrerctHostId;
         }
 
         Status = BookingStatus.Declined;
@@ -106,7 +105,7 @@ public sealed class Booking : Entity<Guid>
     {
         if (Guest.Id != guestId)
         {
-            return Result.Failure(DomainErrors.Booking.IncorrerctGuestId);
+            return DomainErrors.Booking.IncorrerctGuestId;
         }
 
         Status = BookingStatus.Canceled;

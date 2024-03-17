@@ -15,10 +15,10 @@ public record Money
     {
         if (IsNegative(amount))
         {
-            return Result.Failure<Money>(Errors.DomainErrors.Money.InvalidAmount);
+            return Errors.DomainErrors.Money.InvalidAmount;
         }
 
-        return Result.Success(new Money(amount));
+        return new Money(amount);
     }
 
     private static bool IsNegative(decimal amonut) => amonut < 0;

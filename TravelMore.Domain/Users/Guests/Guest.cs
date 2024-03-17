@@ -34,13 +34,13 @@ public class Guest : User
     {
         if (!IsBalanceEnough(request.Payment))
         {
-            return Result.Failure(DomainErrors.Guest.InsufficientBalance);
+            return DomainErrors.Guest.InsufficientBalance;
         }
 
         var isHotelAvailableResult = request.Hotel.IsBookable(request.Schedule);
         if (isHotelAvailableResult.IsFailure)
         {
-            return Result.Failure(isHotelAvailableResult.Error);
+            return isHotelAvailableResult;
         }
 
         return Result.Success();
@@ -51,7 +51,7 @@ public class Guest : User
         var result = Money.Create(amount);
         if (result.IsFailure)
         {
-            return Result.Failure(result.Error);
+            return result;
         }
 
         Balance = result.Value;

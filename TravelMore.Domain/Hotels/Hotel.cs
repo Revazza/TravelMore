@@ -51,7 +51,7 @@ public class Hotel : Entity<Guid>
         var result = Money.Create(price);
         if (result.IsFailure)
         {
-            return result.Error;
+            return result;
         }
 
         PricePerNight = result.Value;
