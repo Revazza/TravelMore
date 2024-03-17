@@ -13,7 +13,7 @@ public class HotelPaymentCalculatorTests
     [SetUp]
     public void SetUp()
     {
-        _hotel = new Hotel(Guid.NewGuid());
+        _hotel = new Hotel(new Guid("65834710-ec38-41df-89a0-c1e7290b47d1"));
         _hotel.SetPricePerNight(50);
         short numberOfGuests = 5;
 

@@ -4,6 +4,7 @@ using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Errors;
 using TravelMore.Domain.Hotels;
+using TravelMore.Domain.Tests.TestsCommons;
 using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Hosts;
 
@@ -24,9 +25,9 @@ public class BookingTests
     [SetUp]
     public void SetUp()
     {
-        _guest = new Guest(1);
+        _guest = TestsCommon.Valid.Guest;
         _guest.SetBalance(1000);
-        _host = new Host(2);
+        _host = TestsCommon.Valid.Host;
         _validNumberOfGuest = 5;
         _hotel = new Hotel(
             id: new Guid("af9b9df3-a6a3-4f4b-bb1d-2fde6c4fcb40"),

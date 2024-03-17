@@ -1,5 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.BookingSchedules;
+using TravelMore.Domain.Common.Extensions;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Errors;
@@ -37,15 +38,6 @@ public class Hotel : Entity<Guid>
         HostId = Host.Id;
     }
 
-    public Result IsBookable(BookingSchedule schedule)
-    {
-        if (AnyBookingsScheduleOverlaps(schedule))
-        {
-            return DomainErrors.Hotel.OverlapSchedule;
-        }
-        return Result.Success();
-    }
-
     public Result SetPricePerNight(decimal price)
     {
         var result = Money.Create(price);
@@ -58,7 +50,30 @@ public class Hotel : Entity<Guid>
         return Result.Success();
     }
 
-    public void AddBooking(Booking booking) => _bookings.Add(booking);
+    public void AddBooking(Booking booking)
+    {
+        _bookings.Add(booking);
+    }
+
+    public Result SetMaxNumberOfGuests(short numberOfGuests)
+    {
+        if (numberOfGuests.IsLessThanOrEqualToZero())
+        {
+            return DomainErrors.Hotel.InvalidGuestNumber;
+        }
+
+        MaxNumberOfGuests = numberOfGuests;
+        return Result.Success();
+    }
+
+    public Result IsBookable(BookingSchedule schedule)
+    {
+        if (AnyBookingsScheduleOverlaps(schedule))
+        {
+            return DomainErrors.Hotel.OverlapSchedule;
+        }
+        return Result.Success();
+    }
 
     public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));
 

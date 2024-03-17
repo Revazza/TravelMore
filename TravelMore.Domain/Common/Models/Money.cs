@@ -1,5 +1,6 @@
 ﻿namespace TravelMore.Domain.Common.Models;
 
+using TravelMore.Domain.Common.Extensions;
 using TravelMore.Domain.Common.Results;
 
 public record Money
@@ -13,15 +14,13 @@ public record Money
 
     public static Result<Money> Create(decimal amount)
     {
-        if (IsNegative(amount))
+        if (amount.IsNegative())
         {
             return Errors.DomainErrors.Money.InvalidAmount;
         }
 
         return new Money(amount);
     }
-
-    private static bool IsNegative(decimal amonut) => amonut < 0;
 
     public static bool operator >(Money left, Money right) => left.Amount > right.Amount;
 

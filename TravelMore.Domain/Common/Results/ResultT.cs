@@ -16,7 +16,7 @@ public class Result<TValue> : Result
                 
     }
 
-    public TValue Value => _value!;
+    public TValue Value => IsSuccess ? _value! : throw new InvalidOperationException("Can't get value when operation is not successful");
 
     public static implicit operator Result<TValue>(TValue value) => new(value);
     public static implicit operator Result<TValue>(Error error) => new(error);
