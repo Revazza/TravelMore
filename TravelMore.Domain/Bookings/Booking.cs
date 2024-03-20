@@ -43,7 +43,7 @@ public sealed class Booking : Entity<Guid>
         Guest guest,
         Hotel hotel)
     {
-        var totalPayment = new HotelPaymentCalculator(hotel, numberOfGuests).Calculate();
+        var totalPayment = HotelPaymentCalculator.Create(hotel, numberOfGuests).Calculate();
         var schedule = BookingSchedule.Create(from, to);
 
         guest.EnsureCanBook(totalPayment);

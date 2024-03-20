@@ -1,12 +1,15 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.BookingSchedules;
+using TravelMore.Domain.Bookings.Exceptions;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Results;
-using TravelMore.Domain.Errors;
 using TravelMore.Domain.Hotels;
+using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.Tests.TestsCommons;
 using TravelMore.Domain.Users.Guests;
+using TravelMore.Domain.Users.Guests.Exceptions;
 using TravelMore.Domain.Users.Hosts;
+using TravelMore.Domain.Users.Hosts.Exceptions;
 
 namespace TravelMore.Domain.Tests.Bookings;
 
@@ -27,7 +30,7 @@ public class BookingTests
             id: new Guid("af9b9df3-a6a3-4f4b-bb1d-2fde6c4fcb40"),
             description: "Hotel Description",
             maxNumberOfGuests: TestsCommon.Valid.MaxNumberOfGuests,
-            pricePerNight: Money.Create(100).Value,
+            pricePerNight: Money.Create(100),
             host: _host);
 
         _booking = Booking.Create(
@@ -35,7 +38,7 @@ public class BookingTests
             to: TestsCommon.FifteenthOfApril2023,
             numberOfGuests: TestsCommon.Valid.NumberOfGuests,
             guest: _guest,
-            hotel: _hotel).Value;
+            hotel: _hotel);
 
         _hotel.AddBooking(_booking);
         _host.AddHotel(_hotel);
@@ -47,13 +50,14 @@ public class BookingTests
 
     [TestCase("2023-03-19", "2023-03-31")]
     [TestCase("2023-04-16", "2023-04-20")]
-    public void SetSchedule_Should_ReturnSuccessResult_WhenNonOverlappingScheduleProvided(DateTime from, DateTime to)
+    public void SetSchedule_Should_UpdateSchedule_When_NonOverlappingScheduleProvided(DateTime from, DateTime to)
     {
-        var schedule = BookingSchedule.Create(from, to).Value;
+        var previousSchedule = _booking.Schedule;
+        var newSchedule = BookingSchedule.Create(from, to);
 
-        var result = _booking.SetSchedule(schedule);
+        _booking.SetSchedule(newSchedule);
 
-        Assert.That(result.IsSuccess, Is.EqualTo(true));
+        Assert.That(previousSchedule, Is.Not.EqualTo(newSchedule));
 
     }
 
@@ -61,18 +65,11 @@ public class BookingTests
     [TestCase("2023-04-8", "2023-04-15")]
     [TestCase("2023-04-7", "2023-04-12")]
     [TestCase("2023-04-12", "2023-04-16")]
-    public void SetSchedule_Should_ReturnFailureResult_WhenInvalidScheduleProvided(DateTime from, DateTime to)
+    public void SetSchedule_Should_ThrowHotelOverlapScheduleException_When_InvalidScheduleProvided(DateTime from, DateTime to)
     {
-        var schedule = BookingSchedule.Create(from, to).Value;
+        var schedule = BookingSchedule.Create(from, to);
 
-        var result = _booking.SetSchedule(schedule);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsFailure, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(DomainErrors.Hotel.OverlapSchedule));
-        });
-
+        Assert.Throws<HotelOverlapScheduleException>(() => _booking.SetSchedule(schedule));
     }
 
     #endregion
@@ -80,30 +77,40 @@ public class BookingTests
     #region Create
 
     [Test]
-    public void Create_ShouldReturnFailureResult_WhenGuestCantBook_DueToScheduleOverlap()
+    public void Create_Should_ThrowHotelOverlapScheduleException_When_SchedulesOverlap()
     {
         var schedule = TestsCommon.OverlapingSchedule;
-        var bookingResult = Booking.Create(
+
+        Assert.Throws<HotelOverlapScheduleException>(() => Booking.Create(
             from: schedule.From,
             to: schedule.To,
             numberOfGuests: TestsCommon.Valid.NumberOfGuests,
             guest: _guest,
-            hotel: _hotel);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(bookingResult.IsFailure, Is.EqualTo(true));
-            Assert.That(bookingResult.Error, Is.EqualTo(DomainErrors.Hotel.OverlapSchedule));
-        });
+            hotel: _hotel));
 
     }
 
     [Test]
-    public void Create_ShouldReturnFailureResult_WhenGuestCantBook_DueToInsufficientBalance()
+    public void Create_Should_ThrowGuestInsufficientBalanceException_When_GuestBalanceIsInsufficient()
     {
         var schedule = TestsCommon.NonOverlapingSchedule;
         _guest.SetBalance(0);
-        var bookingResult = Booking.Create(
+
+        Assert.Throws<GuestInsufficientBalanceException>(() => Booking.Create(
+            from: schedule.From,
+            to: schedule.To,
+            numberOfGuests: TestsCommon.Valid.NumberOfGuests,
+            guest: _guest,
+            hotel: _hotel));
+
+    }
+
+    [Test]
+    public void Create_Should_CreateBooking_When_GuestCanBook()
+    {
+        var schedule = TestsCommon.NonOverlapingSchedule;
+
+        var booking = Booking.Create(
             from: schedule.From,
             to: schedule.To,
             numberOfGuests: TestsCommon.Valid.NumberOfGuests,
@@ -112,45 +119,27 @@ public class BookingTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(bookingResult.IsFailure, Is.EqualTo(true));
-            Assert.That(bookingResult.Error, Is.EqualTo(DomainErrors.Guest.InsufficientBalance));
+            Assert.That(booking.Schedule, Is.EqualTo(schedule));
+            Assert.That(booking.NumberOfGuests, Is.EqualTo(TestsCommon.Valid.NumberOfGuests));
+            Assert.That(booking.Guest, Is.EqualTo(_guest));
+            Assert.That(booking.BookedHotel, Is.EqualTo(_hotel));
         });
 
     }
 
     [Test]
-    public void Create_ShouldReturnSuccessResult_WhenGuestCanBook()
+    public void Create_Should_CreateBookingWithPendingStatus_When_GuestCanBook()
     {
         var schedule = TestsCommon.NonOverlapingSchedule;
 
-        var bookingResult = Booking.Create(
-            from: schedule.From,
-            to: schedule.To,
-            numberOfGuests: TestsCommon.Valid.NumberOfGuests,
-            guest: _guest,
-            hotel: _hotel);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(bookingResult.IsSuccess, Is.EqualTo(true));
-            Assert.That(bookingResult.Error, Is.EqualTo(Error.None));
-        });
-
-    }
-
-    [Test]
-    public void Create_ShouldCreateBookingWithPendingStatus_WhenGuestCanBook()
-    {
-        var schedule = TestsCommon.NonOverlapingSchedule;
-
-        var result = Booking.Create(
+        var booking = Booking.Create(
             schedule.From,
             schedule.To,
             TestsCommon.Valid.NumberOfGuests,
             _guest,
             _hotel);
 
-        Assert.That(result.Value.Status, Is.EqualTo(BookingStatus.Pending));
+        Assert.That(booking.Status, Is.EqualTo(BookingStatus.Pending));
 
     }
 
@@ -158,33 +147,19 @@ public class BookingTests
 
     #region Accept
     [Test]
-    public void Accept_ShouldReturnFailureResult_WhenHostIdDoesntMatchPassedHostId()
+    public void Accept_Should_ThrowHostIdMismatchedException_When_HostIdDoesntMatchPassedHostId()
     {
         var incorrectHostId = -1;
-
-        var result = _booking.Accept(incorrectHostId);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsFailure, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(DomainErrors.Booking.IncorrerctHostId));
-            Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Pending));
-        });
-
+        Assert.Throws<HostIdMismatchedException>(() => _booking.Accept(incorrectHostId));
+        Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Pending));
     }
 
     [Test]
-    public void Accept_ShouldReturnSuccessResultAndChangeStatus_WhenHostIdMatchesPassedHostId()
+    public void Accept_Should_UpdateStatus_When_HostIdMatchesPassedHostId()
     {
-        var result = _booking.Accept(_host.Id);
+        _booking.Accept(_host.Id);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsSuccess, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(Error.None));
-            Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Accepted));
-        });
-
+        Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Accepted));
     }
 
     #endregion
@@ -192,33 +167,20 @@ public class BookingTests
     #region Cancel
 
     [Test]
-    public void Cancel_ShouldReturnFailureResult_WhenGuestIdDoesntMatchPassedGuestId()
+    public void Cancel_Should_ThrowGuestIdMismatchedException_When_GuestIdDoesntMatchPassedGuestId()
     {
         var incorrectGuestId = -1;
 
-        var result = _booking.Cancel(incorrectGuestId);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsFailure, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(DomainErrors.Booking.IncorrerctGuestId));
-            Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Pending));
-        });
-
+        Assert.Throws<GuestIdMismatchedException>(() => _booking.Cancel(incorrectGuestId));
+        Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Pending));
     }
 
     [Test]
-    public void Cancel_ShouldReturnSuccessResultAndChangeStatus_WhenGuestIdMatchesPassedGuestId()
+    public void Cancel_Should_UpdateStatus_WhenGuestIdMatchesPassedGuestId()
     {
-        var result = _booking.Cancel(_guest.Id);
+        _booking.Cancel(_guest.Id);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsSuccess, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(Error.None));
-            Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Canceled));
-        });
-
+        Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Canceled));
     }
 
     #endregion
@@ -226,31 +188,19 @@ public class BookingTests
     #region Decline
 
     [Test]
-    public void Decline_ShouldReturnSuccessResultAndChangeStatus_WhenHostIdMatchesPassedHostId()
+    public void Decline_Should_UpdateStatus_WhenHostIdMatchesPassedHostId()
     {
-        var result = _booking.Decline(_host.Id);
+        _booking.Decline(_host.Id);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsSuccess, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(Error.None));
-            Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Declined));
-        });
-
+        Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Declined));
     }
 
     [Test]
-    public void Decline_ShouldReturnFailureResult_WhenHostIdDoesntMatchPassedHostId()
+    public void Decline_Should_ThrowHostIdMismatchedException_WhenHostIdDoesntMatchPassedHostId()
     {
         var incorrectHostId = -1;
-        var result = _booking.Decline(incorrectHostId);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsFailure, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(DomainErrors.Booking.IncorrerctHostId));
-            Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Pending));
-        });
+        Assert.Throws<HostIdMismatchedException>(() => _booking.Decline(incorrectHostId));
+        Assert.That(_booking.Status, Is.EqualTo(BookingStatus.Pending));
 
     }
 

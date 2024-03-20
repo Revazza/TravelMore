@@ -25,30 +25,25 @@ public class CreateBookingCommandHandler(
 
         if (guest is null)
         {
-            return Result.Failure<Booking>(DomainErrors.Guest.NotFound);
+            return Result.Failure<Booking>(Error.None);
         }
 
         var hotel = await _hotelRepository.GetHotelByIdWithBookingsAsync(request.HotelId);
         if (hotel is null)
         {
-            return Result.Failure<Booking>(DomainErrors.Hotel.NotFound);
+            return Result.Failure<Booking>(Error.None);
         }
 
-        var bookingResult = Booking.Create(
+        var booking = Booking.Create(
             request.CheckIn,
             request.CheckOut,
             request.NumberOfGuests,
             guest,
             hotel);
 
-        if (bookingResult.IsFailure)
-        {
-            return Result.Failure<Booking>(bookingResult.Error);
-        }
-
-        await _bookingRepository.AddAsync(bookingResult.Value);
+        await _bookingRepository.AddAsync(booking);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return bookingResult;
+        return booking;
     }
 }

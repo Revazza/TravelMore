@@ -1,7 +1,7 @@
 ﻿using TravelMore.Domain.Bookings;
+using TravelMore.Domain.Common.Exceptions;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Results;
-using TravelMore.Domain.Errors;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Users.Hosts;
 
@@ -21,7 +21,7 @@ public class HotelTests
             new Guid("cc6ba882-4a49-47c6-9084-c4b17738c254"),
             description: "Dummy Hotel",
             maxNumberOfGuests: 10,
-            pricePerNight: Money.Create(10).Value,
+            pricePerNight: Money.Create(10),
             _host);
     }
 
@@ -39,7 +39,7 @@ public class HotelTests
     public void Constructor_Should_CreateHotelWithParameters()
     {
         var hotelId = new Guid("08008da6-69c8-426c-a69a-fbefd16b44e3");
-        var pricePerNight = Money.Create(10).Value;
+        var pricePerNight = Money.Create(10);
         var description = "description";
         short maxNumberOfGuests = 5;
         var result = new Hotel(hotelId, description, maxNumberOfGuests, pricePerNight, _host);
@@ -57,38 +57,20 @@ public class HotelTests
     }
 
     [Test]
-    public void SetPricePerNight_ShouldReturnSuccessResult_WhenNonNegativeParameterIsProvided()
+    public void SetPricePerNight_Should_UpdatePricePerNight_When_NonNegativeParameterIsProvided()
     {
         var pricePerNight = 10;
-        var result = _hotel.SetPricePerNight(pricePerNight);
+        _hotel.SetPricePerNight(pricePerNight);
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsSuccess, Is.True);
-            Assert.That(result.Error, Is.EqualTo(Error.None));
-            Assert.That(_hotel.PricePerNight.Amount, Is.EqualTo(pricePerNight));
-        });
-
+        Assert.That(_hotel.PricePerNight.Amount, Is.EqualTo(pricePerNight));
     }
 
-    public void SetPricePerNight_ShouldReturnFailureResult_WhenNegativeParameterIsProvided()
+    public void SetPricePerNight_Should_ReturnFailureResult_When_NegativeParameterIsProvided()
     {
         var invalidPricePerNight = -1;
         var initialPricePerNight = _hotel.PricePerNight;
-        var result = _hotel.SetPricePerNight(invalidPricePerNight);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsFailure, Is.True);
-            Assert.That(result.Error, Is.EqualTo(DomainErrors.Money.InvalidAmount));
-            Assert.That(_hotel.PricePerNight, Is.EqualTo(initialPricePerNight));
-        });
-
-    }
-
-    public void AddBooking_Should_AddBookingToHotel()
-    {
-
+        Assert.Throws<NegativeAmountException>(() => _hotel.SetPricePerNight(invalidPricePerNight));
+        Assert.That(_hotel.PricePerNight, Is.EqualTo(initialPricePerNight));
     }
 
 }

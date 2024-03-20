@@ -1,7 +1,6 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Interfaces.Repositories;
 using TravelMore.Domain.Common.Results;
-using TravelMore.Domain.Errors;
 using TravelMore.Domain.Hotels;
 
 namespace TravelMore.Application.Hotels.Queries.GetById;
@@ -17,7 +16,7 @@ public class GetHotelByIdQueryHandler(IHotelRepository hotelRepository) : IReque
         var hotel = await _hotelRepository.GetByIdAsync(request.Id);
         if (hotel is null)
         {
-            return Result.Failure<Hotel>(DomainErrors.Hotel.NotFound);
+            return Result.Failure<Hotel>(Error.None);
         }
 
         return Result.Success(hotel);

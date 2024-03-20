@@ -2,7 +2,7 @@
 
 namespace TravelMore.Domain.Bookings.BookingSchedules;
 
-public class BookingSchedule
+public record BookingSchedule
 {
     public DateTime From { get; set; }
     public DateTime To { get; set; }
@@ -25,7 +25,7 @@ public class BookingSchedule
     {
         if (!IsBookingPeriodInOrder(from, to))
         {
-            throw new BookingInvalidPeriodException();
+            throw new BookingScheduleInvalidPeriodException();
         }
     }
 

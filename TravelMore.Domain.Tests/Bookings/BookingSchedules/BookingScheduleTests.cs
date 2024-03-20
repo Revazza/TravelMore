@@ -1,6 +1,6 @@
 ﻿
 using TravelMore.Domain.Bookings.BookingSchedules;
-using TravelMore.Domain.Common.Results;
+using TravelMore.Domain.Bookings.Exceptions;
 
 namespace TravelMore.Domain.Tests.Bookings.BookingSchedules;
 
@@ -16,7 +16,7 @@ public class BookingScheduleTests
 
     [TestCase(0)]
     [TestCase(1)]
-    public void Create_ShouldReturnSuccessResult_WhenOrderedPeriodIsPassed(int days)
+    public void Create_Should_ReturnCreatedBookingSchedule_When_OrderedPeriodIsPassed(int days)
     {
         var from = _date;
         var to = _date.AddDays(days);
@@ -25,30 +25,24 @@ public class BookingScheduleTests
 
         Assert.Multiple(() =>
         {
-            Assert.That(result.IsSuccess, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(Error.None));
+            Assert.That(result.From, Is.EqualTo(from));
+            Assert.That(result.To, Is.EqualTo(to));
         });
 
     }
 
     [Test]
-    public void Create_ShouldReturnFailureResult_WhenUnorderedPeriodIsPassed()
+    public void Create_Should_ThrowBookingScheduleInvalidPeriodException_When_UnorderedPeriodIsPassed()
     {
         var from = _date;
         var to = _date.AddDays(-1);
 
-        var result = BookingSchedule.Create(from, to);
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(result.IsFailure, Is.EqualTo(true));
-            Assert.That(result.Error, Is.EqualTo(DomainErrors.BookingSchedule.InvalidBookingPeriod));
-        });
+        Assert.Throws<BookingScheduleInvalidPeriodException>(() => BookingSchedule.Create(from, to));
 
     }
 
     [Test]
-    public void Create_ShouldReturnBookingScheduleWithDefaultPropertyValues_WhenNoParametersArePassed()
+    public void Create_Should_ReturnBookingScheduleWithDefaultDatetimeValues_WhenNoParametersArePassed()
     {
         var result = BookingSchedule.Create();
 
