@@ -1,5 +1,4 @@
 ﻿using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Interfaces;
 
@@ -10,6 +9,6 @@ public class HotelPaymentCalculator(Hotel hotel, short numberOfGuests) : IHotelP
     private readonly Hotel _hotel = hotel;
     private readonly short _numberOfGuests = numberOfGuests;
 
-    public Result<Money> Calculate() => Money.Create(_hotel.PricePerNight.Amount * _numberOfGuests);
+    public Money Calculate() => Money.Create(_hotel.PricePerNight.Amount * _numberOfGuests);
 
 }

@@ -1,9 +1,7 @@
-﻿using System.Security;
-using TravelMore.Domain.Bookings;
+﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Common.Requests;
-using TravelMore.Domain.Common.Results;
-using TravelMore.Domain.Errors;
+using TravelMore.Domain.Users.Guests.Exceptions;
 
 namespace TravelMore.Domain.Users.Guests;
 
@@ -12,12 +10,7 @@ public class Guest : User
     private readonly List<Booking> _bookings = [];
     public IReadOnlyCollection<Booking> Bookings => _bookings;
     public string UserName { get; } = string.Empty;
-    public Money Balance { get; private set; } = Money.Create(0).Value;
-
-    public Guest(int id) : base(id)
-    {
-
-    }
+    public Money Balance { get; private set; } = Money.Create(0);
 
     public Guest(int id, string userName, Money balance) : base(id)
     {
@@ -30,32 +23,17 @@ public class Guest : User
         UserName = userName;
     }
 
-    public Result CanBook(BookingRequest request)
+    public void EnsureCanBook(Money payment)
     {
-        if (!IsBalanceEnough(request.Payment))
+        if (!IsBalanceEnough(payment))
         {
-            return DomainErrors.Guest.InsufficientBalance;
+            throw new GuestInsufficientBalanceException();
         }
-
-        var isHotelAvailableResult = request.Hotel.IsBookable(request.Schedule);
-        if (isHotelAvailableResult.IsFailure)
-        {
-            return isHotelAvailableResult;
-        }
-
-        return Result.Success();
     }
 
-    public Result SetBalance(decimal amount)
+    public void SetBalance(decimal amount)
     {
-        var result = Money.Create(amount);
-        if (result.IsFailure)
-        {
-            return result;
-        }
-
-        Balance = result.Value;
-        return Result.Success();
+        Balance = Money.Create(amount);
     }
 
     private bool IsBalanceEnough(Money totalPayment) => Balance >= totalPayment;

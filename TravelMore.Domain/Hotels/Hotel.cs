@@ -2,8 +2,7 @@
 using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Common.Extensions;
 using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Common.Results;
-using TravelMore.Domain.Errors;
+using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;
@@ -14,7 +13,7 @@ public class Hotel : Entity<Guid>
     public IReadOnlyCollection<Booking> Bookings => _bookings;
     public string Description { get; } = string.Empty;
     public short MaxNumberOfGuests { get; set; }
-    public Money PricePerNight { get; set; } = Money.Create(0).Value;
+    public Money PricePerNight { get; set; } = Money.Create(0);
     public int HostId { get; }
     public Host Host { get; } = null!;
 
@@ -38,16 +37,9 @@ public class Hotel : Entity<Guid>
         HostId = Host.Id;
     }
 
-    public Result SetPricePerNight(decimal price)
+    public void SetPricePerNight(decimal price)
     {
-        var result = Money.Create(price);
-        if (result.IsFailure)
-        {
-            return result;
-        }
-
-        PricePerNight = result.Value;
-        return Result.Success();
+        PricePerNight = Money.Create(price);
     }
 
     public void AddBooking(Booking booking)
@@ -55,24 +47,22 @@ public class Hotel : Entity<Guid>
         _bookings.Add(booking);
     }
 
-    public Result SetMaxNumberOfGuests(short numberOfGuests)
+    public void SetMaxNumberOfGuests(short numberOfGuests)
     {
         if (numberOfGuests.IsLessThanOrEqualToZero())
         {
-            return DomainErrors.Hotel.InvalidGuestNumber;
+            throw new HotelInvalidGuestNumberException();
         }
 
         MaxNumberOfGuests = numberOfGuests;
-        return Result.Success();
     }
 
-    public Result IsBookable(BookingSchedule schedule)
+    public void EnsureBookable(BookingSchedule schedule)
     {
         if (AnyBookingsScheduleOverlaps(schedule))
         {
-            return DomainErrors.Hotel.OverlapSchedule;
+            throw new HotelOverlapScheduleException();
         }
-        return Result.Success();
     }
 
     public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));

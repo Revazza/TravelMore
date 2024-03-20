@@ -1,5 +1,4 @@
-﻿using TravelMore.Domain.Common.Results;
-using TravelMore.Domain.Errors;
+﻿using TravelMore.Domain.Bookings.Exceptions;
 
 namespace TravelMore.Domain.Bookings.BookingSchedules;
 
@@ -14,17 +13,21 @@ public class BookingSchedule
         To = to;
     }
 
-    public static Result<BookingSchedule> Create(DateTime from, DateTime to)
+    public static BookingSchedule Create(DateTime from, DateTime to)
     {
-        if (!IsBookingPeriodInOrder(from, to))
-        {
-            return DomainErrors.BookingSchedule.InvalidBookingPeriod;
-        }
-
-        return new BookingSchedule(from, to);
+        EnsureBookingPeriodIsInOrder(from, to);
+        return new(from, to);
     }
 
     public static BookingSchedule Create() => new(DateTime.MinValue, DateTime.MinValue);
+
+    private static void EnsureBookingPeriodIsInOrder(DateTime from, DateTime to)
+    {
+        if (!IsBookingPeriodInOrder(from, to))
+        {
+            throw new BookingInvalidPeriodException();
+        }
+    }
 
     private static bool IsBookingPeriodInOrder(DateTime from, DateTime to) => from <= to;
 

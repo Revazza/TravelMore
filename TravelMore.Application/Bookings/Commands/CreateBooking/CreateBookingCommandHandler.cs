@@ -1,11 +1,8 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Interfaces.Repositories;
 using TravelMore.Application.Common.Interfaces.Services;
-using TravelMore.Application.Guests.Queries.GetById;
-using TravelMore.Application.Hotels.Queries.GetById;
 using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Common.Results;
-using TravelMore.Domain.Errors;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
 

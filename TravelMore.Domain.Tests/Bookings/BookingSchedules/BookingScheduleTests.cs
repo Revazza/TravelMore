@@ -1,7 +1,6 @@
 ﻿
 using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Common.Results;
-using TravelMore.Domain.Errors;
 
 namespace TravelMore.Domain.Tests.Bookings.BookingSchedules;
 
