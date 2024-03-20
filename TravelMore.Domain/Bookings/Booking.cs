@@ -21,6 +21,10 @@ public sealed class Booking : Entity<Guid>
     public Hotel BookedHotel { get; } = null!;
     public BookingStatus Status { get; set; }
 
+    private Booking() : base(Guid.NewGuid())
+    {
+    }
+
     private Booking(
         short numberOfGuests,
         Money totalPayment,

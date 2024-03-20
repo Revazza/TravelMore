@@ -1,7 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Common.Exceptions;
 using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Users.Hosts;
 
@@ -11,7 +10,6 @@ public class HotelTests
 {
     private Hotel _hotel;
     private Host _host;
-    private Booking _validBooking;
 
     [SetUp]
     public void SetUp()

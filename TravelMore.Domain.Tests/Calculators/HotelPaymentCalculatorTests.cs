@@ -1,5 +1,4 @@
 ﻿using TravelMore.Domain.Calculators;
-using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.Tests.TestsCommons;

@@ -1,7 +1,6 @@
-﻿
-using static System.Runtime.InteropServices.JavaScript.JSType;
+﻿using TravelMore.Domain.Common.Results;
 
-namespace TravelMore.Domain.Common.Results;
+namespace TravelMore.Application.Common.Results;
 
 public class Result
 {

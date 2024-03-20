@@ -1,8 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.BookingSchedules;
-using TravelMore.Domain.Bookings.Exceptions;
 using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.Tests.TestsCommons;

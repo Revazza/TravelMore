@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Interfaces.Repositories;
-using TravelMore.Domain.Common.Results;
+using TravelMore.Application.Common.Results;
 using TravelMore.Domain.Users.Guests;
 
 namespace TravelMore.Application.Guests.Queries.GetById;

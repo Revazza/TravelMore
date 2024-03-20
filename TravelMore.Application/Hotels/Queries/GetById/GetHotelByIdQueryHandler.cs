@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Interfaces.Repositories;
+using TravelMore.Application.Common.Results;
 using TravelMore.Domain.Common.Results;
 using TravelMore.Domain.Hotels;
 

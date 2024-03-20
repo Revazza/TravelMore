@@ -40,10 +40,10 @@ public class HotelConfigurations : IEntityTypeConfiguration<Hotel>
     public readonly static dynamic SeedHotel = new
     {
         Id = new Guid("db37121d-c8fe-4f41-ab6e-34dded72f3b4"),
+        Description = HostConfigurations.SeedHost.Email,
         Email = $"{HostConfigurations.SeedHost.Email}'s hotel",
         MaxNumberOfGuests = (short)10,
-        Description = HostConfigurations.SeedHost.Email,
-        OwnerId = HostConfigurations.SeedHost.Id
+        HostId = HostConfigurations.SeedHost.Id
     };
 
     private static readonly dynamic Price = new

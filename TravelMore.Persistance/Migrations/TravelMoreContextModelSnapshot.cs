@@ -55,15 +55,15 @@ namespace TravelMore.Persistance.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int>("HostId")
+                        .HasColumnType("int");
+
                     b.Property<short>("MaxNumberOfGuests")
                         .HasColumnType("smallint");
 
-                    b.Property<int>("OwnerId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("OwnerId");
+                    b.HasIndex("HostId");
 
                     b.ToTable("Hotels");
 
@@ -72,8 +72,8 @@ namespace TravelMore.Persistance.Migrations
                         {
                             Id = new Guid("db37121d-c8fe-4f41-ab6e-34dded72f3b4"),
                             Description = "host@gmail.com",
-                            MaxNumberOfGuests = (short)10,
-                            OwnerId = 2
+                            HostId = 2,
+                            MaxNumberOfGuests = (short)10
                         });
                 });
 
@@ -144,7 +144,7 @@ namespace TravelMore.Persistance.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.OwnsOne("TravelMore.Domain.Shared.Models.Money", "TotalPayment", b1 =>
+                    b.OwnsOne("TravelMore.Domain.Common.Models.Money", "TotalPayment", b1 =>
                         {
                             b1.Property<Guid>("BookingId")
                                 .HasColumnType("uniqueidentifier");
@@ -193,13 +193,13 @@ namespace TravelMore.Persistance.Migrations
 
             modelBuilder.Entity("TravelMore.Domain.Hotels.Hotel", b =>
                 {
-                    b.HasOne("TravelMore.Domain.Users.Hosts.Host", "Owner")
+                    b.HasOne("TravelMore.Domain.Users.Hosts.Host", "Host")
                         .WithMany("Hotels")
-                        .HasForeignKey("OwnerId")
+                        .HasForeignKey("HostId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.OwnsOne("TravelMore.Domain.Shared.Models.Money", "Price", b1 =>
+                    b.OwnsOne("TravelMore.Domain.Common.Models.Money", "PricePerNight", b1 =>
                         {
                             b1.Property<Guid>("HotelId")
                                 .HasColumnType("uniqueidentifier");
@@ -223,15 +223,15 @@ namespace TravelMore.Persistance.Migrations
                                 });
                         });
 
-                    b.Navigation("Owner");
+                    b.Navigation("Host");
 
-                    b.Navigation("Price")
+                    b.Navigation("PricePerNight")
                         .IsRequired();
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Users.Guests.Guest", b =>
                 {
-                    b.OwnsOne("TravelMore.Domain.Shared.Models.Money", "Balance", b1 =>
+                    b.OwnsOne("TravelMore.Domain.Common.Models.Money", "Balance", b1 =>
                         {
                             b1.Property<int>("GuestId")
                                 .HasColumnType("int");

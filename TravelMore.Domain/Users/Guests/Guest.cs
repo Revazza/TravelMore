@@ -12,6 +12,10 @@ public class Guest : User
     public string UserName { get; } = string.Empty;
     public Money Balance { get; private set; } = Money.Create(0);
 
+    private Guest() : base(0)
+    {
+    }
+
     public Guest(int id, string userName, Money balance) : base(id)
     {
         UserName = userName;

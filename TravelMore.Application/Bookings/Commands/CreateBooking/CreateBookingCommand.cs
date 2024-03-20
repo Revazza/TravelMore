@@ -1,6 +1,6 @@
 ﻿using MediatR;
+using TravelMore.Application.Common.Results;
 using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Common.Results;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
 

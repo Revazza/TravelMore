@@ -1,8 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using TravelMore.Application.Bookings.Commands.CreateBooking;
+using TravelMore.Application.Common.Results;
 using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Common.Results;
 
 namespace TravelMore.Api.Controllers;
 [Route("api/booking")]

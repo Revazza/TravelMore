@@ -33,15 +33,15 @@ namespace TravelMore.Persistance.Migrations
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
                     MaxNumberOfGuests = table.Column<short>(type: "smallint", nullable: false),
-                    Price_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
-                    OwnerId = table.Column<int>(type: "int", nullable: false)
+                    PricePerNight_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
+                    HostId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Hotels", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Hotels_Users_OwnerId",
-                        column: x => x.OwnerId,
+                        name: "FK_Hotels_Users_HostId",
+                        column: x => x.HostId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -86,8 +86,8 @@ namespace TravelMore.Persistance.Migrations
 
             migrationBuilder.InsertData(
                 table: "Hotels",
-                columns: new[] { "Id", "Description", "MaxNumberOfGuests", "OwnerId", "Price_Amount" },
-                values: new object[] { new Guid("db37121d-c8fe-4f41-ab6e-34dded72f3b4"), "host@gmail.com", (short)10, 2, 100m });
+                columns: new[] { "Id", "Description", "HostId", "MaxNumberOfGuests", "PricePerNight_Amount" },
+                values: new object[] { new Guid("db37121d-c8fe-4f41-ab6e-34dded72f3b4"), "host@gmail.com", 2, (short)10, 100m });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Bookings_BookedHotelId",
@@ -100,9 +100,9 @@ namespace TravelMore.Persistance.Migrations
                 column: "GuestId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Hotels_OwnerId",
+                name: "IX_Hotels_HostId",
                 table: "Hotels",
-                column: "OwnerId");
+                column: "HostId");
         }
 
         /// <inheritdoc />

@@ -1,5 +1,7 @@
-﻿
-namespace TravelMore.Domain.Common.Results;
+﻿using TravelMore.Domain.Common.Results;
+
+namespace TravelMore.Application.Common.Results;
+
 public class Result<TValue> : Result
 {
     private readonly TValue? _value;
@@ -13,7 +15,7 @@ public class Result<TValue> : Result
     protected internal Result(Error error)
     : base(error)
     {
-                
+
     }
 
     public TValue Value => IsSuccess ? _value! : throw new InvalidOperationException("Can't get value when operation is not successful");
