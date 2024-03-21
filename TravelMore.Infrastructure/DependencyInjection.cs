@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using TravelMore.Application.Common.Interfaces.Repositories;
 using TravelMore.Application.Common.Interfaces.Services;
+using TravelMore.Infrastructure.Middlewares;
 using TravelMore.Infrastructure.Repositories;
 using TravelMore.Infrastructure.Services;
 
@@ -20,6 +21,7 @@ public static class DependencyInjection
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         return services
+            .AddTransient<GlobalExceptionLoggingMiddleware>()
             .AddScoped<IUserIdentityService, UserIdentityService>()
             .AddScoped<IBookingRepository, BookingRepository>()
             .AddScoped<IUnitOfWork, UnitOfWork>()

@@ -1,9 +1,14 @@
+using Serilog;
 using TravelMore.Application;
 using TravelMore.Infrastructure;
+using TravelMore.Infrastructure.Middlewares;
 using TravelMore.Persistance;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Log.Logger = new LoggerConfiguration()
+    .WriteTo.Console()
+    .CreateLogger();
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -25,6 +30,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+app.UseMiddleware<GlobalExceptionLoggingMiddleware>();
 
 app.MapControllers();
 
