@@ -2,6 +2,7 @@
 
 using TravelMore.Domain.Common.Exceptions;
 using TravelMore.Domain.Common.Extensions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public record Money
 {
@@ -25,6 +26,8 @@ public record Money
     public static bool operator >=(Money left, Money right) => left.Amount >= right.Amount;
 
     public static bool operator <=(Money left, Money right) => left.Amount <= right.Amount;
+
+    public static implicit operator Money(decimal amount) => Create(amount);
 
     private static void EnsureNonNegativeAmount(decimal amount)
     {

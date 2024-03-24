@@ -15,7 +15,7 @@ public class HotelPaymentCalculatorTests
     {
         _hotel = new Hotel(new Guid("65834710-ec38-41df-89a0-c1e7290b47d1"));
 
-        _hotel.SetPricePerNight(50);
+        _hotel.SetPricePerDay(50);
 
         _calculator = StandartGuestPaymentCalculator.Create(_hotel, TestsCommon.Valid.NumberOfGuests);
 
@@ -30,7 +30,7 @@ public class HotelPaymentCalculatorTests
     [Test]
     public void Calculate_Should_ReturnsSuccessResult_WhenValidParametersArePassed()
     {
-        _hotel.SetPricePerNight(10);
+        _hotel.SetPricePerDay(10);
         short numberOfGuests = 3;
         var expectedResult = 30;
         var result = StandartGuestPaymentCalculator.Create(_hotel, numberOfGuests).Calculate();

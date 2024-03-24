@@ -14,7 +14,7 @@ public class Hotel : Entity<Guid>
     public IReadOnlyCollection<Booking> Bookings => _bookings;
     public string Description { get; } = string.Empty;
     public short MaxNumberOfGuests { get; set; }
-    public Money PricePerNight { get; set; } = Money.Create(0);
+    public Money PricePerDay { get; set; } = Money.Create(0);
     public int HostId { get; }
     public Host Host { get; } = null!;
 
@@ -33,14 +33,14 @@ public class Hotel : Entity<Guid>
     {
         Description = description;
         MaxNumberOfGuests = maxNumberOfGuests;
-        PricePerNight = pricePerNight;
+        PricePerDay = pricePerNight;
         Host = host;
         HostId = Host.Id;
     }
 
-    public void SetPricePerNight(decimal price)
+    public void SetPricePerDay(decimal price)
     {
-        PricePerNight = Money.Create(price);
+        PricePerDay = Money.Create(price);
     }
 
     public void AddBooking(Booking booking)

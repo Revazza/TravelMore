@@ -12,14 +12,15 @@ namespace TravelMore.Domain.Bookings;
 
 public sealed class Booking : Entity<Guid>
 {
-    public BookingSchedule Schedule { get; private set; } = BookingSchedule.Create();
+    public BookingSchedule Schedule { get; init; } = BookingSchedule.Create();
     public Money TotalPayment { get; private set; } = Money.Create(0);
-    public short NumberOfGuests { get; }
-    public int GuestId { get; }
-    public Guest Guest { get; } = null!;
-    public Guid BookedHotelId { get; }
-    public Hotel BookedHotel { get; } = null!;
-    public BookingStatus Status { get; set; }
+    public short NumberOfGuests { get; private set; }
+    public int GuestId { get; private set; }
+    public Guest Guest { get; private set; } = null!;
+    public Guid BookedHotelId { get; private set; }
+    public Hotel BookedHotel { get; private set; } = null!;
+    public BookingStatus Status { get; private set; }
+    public short NumberOfDays { get; private set; }
 
     private Booking() : base(Guid.NewGuid())
     {
@@ -38,6 +39,7 @@ public sealed class Booking : Entity<Guid>
         Guest = guest;
         BookedHotel = bookedHotel;
         Status = BookingStatus.Pending;
+        NumberOfDays = CalculateNumberOfDays(schedule);
     }
 
     public static Booking Create(
@@ -54,13 +56,6 @@ public sealed class Booking : Entity<Guid>
         guest.EnsureCanBook(schedule, totalPayment);
 
         return new(numberOfGuests, totalPayment, schedule, guest, hotel);
-    }
-
-    public void SetSchedule(BookingSchedule schedule)
-    {
-        BookedHotel.EnsureNoBookingsScheduleOverlaps(schedule);
-        Guest.EnsureNoBookingsScheduleOverlaps(schedule);
-        Schedule = schedule;
     }
 
     public void Accept(int hostId)
@@ -82,6 +77,8 @@ public sealed class Booking : Entity<Guid>
     }
 
     public bool DoesOverLap(DateTime from, DateTime to) => Schedule.From <= to && from <= Schedule.To;
+
+    private short CalculateNumberOfDays(BookingSchedule schedule) => (short)(schedule.To - schedule.From).TotalDays;
 
     private void EnsureGuestIdMatches(int guestId)
     {

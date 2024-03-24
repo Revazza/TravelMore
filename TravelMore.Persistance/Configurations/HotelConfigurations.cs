@@ -19,7 +19,7 @@ public class HotelConfigurations : IEntityTypeConfiguration<Hotel>
             .WithMany(x => x.Hotels)
             .HasForeignKey(x => x.HostId);
 
-        builder.OwnsOne(x => x.PricePerNight, price =>
+        builder.OwnsOne(x => x.PricePerDay, price =>
         {
             price.Property(x => x.Amount)
                 .HasPrecision(18, 10);
@@ -32,7 +32,7 @@ public class HotelConfigurations : IEntityTypeConfiguration<Hotel>
     {
         builder.HasData(SeedHotel);
 
-        builder.OwnsOne(x => x.PricePerNight).HasData(Price);
+        builder.OwnsOne(x => x.PricePerDay).HasData(Price);
     }
 
     private static readonly Guid SeedHotelId = new("db37121d-c8fe-4f41-ab6e-34dded72f3b4");
