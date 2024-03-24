@@ -1,7 +1,9 @@
 ﻿
+using TravelMore.Domain.Common.Models;
+
 namespace TravelMore.Domain.Interfaces;
 
-public interface IHotelPaymentCalculator<T>
+public interface IHotelPaymentCalculator
 {
-    T Calculate();
+    Money Calculate();
 }

@@ -6,18 +6,19 @@ using TravelMore.Domain.Interfaces;
 
 namespace TravelMore.Domain.Calculators;
 
-public class HotelPaymentCalculator : IHotelPaymentCalculator<Money>
+public class StandartGuestPaymentCalculator : IHotelPaymentCalculator
 {
     private readonly Hotel _hotel;
     private readonly short _numberOfGuests;
+    private const decimal FeePercentage = 0.15m;
 
-    private HotelPaymentCalculator(Hotel hotel, short numberOfGuests)
+    private StandartGuestPaymentCalculator(Hotel hotel, short numberOfGuests)
     {
         _hotel = hotel;
         _numberOfGuests = numberOfGuests;
     }
 
-    public static HotelPaymentCalculator Create(Hotel hotel, short numberOfGuests)
+    public static StandartGuestPaymentCalculator Create(Hotel hotel, short numberOfGuests)
     {
         if (numberOfGuests.IsLessThanOrEqualToZero())
         {
@@ -27,6 +28,12 @@ public class HotelPaymentCalculator : IHotelPaymentCalculator<Money>
         return new(hotel, numberOfGuests);
     }
 
-    public Money Calculate() => Money.Create(_hotel.PricePerNight.Amount * _numberOfGuests);
+    public Money Calculate()
+    {
+        var payment = _hotel.PricePerNight.Amount * _numberOfGuests;
+        var fee = payment * FeePercentage;
+        var totalPayment = payment * fee;
+        return Money.Create(totalPayment);
+    }
 
 }

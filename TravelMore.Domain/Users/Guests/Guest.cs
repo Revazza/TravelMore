@@ -5,29 +5,29 @@ using TravelMore.Domain.Users.Guests.Exceptions;
 
 namespace TravelMore.Domain.Users.Guests;
 
-public class Guest : User
+public abstract class Guest : User
 {
     private readonly List<Booking> _bookings = [];
     public IReadOnlyCollection<Booking> Bookings => _bookings;
     public string UserName { get; } = string.Empty;
     public Money Balance { get; private set; } = Money.Create(0);
 
-    private Guest() : base(0)
+    protected Guest() : base(0)
     {
     }
 
-    public Guest(int id, string userName, Money balance) : base(id)
+    protected Guest(int id, string userName, Money balance) : base(id)
     {
         UserName = userName;
         Balance = balance;
     }
 
-    public Guest(int id, string userName) : base(id)
+    protected Guest(int id, string userName) : base(id)
     {
         UserName = userName;
     }
 
-    public void EnsureCanBook(BookingSchedule schedule, Money payment)
+    public virtual void EnsureCanBook(BookingSchedule schedule, Money payment)
     {
         EnsureBalanaceIsEnough(payment);
         EnsureNoBookingsScheduleOverlaps(schedule);
@@ -48,7 +48,7 @@ public class Guest : User
         }
     }
 
-    private void EnsureBalanaceIsEnough(Money payment)
+    protected void EnsureBalanaceIsEnough(Money payment)
     {
         if (!IsBalanceEnough(payment))
         {
@@ -56,6 +56,6 @@ public class Guest : User
         }
     }
 
-    private bool IsBalanceEnough(Money totalPayment) => Balance >= totalPayment;
+    protected bool IsBalanceEnough(Money totalPayment) => Balance >= totalPayment;
 
 }

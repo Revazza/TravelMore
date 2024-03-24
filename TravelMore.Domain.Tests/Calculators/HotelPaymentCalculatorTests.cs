@@ -7,7 +7,7 @@ namespace TravelMore.Domain.Tests.Calculators;
 
 public class HotelPaymentCalculatorTests
 {
-    private HotelPaymentCalculator _calculator;
+    private StandartGuestPaymentCalculator _calculator;
     private Hotel _hotel;
 
     [SetUp]
@@ -17,14 +17,14 @@ public class HotelPaymentCalculatorTests
 
         _hotel.SetPricePerNight(50);
 
-        _calculator = HotelPaymentCalculator.Create(_hotel, TestsCommon.Valid.NumberOfGuests);
+        _calculator = StandartGuestPaymentCalculator.Create(_hotel, TestsCommon.Valid.NumberOfGuests);
 
     }
 
     [Test]
     public void Calculate_Should_ThrowNegativeAmountException_WhenNumberOfGuestsAreNegative()
     {
-        Assert.Throws<HotelInvalidGuestNumberException>(() => HotelPaymentCalculator.Create(_hotel, -1).Calculate());
+        Assert.Throws<HotelInvalidGuestNumberException>(() => StandartGuestPaymentCalculator.Create(_hotel, -1).Calculate());
     }
 
     [Test]
@@ -33,7 +33,7 @@ public class HotelPaymentCalculatorTests
         _hotel.SetPricePerNight(10);
         short numberOfGuests = 3;
         var expectedResult = 30;
-        var result = HotelPaymentCalculator.Create(_hotel, numberOfGuests).Calculate();
+        var result = StandartGuestPaymentCalculator.Create(_hotel, numberOfGuests).Calculate();
 
         Assert.Multiple(() =>
         {

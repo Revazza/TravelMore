@@ -50,7 +50,7 @@ public sealed class Booking : Entity<Guid>
         var schedule = BookingSchedule.Create(from, to);
         hotel.EnsureBookable(schedule, numberOfGuests);
 
-        var totalPayment = HotelPaymentCalculator.Create(hotel, numberOfGuests).Calculate();
+        var totalPayment = StandartGuestPaymentCalculator.Create(hotel, numberOfGuests).Calculate();
         guest.EnsureCanBook(schedule, totalPayment);
 
         return new(numberOfGuests, totalPayment, schedule, guest, hotel);
