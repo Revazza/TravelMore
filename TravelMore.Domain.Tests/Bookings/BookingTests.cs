@@ -67,7 +67,7 @@ public class BookingTests
     {
         var schedule = BookingSchedule.Create(from, to);
 
-        Assert.Throws<HotelOverlapScheduleException>(() => _booking.SetSchedule(schedule));
+        Assert.Throws<HotelOverlapBookingScheduleException>(() => _booking.SetSchedule(schedule));
     }
 
     #endregion
@@ -79,7 +79,7 @@ public class BookingTests
     {
         var schedule = TestsCommon.OverlapingSchedule;
 
-        Assert.Throws<HotelOverlapScheduleException>(() => Booking.Create(
+        Assert.Throws<HotelOverlapBookingScheduleException>(() => Booking.Create(
             from: schedule.From,
             to: schedule.To,
             numberOfGuests: TestsCommon.Valid.NumberOfGuests,

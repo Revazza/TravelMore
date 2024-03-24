@@ -66,11 +66,11 @@ public class Hotel : Entity<Guid>
 
     public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));
 
-    private void EnsureNoBookingsScheduleOverlaps(BookingSchedule schedule)
+    public void EnsureNoBookingsScheduleOverlaps(BookingSchedule schedule)
     {
         if (AnyBookingsScheduleOverlaps(schedule))
         {
-            throw new HotelOverlapScheduleException();
+            throw new HotelOverlapBookingScheduleException();
         }
     }
 

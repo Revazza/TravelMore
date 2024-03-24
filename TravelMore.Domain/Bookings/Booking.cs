@@ -1,4 +1,5 @@
-﻿using TravelMore.Domain.Bookings.BookingSchedules;
+﻿using System.Net.WebSockets;
+using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Calculators;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
@@ -50,51 +51,52 @@ public sealed class Booking : Entity<Guid>
         hotel.EnsureBookable(schedule, numberOfGuests);
 
         var totalPayment = HotelPaymentCalculator.Create(hotel, numberOfGuests).Calculate();
-        guest.EnsureCanBook(totalPayment);
+        guest.EnsureCanBook(schedule, totalPayment);
 
         return new(numberOfGuests, totalPayment, schedule, guest, hotel);
     }
 
     public void SetSchedule(BookingSchedule schedule)
     {
-        if (BookedHotel.AnyBookingsScheduleOverlaps(schedule))
-        {
-            throw new HotelOverlapScheduleException();
-        }
-
+        BookedHotel.EnsureNoBookingsScheduleOverlaps(schedule);
+        Guest.EnsureNoBookingsScheduleOverlaps(schedule);
         Schedule = schedule;
     }
 
     public void Accept(int hostId)
     {
-        if (BookedHotel.HostId != hostId)
-        {
-            throw new HostIdMismatchedException();
-        }
-
+        EnsureHostIdMatches(hostId);
         Status = BookingStatus.Accepted;
     }
 
     public void Decline(int hostId)
     {
-        if (BookedHotel.HostId != hostId)
-        {
-            throw new HostIdMismatchedException();
-        }
-
+        EnsureHostIdMatches(hostId);
         Status = BookingStatus.Declined;
     }
 
     public void Cancel(int guestId)
     {
-        if (Guest.Id != guestId)
-        {
-            throw new GuestIdMismatchedException();
-        }
-
+        EnsureGuestIdMatches(guestId);
         Status = BookingStatus.Canceled;
     }
 
     public bool DoesOverLap(DateTime from, DateTime to) => Schedule.From <= to && from <= Schedule.To;
+
+    private void EnsureGuestIdMatches(int guestId)
+    {
+        if (Guest.Id != guestId)
+        {
+            throw new GuestIdMismatchedException();
+        }
+    }
+
+    private void EnsureHostIdMatches(int hostId)
+    {
+        if (BookedHotel.Host.Id != hostId)
+        {
+            throw new HostIdMismatchedException();
+        }
+    }
 
 }

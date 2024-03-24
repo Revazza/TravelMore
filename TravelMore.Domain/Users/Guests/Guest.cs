@@ -1,6 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
+using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Common.Requests;
 using TravelMore.Domain.Users.Guests.Exceptions;
 
 namespace TravelMore.Domain.Users.Guests;
@@ -27,17 +27,33 @@ public class Guest : User
         UserName = userName;
     }
 
-    public void EnsureCanBook(Money payment)
+    public void EnsureCanBook(BookingSchedule schedule, Money payment)
     {
-        if (!IsBalanceEnough(payment))
-        {
-            throw new GuestInsufficientBalanceException();
-        }
+        EnsureBalanaceIsEnough(payment);
+        EnsureNoBookingsScheduleOverlaps(schedule);
     }
 
     public void SetBalance(decimal amount)
     {
         Balance = Money.Create(amount);
+    }
+
+    public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));
+
+    public void EnsureNoBookingsScheduleOverlaps(BookingSchedule schedule)
+    {
+        if (AnyBookingsScheduleOverlaps(schedule))
+        {
+            throw new GuestOverlapBookingScheduleException();
+        }
+    }
+
+    private void EnsureBalanaceIsEnough(Money payment)
+    {
+        if (!IsBalanceEnough(payment))
+        {
+            throw new GuestInsufficientBalanceException();
+        }
     }
 
     private bool IsBalanceEnough(Money totalPayment) => Balance >= totalPayment;
