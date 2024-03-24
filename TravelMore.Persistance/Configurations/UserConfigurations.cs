@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TravelMore.Domain.Users;
 
-namespace TravelMore.Persistance.Configurations.TravelMore;
+namespace TravelMore.Persistance.Configurations;
 
 public class UserConfigurations : IEntityTypeConfiguration<User>
 {

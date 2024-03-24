@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TravelMore.Domain.Hotels;
 
-namespace TravelMore.Persistance.Configurations.TravelMore;
+namespace TravelMore.Persistance.Configurations;
 
 public class HotelConfigurations : IEntityTypeConfiguration<Hotel>
 {

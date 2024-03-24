@@ -1,5 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.BookingSchedules;
+using TravelMore.Domain.Calculators;
 using TravelMore.Domain.Common.Extensions;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels.Exceptions;
@@ -57,7 +58,15 @@ public class Hotel : Entity<Guid>
         MaxNumberOfGuests = numberOfGuests;
     }
 
-    public void EnsureBookable(BookingSchedule schedule)
+    public void EnsureBookable(BookingSchedule schedule, short numberOfGuests)
+    {
+        EnsureNumberOfGuestsIsAllowed(numberOfGuests);
+        EnsureNoBookingsScheduleOverlaps(schedule);
+    }
+
+    public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));
+
+    private void EnsureNoBookingsScheduleOverlaps(BookingSchedule schedule)
     {
         if (AnyBookingsScheduleOverlaps(schedule))
         {
@@ -65,6 +74,14 @@ public class Hotel : Entity<Guid>
         }
     }
 
-    public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));
+    private void EnsureNumberOfGuestsIsAllowed(short numberOfGuests)
+    {
+        if (!IsNumberOfGuestsAllowed(numberOfGuests))
+        {
+            throw new Exception();// TODO: create custom exception
+        }
+    }
+
+    private bool IsNumberOfGuestsAllowed(short numberOfguests) => numberOfguests <= MaxNumberOfGuests;
 
 }

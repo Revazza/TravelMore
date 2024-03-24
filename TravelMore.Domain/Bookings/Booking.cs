@@ -1,7 +1,6 @@
 ﻿using TravelMore.Domain.Bookings.BookingSchedules;
 using TravelMore.Domain.Calculators;
 using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Common.Requests;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.Users.Guests;
@@ -47,11 +46,11 @@ public sealed class Booking : Entity<Guid>
         Guest guest,
         Hotel hotel)
     {
-        var totalPayment = HotelPaymentCalculator.Create(hotel, numberOfGuests).Calculate();
         var schedule = BookingSchedule.Create(from, to);
+        hotel.EnsureBookable(schedule, numberOfGuests);
 
+        var totalPayment = HotelPaymentCalculator.Create(hotel, numberOfGuests).Calculate();
         guest.EnsureCanBook(totalPayment);
-        hotel.EnsureBookable(schedule);
 
         return new(numberOfGuests, totalPayment, schedule, guest, hotel);
     }
