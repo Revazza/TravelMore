@@ -2,6 +2,6 @@
 
 namespace TravelMore.Domain.Users.StandartGuests;
 
-public class StandartGuest : Guest
+public class StandardGuest : Guest
 {
 }

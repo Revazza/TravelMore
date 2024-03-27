@@ -1,4 +1,4 @@
-﻿using TravelMore.Domain.Bookings.BookingSchedules;
+﻿using TravelMore.Domain.Bookings.ValueObjects;
 
 namespace TravelMore.Domain.Tests.TestsCommons;
 

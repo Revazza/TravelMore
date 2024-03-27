@@ -1,9 +1,12 @@
-﻿using System.Net.WebSockets;
-using TravelMore.Domain.Bookings.BookingSchedules;
+﻿using System.ComponentModel;
+using TravelMore.Domain.Bookings.Enums;
+using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Calculators;
+using TravelMore.Domain.Common.Enums;
+using TravelMore.Domain.Common.Factories;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
-using TravelMore.Domain.Hotels.Exceptions;
+using TravelMore.Domain.PaymentsDetails;
 using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Guests.Exceptions;
 using TravelMore.Domain.Users.Hosts.Exceptions;
@@ -12,61 +15,60 @@ namespace TravelMore.Domain.Bookings;
 
 public sealed class Booking : Entity<Guid>
 {
-    public BookingSchedule Schedule { get; init; } = BookingSchedule.Create();
-    public Money TotalPayment { get; private set; } = Money.Create(0);
-    public short NumberOfGuests { get; private set; }
+    public BookingDetails Details { get; private set; }
+    public PaymentDetails? PaymentDetails { get; private set; }
     public int GuestId { get; private set; }
     public Guest Guest { get; private set; } = null!;
     public Guid BookedHotelId { get; private set; }
     public Hotel BookedHotel { get; private set; } = null!;
     public BookingStatus Status { get; private set; }
-    public short NumberOfDays { get; private set; }
 
     private Booking() : base(Guid.NewGuid())
     {
     }
 
+
     private Booking(
-        short numberOfGuests,
-        Money totalPayment,
-        BookingSchedule schedule,
+        BookingDetails details,
         Guest guest,
         Hotel bookedHotel) : base(Guid.NewGuid())
     {
-        NumberOfGuests = numberOfGuests;
-        TotalPayment = totalPayment;
-        Schedule = schedule;
+        Details = details;
+        Status = BookingStatus.Pending;
         Guest = guest;
         BookedHotel = bookedHotel;
-        Status = BookingStatus.Pending;
-        NumberOfDays = CalculateNumberOfDays(schedule);
+        PaymentDetails = null;
     }
 
     public static Booking Create(
-        DateTime from,
-        DateTime to,
-        short numberOfGuests,
-        Guest guest,
-        Hotel hotel)
+       DateTime from,
+       DateTime to,
+       short numberOfGuests,
+       PaymentMethod paymentMethod,
+       Guest guest,
+       Hotel hotel)
     {
         var schedule = BookingSchedule.Create(from, to);
-        hotel.EnsureBookable(schedule, numberOfGuests);
+        var numberOfDays = CalculateNumberOfDays(schedule);
+        var bookingDetails = new BookingDetails(numberOfGuests, numberOfDays, schedule);
+        //var paymentDetails = new PaymentDetails();
 
-        var totalPayment = StandartGuestPaymentCalculator.Create(hotel, numberOfGuests).Calculate();
-        guest.EnsureCanBook(schedule, totalPayment);
+        //hotel.EnsureBookable(bookingDetails);
+        //guest.EnsureCanBook(bookingDetails);
 
-        return new(numberOfGuests, totalPayment, schedule, guest, hotel);
+        return new(bookingDetails, guest, hotel);
     }
 
     public void Accept(int hostId)
     {
-        EnsureHostIdMatches(hostId);
+        EnsureHotelHostIdMatches(hostId);
         Status = BookingStatus.Accepted;
     }
 
     public void Decline(int hostId)
     {
-        EnsureHostIdMatches(hostId);
+        EnsureHotelHostIdMatches(hostId);
+        EnsureNotAccepted();
         Status = BookingStatus.Declined;
     }
 
@@ -76,9 +78,18 @@ public sealed class Booking : Entity<Guid>
         Status = BookingStatus.Canceled;
     }
 
-    public bool DoesOverLap(DateTime from, DateTime to) => Schedule.From <= to && from <= Schedule.To;
+    public bool DoesOverLap(DateTime from, DateTime to) => Details.Schedule.From <= to && from <= Details.Schedule.To;
 
-    private short CalculateNumberOfDays(BookingSchedule schedule) => (short)(schedule.To - schedule.From).TotalDays;
+    private void EnsureNotAccepted()
+    {
+        //TODO: create custom exception 
+        if (Status == BookingStatus.Accepted)
+        {
+            throw new Exception();
+        }
+    }
+
+    private static short CalculateNumberOfDays(BookingSchedule schedule) => (short)(schedule.To - schedule.From).TotalDays;
 
     private void EnsureGuestIdMatches(int guestId)
     {
@@ -88,7 +99,7 @@ public sealed class Booking : Entity<Guid>
         }
     }
 
-    private void EnsureHostIdMatches(int hostId)
+    private void EnsureHotelHostIdMatches(int hostId)
     {
         if (BookedHotel.Host.Id != hostId)
         {

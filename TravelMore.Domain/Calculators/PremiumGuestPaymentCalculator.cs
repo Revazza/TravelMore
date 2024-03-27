@@ -6,18 +6,19 @@ namespace TravelMore.Domain.Calculators;
 
 public class PremiumGuestPaymentCalculator : IHotelPaymentCalculator
 {
-    private readonly Hotel _hotel;
+    protected readonly Hotel _hotel;
+    protected readonly short _numberOfNights;
 
-    private PremiumGuestPaymentCalculator(Hotel hotel)
+    private PremiumGuestPaymentCalculator(Hotel hotel, short numberOfNights)
     {
         _hotel = hotel;
+        _numberOfNights = numberOfNights;
     }
 
-    public Money Calculate()
-    {
+    public Money Calculate() => CalculateTotalPayment();
 
-        return Money.Create(0);
-    }
+    public static PremiumGuestPaymentCalculator Create(Hotel hotel, short numberOfDays) => new(hotel, numberOfDays);
 
-    public static PremiumGuestPaymentCalculator Create(Hotel hotel) => new(hotel);
+    private decimal CalculateTotalPayment() => _hotel.PricePerDay.Amount * _numberOfNights;
+
 }

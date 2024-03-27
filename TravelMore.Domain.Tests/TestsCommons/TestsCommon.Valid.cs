@@ -1,4 +1,4 @@
-﻿using TravelMore.Domain.Bookings.BookingSchedules;
+﻿using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Hosts;

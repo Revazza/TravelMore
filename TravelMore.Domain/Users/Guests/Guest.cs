@@ -1,6 +1,7 @@
 ﻿using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Bookings.BookingSchedules;
+using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.PaymentsDetails;
 using TravelMore.Domain.Users.Guests.Exceptions;
 
 namespace TravelMore.Domain.Users.Guests;
@@ -10,7 +11,7 @@ public abstract class Guest : User
     private readonly List<Booking> _bookings = [];
     public IReadOnlyCollection<Booking> Bookings => _bookings;
     public string UserName { get; } = string.Empty;
-    public Money Balance { get; private set; } = Money.Create(0);
+    public Money Balance { get; private set; } = 0;
 
     protected Guest() : base(0)
     {
@@ -27,10 +28,10 @@ public abstract class Guest : User
         UserName = userName;
     }
 
-    public virtual void EnsureCanBook(BookingSchedule schedule, Money payment)
+    public virtual void EnsureCanBook(BookingDetails bookingDetails, PaymentDetails paymentDetails)
     {
-        EnsureBalanaceIsEnough(payment);
-        EnsureNoBookingsScheduleOverlaps(schedule);
+        EnsureBalanaceIsEnough(paymentDetails.TotalPayment);
+        EnsureNoBookingsScheduleOverlaps(bookingDetails.Schedule);
     }
 
     public void SetBalance(decimal amount)

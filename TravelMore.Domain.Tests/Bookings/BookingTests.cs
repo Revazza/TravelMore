@@ -1,5 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Bookings.BookingSchedules;
+using TravelMore.Domain.Bookings.Enums;
+using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Hotels.Exceptions;

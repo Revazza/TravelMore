@@ -1,4 +1,4 @@
-﻿namespace TravelMore.Domain.Bookings.BookingSchedules.Exceptions;
+﻿namespace TravelMore.Domain.Bookings.Exceptions;
 
 public class BookingScheduleInvalidPeriodException : Exception
 {

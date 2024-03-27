@@ -1,6 +1,7 @@
-﻿using TravelMore.Domain.Bookings.Exceptions;
+﻿
+using TravelMore.Domain.Bookings.Exceptions;
 
-namespace TravelMore.Domain.Bookings.BookingSchedules;
+namespace TravelMore.Domain.Bookings.ValueObjects;
 
 public record BookingSchedule
 {
