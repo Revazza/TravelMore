@@ -28,9 +28,8 @@ public abstract class Guest : User
         UserName = userName;
     }
 
-    public virtual void EnsureCanBook(BookingDetails bookingDetails, PaymentDetails paymentDetails)
+    public virtual void EnsureCanBook(BookingDetails bookingDetails)
     {
-        EnsureBalanaceIsEnough(paymentDetails.TotalPayment);
         EnsureNoBookingsScheduleOverlaps(bookingDetails.Schedule);
     }
 

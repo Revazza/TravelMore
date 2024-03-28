@@ -62,29 +62,29 @@ public class Hotel : Entity<Guid>
         MaxNumberOfGuests = numberOfGuests;
     }
 
-    public void EnsureBookable(BookingDetails bookingDetails, PaymentDetails paymentDetails)
+    public void EnsureBookable(BookingDetails bookingDetails, PaymentMethod paymentMethod)
     {
         EnsureNoBookingsScheduleOverlaps(bookingDetails.Schedule);
         EnsureNumberOfGuestsIsAllowed(bookingDetails.NumberOfGuests);
-        EnsureAcceptsPaymentMethod(paymentDetails.PaymentMethod);
+        EnsureAcceptedPaymentMethod(paymentMethod);
     }
 
     public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));
+
+    public void EnsureAcceptedPaymentMethod(PaymentMethod paymentMethod)
+    {
+        //TODO: create custom exception
+        if (!AcceptedPaymentMethods.Any(method => method == paymentMethod))
+        {
+            throw new Exception("Hotel doesn't accept given payment method");
+        }
+    }
 
     private void EnsureNoBookingsScheduleOverlaps(BookingSchedule schedule)
     {
         if (AnyBookingsScheduleOverlaps(schedule))
         {
             throw new HotelOverlapBookingScheduleException();
-        }
-    }
-
-    private void EnsureAcceptsPaymentMethod(PaymentMethod paymentMethod)
-    {
-        //TODO: create custom exception
-        if (!AcceptedPaymentMethods.Any(method => method == paymentMethod))
-        {
-            throw new Exception("Hotel doesn't accept given payment method");
         }
     }
 

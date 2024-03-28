@@ -1,9 +1,6 @@
-﻿using System.ComponentModel;
-using TravelMore.Domain.Bookings.Enums;
+﻿using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
-using TravelMore.Domain.Calculators;
 using TravelMore.Domain.Common.Enums;
-using TravelMore.Domain.Common.Factories;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.PaymentsDetails;
@@ -15,8 +12,8 @@ namespace TravelMore.Domain.Bookings;
 
 public sealed class Booking : Entity<Guid>
 {
-    public BookingDetails Details { get; private set; }
-    public PaymentDetails? PaymentDetails { get; private set; }
+    public BookingDetails Details { get; private set; } = null!;
+    public PaymentDetails PaymentDetails { get; private set; }
     public int GuestId { get; private set; }
     public Guest Guest { get; private set; } = null!;
     public Guid BookedHotelId { get; private set; }
@@ -29,10 +26,12 @@ public sealed class Booking : Entity<Guid>
 
 
     private Booking(
+        PaymentDetails paymentDetails,
         BookingDetails details,
         Guest guest,
         Hotel bookedHotel) : base(Guid.NewGuid())
     {
+        PaymentDetails = paymentDetails;
         Details = details;
         Status = BookingStatus.Pending;
         Guest = guest;
@@ -49,14 +48,19 @@ public sealed class Booking : Entity<Guid>
        Hotel hotel)
     {
         var schedule = BookingSchedule.Create(from, to);
-        var numberOfDays = CalculateNumberOfDays(schedule);
-        var bookingDetails = new BookingDetails(numberOfGuests, numberOfDays, schedule);
-        //var paymentDetails = new PaymentDetails();
+        var numberOfDays = schedule.GetBookingDurationInDays();
 
-        //hotel.EnsureBookable(bookingDetails);
-        //guest.EnsureCanBook(bookingDetails);
+        var bookingDetails = new BookingDetails(
+            NumberOfGuests: numberOfGuests,
+            NumberOfDays: numberOfDays,
+            Schedule: schedule);
 
-        return new(bookingDetails, guest, hotel);
+        var paymentDetails = new PaymentDetails(paymentMethod);
+
+        hotel.EnsureBookable(bookingDetails, paymentMethod);
+        guest.EnsureCanBook(bookingDetails);
+
+        return new(paymentDetails, bookingDetails, guest, hotel);
     }
 
     public void Accept(int hostId)
@@ -78,6 +82,19 @@ public sealed class Booking : Entity<Guid>
         Status = BookingStatus.Canceled;
     }
 
+    public void SetPaymentDetails(PaymentDetails paymentDetails)
+    {
+        PaymentDetails = paymentDetails;
+    }
+
+    public void ChangePaymentMethod(PaymentMethod paymentMethod)
+    {
+        BookedHotel.EnsureAcceptedPaymentMethod(paymentMethod);
+        PaymentDetails.PaymentMethod = paymentMethod;
+    }
+
+    public bool IsPaymentMethodMatching(PaymentMethod paymentMethod) => paymentMethod == PaymentDetails.PaymentMethod;
+
     public bool DoesOverLap(DateTime from, DateTime to) => Details.Schedule.From <= to && from <= Details.Schedule.To;
 
     private void EnsureNotAccepted()
@@ -88,8 +105,6 @@ public sealed class Booking : Entity<Guid>
             throw new Exception();
         }
     }
-
-    private static short CalculateNumberOfDays(BookingSchedule schedule) => (short)(schedule.To - schedule.From).TotalDays;
 
     private void EnsureGuestIdMatches(int guestId)
     {
