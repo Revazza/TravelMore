@@ -45,11 +45,6 @@ public class Hotel : Entity<Guid>
         PricePerDay = Money.Create(price);
     }
 
-    public void AddBooking(Booking booking)
-    {
-        _bookings.Add(booking);
-    }
-
     public void SetMaxNumberOfGuests(short numberOfGuests)
     {
         if (numberOfGuests.IsLessThanOrEqualToZero())

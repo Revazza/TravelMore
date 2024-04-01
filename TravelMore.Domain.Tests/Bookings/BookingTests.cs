@@ -1,10 +1,10 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
-using TravelMore.Domain.Common.Enums;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Hotels.Exceptions;
+using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.Tests.TestsCommons;
 using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Guests.Exceptions;
@@ -41,7 +41,6 @@ public class BookingTests
             guest: _guest,
             hotel: _hotel);
 
-        _hotel.AddBooking(_booking);
         _host.AddHotel(_hotel);
 
     }

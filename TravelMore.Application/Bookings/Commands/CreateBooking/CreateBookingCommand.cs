@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Results;
 using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Common.Enums;
+using TravelMore.Domain.PaymentsDetails.Enums;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
 

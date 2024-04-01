@@ -29,8 +29,8 @@ public class GlobalExceptionLoggingMiddleware : IMiddleware
     private async Task ProcessExceptionAsync(Exception err, HttpContext context, HttpStatusCode statusCode)
     {
         ConfigureResponse(context, statusCode);
-        await WriteResponseAsync(err, context);
         LogError(err);
+        await WriteResponseAsync(err, context);
     }
 
     private static void ConfigureResponse(HttpContext context, HttpStatusCode statusCode)

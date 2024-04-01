@@ -14,6 +14,8 @@ public static class DependencyInjection
         this IServiceCollection services,
         ConfigurationManager configuration)
     {
+        services.AddTransient<GlobalExceptionLoggingMiddleware>();
+
         return services
             .AddRepositories();
     }
@@ -21,7 +23,6 @@ public static class DependencyInjection
     private static IServiceCollection AddRepositories(this IServiceCollection services)
     {
         return services
-            .AddTransient<GlobalExceptionLoggingMiddleware>()
             .AddScoped<IUserIdentityService, UserIdentityService>()
             .AddScoped<IBookingRepository, BookingRepository>()
             .AddScoped<IUnitOfWork, UnitOfWork>()

@@ -1,5 +1,5 @@
-﻿using TravelMore.Domain.Common.Enums;
-using TravelMore.Domain.Common.Models;
+﻿using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.PaymentsDetails.Enums;
 
 namespace TravelMore.Domain.Bookings.ValueObjects;
 
