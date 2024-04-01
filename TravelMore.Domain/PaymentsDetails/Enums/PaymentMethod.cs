@@ -1,4 +1,4 @@
-﻿namespace TravelMore.Domain.Common.Enums;
+﻿namespace TravelMore.Domain.PaymentsDetails.Enums;
 
 public enum PaymentMethod
 {

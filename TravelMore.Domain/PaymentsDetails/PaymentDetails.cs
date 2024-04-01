@@ -1,6 +1,5 @@
-﻿using TravelMore.Domain.Common.Enums;
-using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Hotels;
+﻿using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Hosts;
 
@@ -8,11 +7,13 @@ namespace TravelMore.Domain.PaymentsDetails;
 
 public class PaymentDetails : Entity<Guid>
 {
+    public PaymentStatus PaymentStatus { get; set; }
+    public PaymentMethod PaymentMethod { get; set; }
+    public DateTime PaymentDate { get; init; }
+    public DateTime CreatedAt { get; set; }
     public Money TotalPayment { get; init; } = 0;
     public Money Payment { get; init; } = 0;
     public Money Fee { get; init; } = 0;
-    public PaymentMethod PaymentMethod { get; set; }
-    public DateTime PaymentDate { get; init; }
     public int PayerId { get; set; }
     public Guest Payer { get; set; } = null!;
     public int HostId { get; set; }
@@ -23,12 +24,19 @@ public class PaymentDetails : Entity<Guid>
 
     }
 
+    public PaymentDetails(PaymentMethod paymentMethod) : base(Guid.NewGuid())
+    {
+        PaymentMethod = paymentMethod;
+        CreatedAt = DateTime.UtcNow;
+        PaymentStatus = PaymentStatus.Pending;
+    }
+
     public PaymentDetails(
-        Money totalPayment, 
+        Money totalPayment,
         Money payment,
-        Money fee, 
-        PaymentMethod paymentMethod, 
-        Guest payer, 
+        Money fee,
+        PaymentMethod paymentMethod,
+        Guest payer,
         Host host) : base(Guid.NewGuid())
     {
         TotalPayment = totalPayment;

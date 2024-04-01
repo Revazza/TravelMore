@@ -22,7 +22,7 @@ public record BookingSchedule
 
     public static BookingSchedule Create() => new(DateTime.MinValue, DateTime.MinValue);
 
-    public short GetBookingDurationInDays() => (short)(To - From).TotalDays;
+    public short GetDurationInDays() => (short)(To - From).TotalDays;
 
     private static void EnsureBookingPeriodIsInOrder(DateTime from, DateTime to)
     {

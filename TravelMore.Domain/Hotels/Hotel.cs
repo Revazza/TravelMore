@@ -1,10 +1,9 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.ValueObjects;
-using TravelMore.Domain.Common.Enums;
 using TravelMore.Domain.Common.Extensions;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels.Exceptions;
-using TravelMore.Domain.PaymentsDetails;
+using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;

@@ -1,9 +1,9 @@
 ﻿using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
-using TravelMore.Domain.Common.Enums;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.PaymentsDetails;
+using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Guests.Exceptions;
 using TravelMore.Domain.Users.Hosts.Exceptions;
@@ -13,7 +13,7 @@ namespace TravelMore.Domain.Bookings;
 public sealed class Booking : Entity<Guid>
 {
     public BookingDetails Details { get; private set; }
-    public PaymentDetails? PaymentDetails { get; private set; }
+    public PaymentDetails PaymentDetails { get; private set; }
     public int GuestId { get; private set; }
     public Guest Guest { get; private set; } = null!;
     public Guid BookedHotelId { get; private set; }
@@ -28,7 +28,7 @@ public sealed class Booking : Entity<Guid>
     {
         Details = null!;
         BookedHotel = null!;
-        PaymentDetails = null;
+        PaymentDetails = null!;
     }
 
 
@@ -41,7 +41,7 @@ public sealed class Booking : Entity<Guid>
         Status = BookingStatus.Pending;
         Guest = guest;
         BookedHotel = bookedHotel;
-        PaymentDetails = null;
+        PaymentDetails = null!;
     }
 
     public static Booking Create(
@@ -53,7 +53,7 @@ public sealed class Booking : Entity<Guid>
        Hotel hotel)
     {
         var schedule = BookingSchedule.Create(from, to);
-        var numberOfDays = schedule.GetBookingDurationInDays();
+        var numberOfDays = schedule.GetDurationInDays();
 
         var bookingDetails = new BookingDetails(
             numberOfGuests,
@@ -68,8 +68,8 @@ public sealed class Booking : Entity<Guid>
 
     public void Accept(int hostId)
     {
-        EnsurePaymentDetailsExists();
         EnsureHotelHostIdMatches(hostId);
+        EnsurePaymentCompleted();
         Status = BookingStatus.Accepted;
     }
 
@@ -88,7 +88,6 @@ public sealed class Booking : Entity<Guid>
 
     public void SetPaymentDetails(PaymentDetails paymentDetails)
     {
-        EnsurePaymentDetailsDoesntExist();
         PaymentDetails = paymentDetails;
     }
 
@@ -96,19 +95,10 @@ public sealed class Booking : Entity<Guid>
 
     public bool DoesOverLap(DateTime from, DateTime to) => Details.Schedule.From <= to && from <= Details.Schedule.To;
 
-    private void EnsurePaymentDetailsDoesntExist()
+    public void EnsurePaymentCompleted()
     {
         //TODO: create custom exception 
-        if (PaymentDetails is not null)
-        {
-            throw new Exception();
-        }
-    }
-
-    private void EnsurePaymentDetailsExists()
-    {
-        //TODO: create custom exception 
-        if (PaymentDetails is null)
+        if (PaymentDetails.PaymentStatus != PaymentStatus.Completed)
         {
             throw new Exception();
         }
