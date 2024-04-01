@@ -88,12 +88,22 @@ public sealed class Booking : Entity<Guid>
 
     public void SetPaymentDetails(PaymentDetails paymentDetails)
     {
+        EnsurePaymentDetailsDoesntExist();
         PaymentDetails = paymentDetails;
     }
 
     public bool IsPaymentMethodMatching(PaymentMethod paymentMethod) => paymentMethod == PaymentDetails!.PaymentMethod;
 
     public bool DoesOverLap(DateTime from, DateTime to) => Details.Schedule.From <= to && from <= Details.Schedule.To;
+
+    private void EnsurePaymentDetailsDoesntExist()
+    {
+        //TODO: create custom exception 
+        if (PaymentDetails is not null)
+        {
+            throw new Exception();
+        }
+    }
 
     private void EnsurePaymentDetailsExists()
     {

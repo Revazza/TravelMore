@@ -13,34 +13,30 @@ public class PaymentDetails : Entity<Guid>
     public Money Fee { get; init; } = 0;
     public PaymentMethod PaymentMethod { get; set; }
     public DateTime PaymentDate { get; init; }
-    public DateTime CreatedAt { get; init; }
     public int PayerId { get; set; }
     public Guest Payer { get; set; } = null!;
     public int HostId { get; set; }
     public Host Host { get; set; } = null!;
-
-    public PaymentDetails(PaymentMethod paymentMethod) : base(Guid.NewGuid())
-    {
-        PaymentMethod = paymentMethod;
-        CreatedAt = DateTime.UtcNow;
-    }
 
     private PaymentDetails() : base(Guid.NewGuid())
     {
 
     }
 
-    public static PaymentDetails Create(
-        PaymentMethod paymentMethod,
-        Guest guest,
-        Hotel hotel)
+    public PaymentDetails(
+        Money totalPayment, 
+        Money payment,
+        Money fee, 
+        PaymentMethod paymentMethod, 
+        Guest payer, 
+        Host host) : base(Guid.NewGuid())
     {
-        var fee = 0;
-        var payment = 0;
-        var totalPayment = 0;
-
-
-        return new();
+        TotalPayment = totalPayment;
+        Payment = payment;
+        Fee = fee;
+        PaymentMethod = paymentMethod;
+        Payer = payer;
+        Host = host;
     }
 
 }

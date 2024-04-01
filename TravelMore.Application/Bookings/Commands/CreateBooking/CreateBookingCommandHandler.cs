@@ -23,7 +23,6 @@ public class CreateBookingCommandHandler(
     public async Task<Result<Booking>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
         var guest = await _guestRepository.GetByIdAsync(_userIdentityService.GetUserId());
-
         if (guest is null)
         {
             return Result.Failure<Booking>(Error.None);
