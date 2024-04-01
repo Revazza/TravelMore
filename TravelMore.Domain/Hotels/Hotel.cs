@@ -65,12 +65,12 @@ public class Hotel : Entity<Guid>
     {
         EnsureNoBookingsScheduleOverlaps(bookingDetails.Schedule);
         EnsureNumberOfGuestsIsAllowed(bookingDetails.NumberOfGuests);
-        EnsureAcceptedPaymentMethod(paymentMethod);
+        EnsureAcceptsPaymentMethod(paymentMethod);
     }
 
     public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));
 
-    public void EnsureAcceptedPaymentMethod(PaymentMethod paymentMethod)
+    public void EnsureAcceptsPaymentMethod(PaymentMethod paymentMethod)
     {
         //TODO: create custom exception
         if (!AcceptedPaymentMethods.Any(method => method == paymentMethod))

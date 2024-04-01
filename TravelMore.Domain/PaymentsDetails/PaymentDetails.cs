@@ -31,7 +31,6 @@ public class PaymentDetails : Entity<Guid>
     }
 
     public static PaymentDetails Create(
-        short numberOfDays,
         PaymentMethod paymentMethod,
         Guest guest,
         Hotel hotel)

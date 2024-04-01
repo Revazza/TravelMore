@@ -12,26 +12,31 @@ namespace TravelMore.Domain.Bookings;
 
 public sealed class Booking : Entity<Guid>
 {
-    public BookingDetails Details { get; private set; } = null!;
-    public PaymentDetails PaymentDetails { get; private set; }
+    public BookingDetails Details { get; private set; }
+    public PaymentDetails? PaymentDetails { get; private set; }
     public int GuestId { get; private set; }
     public Guest Guest { get; private set; } = null!;
     public Guid BookedHotelId { get; private set; }
-    public Hotel BookedHotel { get; private set; } = null!;
+    public Hotel BookedHotel { get; private set; }
     public BookingStatus Status { get; private set; }
 
+
+    /// <summary>
+    /// Private consturctor needed to create database migrations
+    /// </summary>
     private Booking() : base(Guid.NewGuid())
     {
+        Details = null!;
+        BookedHotel = null!;
+        PaymentDetails = null;
     }
 
 
     private Booking(
-        PaymentDetails paymentDetails,
         BookingDetails details,
         Guest guest,
         Hotel bookedHotel) : base(Guid.NewGuid())
     {
-        PaymentDetails = paymentDetails;
         Details = details;
         Status = BookingStatus.Pending;
         Guest = guest;
@@ -55,16 +60,15 @@ public sealed class Booking : Entity<Guid>
             numberOfDays,
             schedule);
 
-        var paymentDetails = new PaymentDetails(paymentMethod);
-
         hotel.EnsureBookable(bookingDetails, paymentMethod);
         guest.EnsureCanBook(bookingDetails);
 
-        return new(paymentDetails, bookingDetails, guest, hotel);
+        return new(bookingDetails, guest, hotel);
     }
 
     public void Accept(int hostId)
     {
+        EnsurePaymentDetailsExists();
         EnsureHotelHostIdMatches(hostId);
         Status = BookingStatus.Accepted;
     }
@@ -87,15 +91,18 @@ public sealed class Booking : Entity<Guid>
         PaymentDetails = paymentDetails;
     }
 
-    public void ChangePaymentMethod(PaymentMethod paymentMethod)
-    {
-        BookedHotel.EnsureAcceptedPaymentMethod(paymentMethod);
-        PaymentDetails.PaymentMethod = paymentMethod;
-    }
-
-    public bool IsPaymentMethodMatching(PaymentMethod paymentMethod) => paymentMethod == PaymentDetails.PaymentMethod;
+    public bool IsPaymentMethodMatching(PaymentMethod paymentMethod) => paymentMethod == PaymentDetails!.PaymentMethod;
 
     public bool DoesOverLap(DateTime from, DateTime to) => Details.Schedule.From <= to && from <= Details.Schedule.To;
+
+    private void EnsurePaymentDetailsExists()
+    {
+        //TODO: create custom exception 
+        if (PaymentDetails is null)
+        {
+            throw new Exception();
+        }
+    }
 
     private void EnsureNotAccepted()
     {
