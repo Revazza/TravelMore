@@ -12,6 +12,8 @@ public abstract class Guest : User
     public IReadOnlyCollection<Booking> Bookings => _bookings;
     public string UserName { get; } = string.Empty;
     public Money Balance { get; private set; } = 0;
+    public List<PaymentDetails> Payments { get; set; } = [];
+
 
     protected Guest() : base(0)
     {

@@ -39,6 +39,7 @@ public class CreateBookingCommandHandler(
             request.CheckIn,
             request.CheckOut,
             request.NumberOfGuests,
+            request.PaymentMethod,
             guest,
             hotel);
 

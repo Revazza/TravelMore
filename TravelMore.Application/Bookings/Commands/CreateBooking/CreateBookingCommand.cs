@@ -1,11 +1,13 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Results;
 using TravelMore.Domain.Bookings;
+using TravelMore.Domain.Common.Enums;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
 
 public record CreateBookingCommand(
-    Guid HotelId,
     short NumberOfGuests,
     DateTime CheckIn,
-    DateTime CheckOut) : IRequest<Result<Booking>>;
+    DateTime CheckOut,
+    PaymentMethod PaymentMethod,
+    Guid HotelId) : IRequest<Result<Booking>>;

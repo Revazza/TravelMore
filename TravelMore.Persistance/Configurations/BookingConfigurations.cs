@@ -22,12 +22,10 @@ public class BookingConfigurations : IEntityTypeConfiguration<Booking>
             .HasForeignKey(x => x.BookedHotelId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.OwnsOne(x => x.Schedule);
+        builder.ComplexProperty(x => x.Details);
 
-        builder.OwnsOne(x => x.TotalPayment, price =>
-        {
-            price.Property(x => x.Amount)
-                .HasPrecision(18, 10);
-        });
+        builder.ComplexProperty(x => x.Details)
+            .ComplexProperty(x => x.Schedule);
+
     }
 }

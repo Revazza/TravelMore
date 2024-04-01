@@ -51,9 +51,9 @@ public sealed class Booking : Entity<Guid>
         var numberOfDays = schedule.GetBookingDurationInDays();
 
         var bookingDetails = new BookingDetails(
-            NumberOfGuests: numberOfGuests,
-            NumberOfDays: numberOfDays,
-            Schedule: schedule);
+            numberOfGuests,
+            numberOfDays,
+            schedule);
 
         var paymentDetails = new PaymentDetails(paymentMethod);
 

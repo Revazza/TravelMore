@@ -2,6 +2,7 @@
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Users.Guests;
+using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.PaymentsDetails;
 
@@ -15,8 +16,8 @@ public class PaymentDetails : Entity<Guid>
     public DateTime CreatedAt { get; init; }
     public int PayerId { get; set; }
     public Guest Payer { get; set; } = null!;
-    public Guid HotelId { get; set; }
-    public Hotel Hotel { get; set; } = null!;
+    public int HostId { get; set; }
+    public Host Host { get; set; } = null!;
 
     public PaymentDetails(PaymentMethod paymentMethod) : base(Guid.NewGuid())
     {
