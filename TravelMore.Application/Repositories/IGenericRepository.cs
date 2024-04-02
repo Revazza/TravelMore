@@ -1,5 +1,4 @@
-﻿
-namespace TravelMore.Application.Common.Interfaces.Repositories;
+﻿namespace TravelMore.Application.Repositories;
 
 public interface IGenericRepository<T, TId>
     where T : class

@@ -1,4 +1,4 @@
-﻿using TravelMore.Application.Common.Interfaces.Repositories;
+﻿using TravelMore.Application.Repositories;
 using TravelMore.Domain.Bookings;
 using TravelMore.Persistance.Contexts.TravelMore;
 

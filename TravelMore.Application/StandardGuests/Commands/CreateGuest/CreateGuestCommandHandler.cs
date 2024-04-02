@@ -1,0 +1,44 @@
+﻿using Mapster;
+using MediatR;
+using TravelMore.Application.Common.Dtos;
+using TravelMore.Application.Common.Results;
+using TravelMore.Application.Guests.Queries.DoesGuestExistByUsername;
+using TravelMore.Application.Repositories;
+using TravelMore.Application.Services;
+using TravelMore.Application.Services.PasswordHasher;
+using TravelMore.Domain.Errors;
+using TravelMore.Domain.Users.StandartGuests;
+
+namespace TravelMore.Application.StandardGuests.Commands.CreateGuest;
+
+public class CreateGuestCommandHandler(
+    IPasswordHasher passwordHasher,
+    ISender sender,
+    IStandardGuestRepository standardGuestRepository,
+    IUnitOfWork unitOfWork)
+    : IRequestHandler<CreateGuestCommand, Result<StandardGuestDto>>
+{
+    private readonly IStandardGuestRepository _standardGuestRepository = standardGuestRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly IPasswordHasher _passwordHasher = passwordHasher;
+    private readonly ISender _sender = sender;
+
+    public async Task<Result<StandardGuestDto>> Handle(CreateGuestCommand request, CancellationToken cancellationToken)
+    {
+        var guestExistsResult = await _sender.Send(new DoesGuestExistByUsernameQuery(request.Username), cancellationToken);
+
+        if (guestExistsResult.Value == true)
+        {
+            return DomainErrors.Guest.AlreadyExistByUsername;
+        }
+
+        var hashPasswordResponse = _passwordHasher.Hash(request.Password);
+
+        var guest = new StandardGuest(request.Username, hashPasswordResponse.HashedPassword, hashPasswordResponse.Salt);
+
+        await _standardGuestRepository.AddAsync(guest);
+        await _unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return guest.Adapt<StandardGuestDto>();
+    }
+}

@@ -13,7 +13,7 @@ using TravelMore.Persistance.Contexts.TravelMore;
 namespace TravelMore.Persistance.Migrations
 {
     [DbContext(typeof(TravelMoreContext))]
-    [Migration("20240401193746_Initial")]
+    [Migration("20240402101427_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -128,6 +128,9 @@ namespace TravelMore.Persistance.Migrations
                     b.Property<int>("PaymentMethod")
                         .HasColumnType("int");
 
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
                     b.ComplexProperty<Dictionary<string, object>>("Fee", "TravelMore.Domain.PaymentsDetails.PaymentDetails.Fee#Money", b1 =>
                         {
                             b1.IsRequired();
@@ -176,6 +179,14 @@ namespace TravelMore.Persistance.Migrations
                         .IsRequired()
                         .HasMaxLength(13)
                         .HasColumnType("nvarchar(13)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

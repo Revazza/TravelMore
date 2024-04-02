@@ -15,17 +15,17 @@ public abstract class Guest : User
     public List<PaymentDetails> Payments { get; set; } = [];
 
 
-    protected Guest() : base(0)
+    protected Guest() : base(0, string.Empty, string.Empty)
     {
     }
 
-    protected Guest(int id, string userName, Money balance) : base(id)
+    protected Guest(int id, string userName, string passwordHash, string salt, Money balance) : base(id, passwordHash, salt)
     {
         UserName = userName;
         Balance = balance;
     }
 
-    protected Guest(int id, string userName) : base(id)
+    protected Guest(int id, string userName, string passwordHash, string salt) : base(id, passwordHash, salt)
     {
         UserName = userName;
     }

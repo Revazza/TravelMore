@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using Serilog;
 using System.Net;
 using TravelMore.Application.Common.Results;
-using TravelMore.Domain.Common.Results;
+using TravelMore.Domain.Common.Models;
 
 namespace TravelMore.Infrastructure.Middlewares;
 

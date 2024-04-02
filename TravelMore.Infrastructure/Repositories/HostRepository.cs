@@ -1,4 +1,4 @@
-﻿using TravelMore.Application.Common.Interfaces.Repositories;
+﻿using TravelMore.Application.Repositories;
 using TravelMore.Domain.Users.Hosts;
 using TravelMore.Persistance.Contexts.TravelMore;
 

@@ -1,7 +1,8 @@
 ﻿using TravelMore.Domain.Users.Guests;
 
-namespace TravelMore.Application.Common.Interfaces.Repositories;
+namespace TravelMore.Application.Repositories;
 
 public interface IGuestRepository : IGenericRepository<Guest, int>
 {
+    Task<bool> DoesGuestExistByUsername(string userName);
 }

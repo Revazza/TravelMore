@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using TravelMore.Application.Common.Interfaces.Repositories;
-using TravelMore.Application.Common.Interfaces.Services;
 using TravelMore.Application.Common.Results;
+using TravelMore.Application.Repositories;
+using TravelMore.Application.Services;
 using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Common.Results;
+using TravelMore.Domain.Common.Models;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
 

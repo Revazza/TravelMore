@@ -1,4 +1,4 @@
-﻿using TravelMore.Application.Common.Interfaces.Services;
+﻿using TravelMore.Application.Services;
 using TravelMore.Persistance.Contexts.TravelMore;
 
 namespace TravelMore.Infrastructure.Services;

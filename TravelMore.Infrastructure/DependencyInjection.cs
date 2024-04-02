@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using TravelMore.Application.Common.Interfaces.Repositories;
-using TravelMore.Application.Common.Interfaces.Services;
+using TravelMore.Application.Repositories;
+using TravelMore.Application.Services;
+using TravelMore.Application.Services.PasswordHasher;
 using TravelMore.Infrastructure.Middlewares;
 using TravelMore.Infrastructure.Repositories;
 using TravelMore.Infrastructure.Services;
@@ -15,6 +16,7 @@ public static class DependencyInjection
         ConfigurationManager configuration)
     {
         services.AddTransient<GlobalExceptionLoggingMiddleware>();
+        services.AddTransient<IPasswordHasher, PasswordHasher>();
 
         return services
             .AddRepositories();
@@ -28,7 +30,10 @@ public static class DependencyInjection
             .AddScoped<IUnitOfWork, UnitOfWork>()
             .AddScoped<IHostRepository, HostRepository>()
             .AddScoped<IGuestRepository, GuestRepository>()
+            .AddScoped<IStandardGuestRepository, StandardGuestRepository>()
             .AddScoped<IHotelRepository, HotelRepository>();
 
     }
+
+
 }

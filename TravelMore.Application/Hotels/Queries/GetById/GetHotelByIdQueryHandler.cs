@@ -1,7 +1,7 @@
 ﻿using MediatR;
-using TravelMore.Application.Common.Interfaces.Repositories;
 using TravelMore.Application.Common.Results;
-using TravelMore.Domain.Common.Results;
+using TravelMore.Application.Repositories;
+using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
 
 namespace TravelMore.Application.Hotels.Queries.GetById;

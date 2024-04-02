@@ -1,4 +1,4 @@
-﻿namespace TravelMore.Application.Common.Interfaces.Services;
+﻿namespace TravelMore.Application.Services;
 
 public interface IUnitOfWork
 {

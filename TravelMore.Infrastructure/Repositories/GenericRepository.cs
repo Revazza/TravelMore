@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TravelMore.Persistance.Contexts.TravelMore;
-using TravelMore.Application.Common.Interfaces.Repositories;
+using TravelMore.Application.Repositories;
 
 namespace TravelMore.Infrastructure.Repositories;
 

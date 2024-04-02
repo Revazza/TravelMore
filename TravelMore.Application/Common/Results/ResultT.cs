@@ -1,4 +1,4 @@
-﻿using TravelMore.Domain.Common.Results;
+﻿using TravelMore.Domain.Common.Models;
 
 namespace TravelMore.Application.Common.Results;
 

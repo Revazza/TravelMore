@@ -1,6 +1,6 @@
 ﻿using TravelMore.Domain.Bookings;
 
-namespace TravelMore.Application.Common.Interfaces.Repositories;
+namespace TravelMore.Application.Repositories;
 
 public interface IBookingRepository : IGenericRepository<Booking, Guid>
 {

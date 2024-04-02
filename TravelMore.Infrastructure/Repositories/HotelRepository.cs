@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TravelMore.Application.Common.Interfaces.Repositories;
+using TravelMore.Application.Repositories;
 using TravelMore.Domain.Hotels;
 using TravelMore.Persistance.Contexts.TravelMore;
 
