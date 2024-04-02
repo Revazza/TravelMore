@@ -13,7 +13,7 @@ using TravelMore.Persistance.Contexts.TravelMore;
 namespace TravelMore.Persistance.Migrations
 {
     [DbContext(typeof(TravelMoreContext))]
-    [Migration("20240402101427_Initial")]
+    [Migration("20240402105149_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -164,7 +164,7 @@ namespace TravelMore.Persistance.Migrations
 
                     b.HasIndex("PayerId");
 
-                    b.ToTable("PaymentDetails");
+                    b.ToTable("PaymentsDetails");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Users.User", b =>
@@ -201,6 +201,10 @@ namespace TravelMore.Persistance.Migrations
                 {
                     b.HasBaseType("TravelMore.Domain.Users.User");
 
+                    b.Property<string>("UserName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.ComplexProperty<Dictionary<string, object>>("Balance", "TravelMore.Domain.Users.Guests.Guest.Balance#Money", b1 =>
                         {
                             b1.IsRequired();
@@ -222,6 +226,13 @@ namespace TravelMore.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Host");
+                });
+
+            modelBuilder.Entity("TravelMore.Domain.Users.PremiumGuests.PremiumGuest", b =>
+                {
+                    b.HasBaseType("TravelMore.Domain.Users.Guests.Guest");
+
+                    b.HasDiscriminator().HasValue("PremiumGuest");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Users.StandartGuests.StandardGuest", b =>

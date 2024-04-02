@@ -20,6 +20,7 @@ namespace TravelMore.Persistance.Migrations
                     PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Salt = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
+                    UserName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Balance_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -50,7 +51,7 @@ namespace TravelMore.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PaymentDetails",
+                name: "PaymentsDetails",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -66,14 +67,14 @@ namespace TravelMore.Persistance.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PaymentDetails", x => x.Id);
+                    table.PrimaryKey("PK_PaymentsDetails", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_PaymentDetails_Users_HostId",
+                        name: "FK_PaymentsDetails_Users_HostId",
                         column: x => x.HostId,
                         principalTable: "Users",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PaymentDetails_Users_PayerId",
+                        name: "FK_PaymentsDetails_Users_PayerId",
                         column: x => x.PayerId,
                         principalTable: "Users",
                         principalColumn: "Id");
@@ -102,9 +103,9 @@ namespace TravelMore.Persistance.Migrations
                         principalTable: "Hotels",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_Bookings_PaymentDetails_PaymentDetailsId",
+                        name: "FK_Bookings_PaymentsDetails_PaymentDetailsId",
                         column: x => x.PaymentDetailsId,
-                        principalTable: "PaymentDetails",
+                        principalTable: "PaymentsDetails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -135,13 +136,13 @@ namespace TravelMore.Persistance.Migrations
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentDetails_HostId",
-                table: "PaymentDetails",
+                name: "IX_PaymentsDetails_HostId",
+                table: "PaymentsDetails",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentDetails_PayerId",
-                table: "PaymentDetails",
+                name: "IX_PaymentsDetails_PayerId",
+                table: "PaymentsDetails",
                 column: "PayerId");
         }
 
@@ -155,7 +156,7 @@ namespace TravelMore.Persistance.Migrations
                 name: "Hotels");
 
             migrationBuilder.DropTable(
-                name: "PaymentDetails");
+                name: "PaymentsDetails");
 
             migrationBuilder.DropTable(
                 name: "Users");
