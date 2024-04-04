@@ -2,10 +2,10 @@
 using MediatR;
 using TravelMore.Application.Common.Dtos;
 using TravelMore.Application.Common.Results;
-using TravelMore.Application.Guests.Queries.DoesGuestExistByUsername;
 using TravelMore.Application.Repositories;
 using TravelMore.Application.Services;
 using TravelMore.Application.Services.PasswordHasher;
+using TravelMore.Application.Users.Queries.DoesUserExistByEmail;
 using TravelMore.Domain.Errors;
 using TravelMore.Domain.Users.StandartGuests;
 
@@ -25,11 +25,11 @@ public class CreateGuestCommandHandler(
 
     public async Task<Result<StandardGuestDto>> Handle(CreateGuestCommand request, CancellationToken cancellationToken)
     {
-        var guestExistsResult = await _sender.Send(new DoesGuestExistByUsernameQuery(request.Username), cancellationToken);
+        var guestExists = await _sender.Send(new DoesUserExistByEmailQuery(request.Username), cancellationToken);
 
-        if (guestExistsResult.Value == true)
+        if (guestExists.Value)
         {
-            return DomainErrors.Guest.AlreadyExistByUsername;
+            return DomainErrors.Guest.AlreadyExistByEmail;
         }
 
         var hashPasswordResponse = _passwordHasher.Hash(request.Password);

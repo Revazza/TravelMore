@@ -27,6 +27,7 @@ public static class DependencyInjection
         return services
             .AddScoped<IUserIdentityService, UserIdentityService>()
             .AddScoped<IBookingRepository, BookingRepository>()
+            .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IUnitOfWork, UnitOfWork>()
             .AddScoped<IHostRepository, HostRepository>()
             .AddScoped<IGuestRepository, GuestRepository>()

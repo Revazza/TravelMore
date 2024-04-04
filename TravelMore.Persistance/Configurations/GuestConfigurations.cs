@@ -8,7 +8,9 @@ public class GuestConfigurations : IEntityTypeConfiguration<Guest>
 {
     public void Configure(EntityTypeBuilder<Guest> builder)
     {
-        builder.Property(x => x.UserName).IsRequired();
+        builder.HasIndex(x => x.Email)
+            .IsUnique();
+
         builder.ComplexProperty(x => x.Balance, price =>
         {
             price.Property(x => x.Amount)

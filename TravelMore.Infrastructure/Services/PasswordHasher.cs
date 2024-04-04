@@ -4,13 +4,15 @@ namespace TravelMore.Infrastructure.Services;
 
 public class PasswordHasher : IPasswordHasher
 {
-    public PasswordHasherResponse Hash(string password)
-    {
-        // Very creative I know
-        var salt = BCrypt.Net.BCrypt.GenerateSalt();
-        var passwordWithSalt = password + salt;
-        var hashedPassword = BCrypt.Net.BCrypt.HashPassword(passwordWithSalt);
+    public PasswordHasherResponse Hash(string password) => GenerateHashedPasswordWithSalt(password, GenerateSalt());
 
-        return new(hashedPassword, salt);
-    }
+    public PasswordHasherResponse Hash(string password, string salt) => GenerateHashedPasswordWithSalt(password, salt);
+
+    private static PasswordHasherResponse GenerateHashedPasswordWithSalt(string password, string salt)
+        => new(GenerateHashedPassword(password + salt), salt);
+
+    private static string GenerateSalt() => BCrypt.Net.BCrypt.GenerateSalt();
+
+    private static string GenerateHashedPassword(string password) => BCrypt.Net.BCrypt.HashPassword(password);
+
 }

@@ -7,17 +7,15 @@ public class Host : User
 {
     private readonly List<Hotel> _hotels = [];
     public IReadOnlyCollection<Hotel> Hotels => _hotels;
-    public string Email { get; set; } = string.Empty;
     public List<PaymentDetails> ReceivedPayments { get; set; } = [];
 
-    public Host(int id) : base(id, string.Empty, string.Empty)
+    public Host(int id) : base(id, string.Empty, string.Empty, string.Empty)
     {
 
     }
 
-    public Host(int id, string email, string passwordHash, string salt) : base(id, passwordHash, salt)
+    public Host(int id, string email, string passwordHash, string salt) : base(id, email, passwordHash, salt)
     {
-        Email = email;
     }
 
     public void AddHotel(Hotel newHotel) => _hotels.Add(newHotel);

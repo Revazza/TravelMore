@@ -4,5 +4,5 @@ namespace TravelMore.Application.Repositories;
 
 public interface IGuestRepository : IGenericRepository<Guest, int>
 {
-    Task<bool> DoesGuestExistByUsername(string userName);
+    Task<bool> DoesGuestExistByEmail(string email);
 }

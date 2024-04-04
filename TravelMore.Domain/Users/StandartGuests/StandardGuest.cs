@@ -10,9 +10,9 @@ public class StandardGuest : Guest
 
     }
 
-    public StandardGuest(int id, string userName, string passwordHash, string salt, Money balance) : base(id, userName, passwordHash, salt, balance) { }
+    public StandardGuest(int id, string email, string passwordHash, string salt, Money balance) : base(id, email, passwordHash, salt, balance) { }
 
-    public StandardGuest(string userName, string passwordHash, string salt) : base(0, userName, passwordHash, salt) { }
+    public StandardGuest(string email, string passwordHash, string salt) : base(0, email, passwordHash, salt) { }
 
 
 }

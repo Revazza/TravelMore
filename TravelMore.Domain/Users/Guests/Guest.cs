@@ -10,24 +10,22 @@ public abstract class Guest : User
 {
     private readonly List<Booking> _bookings = [];
     public IReadOnlyCollection<Booking> Bookings => _bookings;
-    public string UserName { get; } = string.Empty;
     public Money Balance { get; private set; } = 0;
     public List<PaymentDetails> Payments { get; set; } = [];
 
 
-    protected Guest() : base(0, string.Empty, string.Empty)
+    protected Guest() : base(0, string.Empty, string.Empty, string.Empty)
     {
     }
 
-    protected Guest(int id, string userName, string passwordHash, string salt, Money balance) : base(id, passwordHash, salt)
+    protected Guest(int id, string email, string passwordHash, string salt, Money balance) : base(id, email, passwordHash, salt)
     {
-        UserName = userName;
         Balance = balance;
     }
 
-    protected Guest(int id, string userName, string passwordHash, string salt) : base(id, passwordHash, salt)
+    protected Guest(int id, string email, string passwordHash, string salt) : base(id, email,passwordHash, salt)
     {
-        UserName = userName;
+        
     }
 
     public virtual void EnsureCanBook(BookingDetails bookingDetails)
