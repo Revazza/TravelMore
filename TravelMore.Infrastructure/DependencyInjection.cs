@@ -18,6 +18,7 @@ public static class DependencyInjection
     {
         services.AddTransient<GlobalExceptionLoggingMiddleware>();
         services.AddTransient<IPasswordHasher, PasswordHasher>();
+        services.AddTransient<IJwtTokenGenerator, JwtTokenGenerator>();
 
         return services
             .AddRepositories()

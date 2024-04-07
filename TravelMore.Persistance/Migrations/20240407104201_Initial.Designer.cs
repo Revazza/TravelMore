@@ -13,7 +13,7 @@ using TravelMore.Persistance.Contexts.TravelMore;
 namespace TravelMore.Persistance.Migrations
 {
     [DbContext(typeof(TravelMoreContext))]
-    [Migration("20240402105149_Initial")]
+    [Migration("20240407104201_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -180,11 +180,19 @@ namespace TravelMore.Persistance.Migrations
                         .HasMaxLength(13)
                         .HasColumnType("nvarchar(13)");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("PasswordHash")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -201,10 +209,6 @@ namespace TravelMore.Persistance.Migrations
                 {
                     b.HasBaseType("TravelMore.Domain.Users.User");
 
-                    b.Property<string>("UserName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.ComplexProperty<Dictionary<string, object>>("Balance", "TravelMore.Domain.Users.Guests.Guest.Balance#Money", b1 =>
                         {
                             b1.IsRequired();
@@ -214,16 +218,15 @@ namespace TravelMore.Persistance.Migrations
                                 .HasColumnType("decimal(18,10)");
                         });
 
+                    b.HasIndex("Email")
+                        .IsUnique();
+
                     b.HasDiscriminator().HasValue("Guest");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Users.Hosts.Host", b =>
                 {
                     b.HasBaseType("TravelMore.Domain.Users.User");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasDiscriminator().HasValue("Host");
                 });

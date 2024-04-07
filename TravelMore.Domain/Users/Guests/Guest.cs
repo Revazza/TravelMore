@@ -13,19 +13,15 @@ public abstract class Guest : User
     public Money Balance { get; private set; } = 0;
     public List<PaymentDetails> Payments { get; set; } = [];
 
-
-    protected Guest() : base(0, string.Empty, string.Empty, string.Empty)
+    private Guest() : base(0, string.Empty, string.Empty, string.Empty, nameof(Guest))
     {
+
     }
 
-    protected Guest(int id, string email, string passwordHash, string salt, Money balance) : base(id, email, passwordHash, salt)
+    protected Guest(int id, string email, string passwordHash, string salt, Money balance, string type)
+        : base(id, email, passwordHash, salt, type)
     {
         Balance = balance;
-    }
-
-    protected Guest(int id, string email, string passwordHash, string salt) : base(id, email,passwordHash, salt)
-    {
-        
     }
 
     public virtual void EnsureCanBook(BookingDetails bookingDetails)

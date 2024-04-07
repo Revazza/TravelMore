@@ -1,7 +1,5 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using TravelMore.Application.Common.Dtos;
-using TravelMore.Application.Common.Results;
 using TravelMore.Application.StandardGuests.Commands.CreateGuest;
 
 namespace TravelMore.Api.Controllers;

@@ -5,7 +5,6 @@ using TravelMore.Application.Services;
 using TravelMore.Application.Users.Queries.CheckPassword;
 using TravelMore.Application.Users.Queries.GetUserByEmail;
 using TravelMore.Domain.Errors;
-using TravelMore.Domain.Users;
 
 namespace TravelMore.Application.Users.Commands.Login;
 

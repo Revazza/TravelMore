@@ -36,6 +36,8 @@ public record Money
         return new(amount);
     }
 
+    public static Money Default => 0;
+
     private static void EnsureNonNegativeAmount(decimal amount)
     {
         if (amount.IsNegative())

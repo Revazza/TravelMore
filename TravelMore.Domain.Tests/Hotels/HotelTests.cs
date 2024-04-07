@@ -1,5 +1,4 @@
-﻿using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Common.Exceptions;
+﻿using TravelMore.Domain.Common.Exceptions;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Users.Hosts;
@@ -14,7 +13,7 @@ public class HotelTests
     [SetUp]
     public void SetUp()
     {
-        _host = new Host(1);
+        _host = new Host(1, "email", string.Empty, string.Empty);
         _hotel = new Hotel(
             new Guid("cc6ba882-4a49-47c6-9084-c4b17738c254"),
             description: "Dummy Hotel",
