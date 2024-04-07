@@ -11,12 +11,12 @@ public class Host : User
 
     public List<PaymentDetails> ReceivedPayments { get; set; } = [];
 
-    private Host() : base(0, string.Empty, string.Empty, string.Empty, nameof(Host))
+    private Host() : base(0, string.Empty, string.Empty, string.Empty)
     {
     }
 
     public Host(int id, string email, string passwordHash, string salt)
-        : base(id, email, passwordHash, salt, nameof(Host))
+        : base(id, email, passwordHash, salt)
     {
     }
 

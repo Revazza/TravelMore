@@ -1,4 +1,5 @@
-﻿using TravelMore.Domain.Common.Models;
+﻿using System.Reflection;
+using TravelMore.Domain.Common.Models;
 
 namespace TravelMore.Domain.Users;
 
@@ -9,12 +10,11 @@ public class User : Entity<int>
 
     }
 
-    protected User(int id, string email, string passwordHash, string salt, string type) : base(id)
+    protected User(int id, string email, string passwordHash, string salt) : base(id)
     {
         Email = email;
         PasswordHash = passwordHash;
         Salt = salt;
-        Type = type;
     }
 
     public string Email { get; protected set; } = string.Empty;
@@ -23,5 +23,4 @@ public class User : Entity<int>
 
     public string Salt { get; protected set; } = string.Empty;
 
-    public string Type { get; protected set; } = nameof(User);
 }

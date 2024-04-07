@@ -13,7 +13,7 @@ using TravelMore.Persistance.Contexts.TravelMore;
 namespace TravelMore.Persistance.Migrations
 {
     [DbContext(typeof(TravelMoreContext))]
-    [Migration("20240407104201_Initial")]
+    [Migration("20240407112454_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -189,10 +189,6 @@ namespace TravelMore.Persistance.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Salt")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Type")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 

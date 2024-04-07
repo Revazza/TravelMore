@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore.SqlServer.Query.Internal;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -30,7 +31,7 @@ public class JwtTokenGenerator(IOptions<JwtSettings> settings) : IJwtTokenGenera
             ];
 
     private JwtSecurityToken GenerateJwtSecurityToken(List<Claim> claims, SigningCredentials credentials)
-        => new JwtSecurityToken(
+        => new(
             issuer: _settings.Issuer,
             audience: _settings.Audience,
             claims: claims,

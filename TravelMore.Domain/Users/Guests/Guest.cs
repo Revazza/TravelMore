@@ -13,13 +13,13 @@ public abstract class Guest : User
     public Money Balance { get; private set; } = 0;
     public List<PaymentDetails> Payments { get; set; } = [];
 
-    private Guest() : base(0, string.Empty, string.Empty, string.Empty, nameof(Guest))
+    private Guest() : base(0, string.Empty, string.Empty, string.Empty)
     {
 
     }
 
-    protected Guest(int id, string email, string passwordHash, string salt, Money balance, string type)
-        : base(id, email, passwordHash, salt, type)
+    protected Guest(int id, string email, string passwordHash, string salt, Money balance)
+        : base(id, email, passwordHash, salt)
     {
         Balance = balance;
     }

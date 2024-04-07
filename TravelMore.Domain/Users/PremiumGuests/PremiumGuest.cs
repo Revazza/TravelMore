@@ -5,12 +5,12 @@ namespace TravelMore.Domain.Users.PremiumGuests;
 
 public class PremiumGuest : Guest
 {
-    private PremiumGuest() : base(0, string.Empty, string.Empty, string.Empty, Money.Default, nameof(PremiumGuest))
+    private PremiumGuest() : base(0, string.Empty, string.Empty, string.Empty, Money.Default)
     {
     }
 
     public PremiumGuest(int id, string email, string passwordHash, string salt, Money balance)
-        : base(id, email, passwordHash, salt, balance, nameof(PremiumGuest))
+        : base(id, email, passwordHash, salt, balance)
     {
     }
 
