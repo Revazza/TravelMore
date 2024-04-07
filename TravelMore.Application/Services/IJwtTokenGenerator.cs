@@ -2,7 +2,7 @@
 
 namespace TravelMore.Application.Services;
 
-public interface ITokenGenerator
+public interface IJwtTokenGenerator
 {
     string Generate(User user);
 }

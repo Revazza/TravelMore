@@ -6,6 +6,7 @@ using TravelMore.Application.Services.PasswordHasher;
 using TravelMore.Infrastructure.Middlewares;
 using TravelMore.Infrastructure.Repositories;
 using TravelMore.Infrastructure.Services;
+using TravelMore.Infrastructure.Services.JwtTokenGenerators;
 
 namespace TravelMore.Infrastructure;
 
@@ -19,7 +20,16 @@ public static class DependencyInjection
         services.AddTransient<IPasswordHasher, PasswordHasher>();
 
         return services
-            .AddRepositories();
+            .AddRepositories()
+            .AddCustomOptions(configuration);
+    }
+
+    private static IServiceCollection AddCustomOptions(
+        this IServiceCollection services,
+        ConfigurationManager configuration)
+    {
+        services.Configure<JwtSettings>(configuration.GetSection(JwtSettings.SectionName));
+        return services;
     }
 
     private static IServiceCollection AddRepositories(this IServiceCollection services)
