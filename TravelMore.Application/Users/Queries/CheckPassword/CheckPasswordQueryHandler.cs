@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Results;
 using TravelMore.Application.Services.PasswordHasher;
+using TravelMore.Domain.Common.Models;
 
 namespace TravelMore.Application.Users.Queries.CheckPassword;
 
@@ -14,6 +15,10 @@ public class CheckPasswordQueryHandler(IPasswordHasher passwordHasher) : IReques
     {
         var hashPasswordResponse = _passwordHasher.Hash(request.Password, request.Salt);
         var isCorrect = hashPasswordResponse.HashedPassword == request.HashedPassword;
+        if (!isCorrect)
+        {
+            return await Task.FromResult(Error.None);
+        }
         return await Task.FromResult(isCorrect);
     }
 }
