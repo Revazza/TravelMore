@@ -18,7 +18,7 @@ public abstract class Membership : Subscription
         Money pricePerYear,
         DateTime startDate,
         DateTime endDate,
-        List<SubscriptionTypeInfo> subscriptionTypes) 
+        List<SubscriptionTypeInfo> subscriptionTypes)
             : base(pricePerMonth, pricePerYear, startDate, endDate, subscriptionTypes)
     {
 
