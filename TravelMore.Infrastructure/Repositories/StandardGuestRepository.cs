@@ -1,4 +1,5 @@
-﻿using TravelMore.Application.Repositories;
+﻿using Microsoft.EntityFrameworkCore;
+using TravelMore.Application.Repositories;
 using TravelMore.Domain.Users.StandartGuests;
 using TravelMore.Persistance.Contexts.TravelMore;
 
@@ -9,4 +10,7 @@ public class StandardGuestRepository : GenericRepository<StandardGuest, int>, IS
     public StandardGuestRepository(TravelMoreContext context) : base(context)
     {
     }
+
+    public async Task<StandardGuest?> GetByEmailAsync(string email)
+        => await _context.StandardGuests.FirstOrDefaultAsync(guest => guest.Email == email);
 }

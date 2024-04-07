@@ -5,8 +5,6 @@ using TravelMore.Domain.Common.Models;
 
 namespace TravelMore.Application.Users.Queries.CheckPassword;
 
-public record CheckPasswordQuery(string Password, string Salt, string HashedPassword) : IRequest<Result<bool>>;
-
 public class CheckPasswordQueryHandler(IPasswordHasher passwordHasher) : IRequestHandler<CheckPasswordQuery, Result<bool>>
 {
     private readonly IPasswordHasher _passwordHasher = passwordHasher;

@@ -13,7 +13,7 @@ namespace TravelMore.Domain.Bookings;
 public sealed class Booking : Entity<Guid>
 {
     public BookingDetails Details { get; private set; }
-    public PaymentDetails PaymentDetails { get; private set; }
+    public BookingPaymentDetails PaymentDetails { get; private set; }
     public int GuestId { get; private set; }
     public Guest Guest { get; private set; } = null!;
     public Guid BookedHotelId { get; private set; }
@@ -86,7 +86,7 @@ public sealed class Booking : Entity<Guid>
         Status = BookingStatus.Canceled;
     }
 
-    public void SetPaymentDetails(PaymentDetails paymentDetails)
+    public void SetPaymentDetails(BookingPaymentDetails paymentDetails)
     {
         PaymentDetails = paymentDetails;
     }

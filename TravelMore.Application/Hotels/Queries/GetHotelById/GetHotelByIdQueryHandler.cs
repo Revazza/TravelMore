@@ -4,9 +4,7 @@ using TravelMore.Application.Repositories;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Hotels;
 
-namespace TravelMore.Application.Hotels.Queries.GetById;
-
-public record GetHotelByIdQuery(Guid Id) : IRequest<Result<Hotel>>;
+namespace TravelMore.Application.Hotels.Queries.GetHotelById;
 
 public class GetHotelByIdQueryHandler(IHotelRepository hotelRepository) : IRequestHandler<GetHotelByIdQuery, Result<Hotel>>
 {
@@ -17,10 +15,10 @@ public class GetHotelByIdQueryHandler(IHotelRepository hotelRepository) : IReque
         var hotel = await _hotelRepository.GetByIdAsync(request.Id);
         if (hotel is null)
         {
-            return Result.Failure<Hotel>(Error.None);
+            return Error.None;
         }
 
-        return Result.Success(hotel);
+        return hotel;
 
     }
 }

@@ -6,9 +6,9 @@ using TravelMore.Domain.PaymentsDetails;
 
 namespace TravelMore.Persistance.Configurations;
 
-public class PaymentDetailsConfigurations : IEntityTypeConfiguration<PaymentDetails>
+public class PaymentDetailsConfigurations : IEntityTypeConfiguration<BookingPaymentDetails>
 {
-    public void Configure(EntityTypeBuilder<PaymentDetails> builder)
+    public void Configure(EntityTypeBuilder<BookingPaymentDetails> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)

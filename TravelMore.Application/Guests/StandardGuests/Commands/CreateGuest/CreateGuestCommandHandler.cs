@@ -10,7 +10,7 @@ using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Errors;
 using TravelMore.Domain.Users.StandartGuests;
 
-namespace TravelMore.Application.StandardGuests.Commands.CreateGuest;
+namespace TravelMore.Application.Guests.StandardGuests.Commands.CreateGuest;
 
 public class CreateGuestCommandHandler(
     IPasswordHasher passwordHasher,
@@ -35,7 +35,7 @@ public class CreateGuestCommandHandler(
 
         var hashPasswordResponse = _passwordHasher.Hash(request.Password);
 
-        var guest = new StandardGuest(0, request.Username, hashPasswordResponse.HashedPassword, hashPasswordResponse.Salt, Money.Default);
+        var guest = new StandardGuest(request.Username, hashPasswordResponse.HashedPassword, hashPasswordResponse.Salt, Money.Default);
 
         await _standardGuestRepository.AddAsync(guest);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

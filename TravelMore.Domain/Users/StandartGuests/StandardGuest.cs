@@ -1,5 +1,6 @@
 ﻿using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Users.Guests;
+using TravelMore.Domain.Users.PremiumGuests;
 
 namespace TravelMore.Domain.Users.StandartGuests;
 
@@ -9,9 +10,16 @@ public class StandardGuest : Guest
     {
     }
 
-    public StandardGuest(int id, string email, string passwordHash, string salt, Money balance)
-        : base(id, email, passwordHash, salt, balance)
+    public StandardGuest(string email, string passwordHash, string salt, Money balance)
+        : base(0, email, passwordHash, salt, balance)
     {
+    }
+
+    public PremiumGuest CreatePremiumVersion()
+    {
+        EnsureBalanaceIsEnough(PremiumGuest.UpgradeCost);
+
+        return new(Id, Email, PasswordHash, Salt, Balance);
     }
 
 }

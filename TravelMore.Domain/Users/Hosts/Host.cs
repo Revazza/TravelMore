@@ -9,7 +9,7 @@ public class Host : User
     private readonly List<Hotel> _hotels = [];
     public IReadOnlyCollection<Hotel> Hotels => _hotels;
 
-    public List<PaymentDetails> ReceivedPayments { get; set; } = [];
+    public List<BookingPaymentDetails> ReceivedPayments { get; set; } = [];
 
     private Host() : base(0, string.Empty, string.Empty, string.Empty)
     {
