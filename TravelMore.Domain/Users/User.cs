@@ -1,9 +1,8 @@
-﻿using System.Reflection;
-using TravelMore.Domain.Common.Models;
+﻿using TravelMore.Domain.Common.Models;
 
 namespace TravelMore.Domain.Users;
 
-public class User : Entity<int>
+public abstract class User : Entity<int>
 {
     private User() : base(default)
     {

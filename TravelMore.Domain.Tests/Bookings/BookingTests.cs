@@ -23,7 +23,7 @@ public class BookingTests
     [SetUp]
     public void SetUp()
     {
-        _guest = TestsCommon.Valid.StandardGuest;
+        _guest = TestsCommon.Valid.Guest;
         _guest.SetBalance(1000);
         _host = TestsCommon.Valid.Host;
         _hotel = new Hotel(

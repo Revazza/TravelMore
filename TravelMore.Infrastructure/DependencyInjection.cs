@@ -42,7 +42,6 @@ public static class DependencyInjection
             .AddScoped<IUnitOfWork, UnitOfWork>()
             .AddScoped<IHostRepository, HostRepository>()
             .AddScoped<IGuestRepository, GuestRepository>()
-            .AddScoped<IStandardGuestRepository, StandardGuestRepository>()
             .AddScoped<IHotelRepository, HotelRepository>();
 
     }

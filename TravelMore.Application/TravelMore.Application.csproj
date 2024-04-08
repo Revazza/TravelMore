@@ -20,7 +20,6 @@
 
   <ItemGroup>
     <Folder Include="Common\Interfaces\" />
-    <Folder Include="Guests\PremiumGuests\" />
   </ItemGroup>
 
 </Project>
