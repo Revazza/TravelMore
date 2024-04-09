@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Discounts;
-using TravelMore.Domain.Discounts.ValueObjects;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Memberships;
 using TravelMore.Domain.PaymentsDetails;
@@ -20,7 +19,8 @@ public partial class TravelMoreContext : DbContext
     public virtual DbSet<Hotel> Hotels { get; set; }
     public virtual DbSet<Booking> Bookings { get; set; }
     public virtual DbSet<Membership> Memberships { get; set; }
-    public virtual DbSet<BookingDiscountCoupon> BookingDiscountCoupons { get; set; }
+    public virtual DbSet<StandardMembership> StandardMemberships { get; set; }
+    public virtual DbSet<PremiumMembership> PremiumMemberships { get; set; }
     public virtual DbSet<PercentageDiscount> PercentageDiscounts { get; set; }
 
 

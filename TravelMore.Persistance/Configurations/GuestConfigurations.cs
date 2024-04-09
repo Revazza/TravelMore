@@ -17,10 +17,5 @@ public class GuestConfigurations : IEntityTypeConfiguration<Guest>
                 .HasPrecision(18, 10);
         });
 
-        builder
-            .HasOne(x => x.Membership)
-            .WithOne(x => x.Guest)
-            .HasForeignKey<Guest>(x => x.Id);
-
     }
 }

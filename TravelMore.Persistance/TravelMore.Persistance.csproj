@@ -26,4 +26,8 @@
     <ProjectReference Include="..\TravelMore.Domain\TravelMore.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Configurations\Discounts\" />
+  </ItemGroup>
+
 </Project>

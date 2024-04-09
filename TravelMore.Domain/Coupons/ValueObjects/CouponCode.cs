@@ -1,4 +1,4 @@
-﻿namespace TravelMore.Domain.Discounts.ValueObjects;
+﻿namespace TravelMore.Domain.Coupons.ValueObjects;
 
 public record CouponCode
 {

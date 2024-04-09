@@ -1,24 +1,23 @@
-﻿using System.Diagnostics;
-using TravelMore.Domain.Common.Models;
+﻿using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts.Interfaces;
-using TravelMore.Domain.Users;
+using TravelMore.Domain.Users.Guests;
 
 namespace TravelMore.Domain.Discounts;
 
 public class PercentageDiscount : Entity<Guid>, IDiscount
 {
     public decimal DiscountPercentage { get; init; }
-    public int UserId { get; init; }
-    public User User { get; init; } = null!;
+    public int GuestId { get; init; }
+    public Guest Guest { get; init; } = null!;
     public int Limit { get; init; }
     public int TimesUsed { get; init; }
     public bool IsExpired => Limit == TimesUsed;
 
 
-    public PercentageDiscount(Guid id, int limit, decimal discountPercentage, User user) : base(id)
+    public PercentageDiscount(Guid id, int limit, decimal discountPercentage, Guest guest) : base(id)
     {
         Limit = limit;
-        User = user;
+        Guest = guest;
         DiscountPercentage = discountPercentage;
     }
 
