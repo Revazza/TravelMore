@@ -1,6 +1,6 @@
 ﻿namespace TravelMore.Domain.Common.Models;
 
-public abstract class Entity<T>(T id)
+public abstract class Entity<TId>(TId id)
 {
-    public T Id { get; init; } = id;
+    public TId Id { get; init; } = id;
 }

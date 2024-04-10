@@ -12,7 +12,7 @@ public abstract class Coupon<TEntity, TId>
     public Money DiscountAmount { get; set; }
     public DateTime CreationDate { get; set; }
     public DateTime ExpiryDate { get; set; }
-    public bool IsExpired => DateTime.UtcNow <= ExpiryDate;
+    public virtual bool IsExpired => DateTime.UtcNow <= ExpiryDate;
     public TId TargetId { get; set; }
     public TEntity Target { get; set; }
 

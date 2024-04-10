@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TravelMore.Domain.Coupons.MembershipCoupons;
+using TravelMore.Domain.Memberships.Coupons;
 
 namespace TravelMore.Persistance.Configurations.Coupons;
 
@@ -8,7 +8,6 @@ public class MembershipCouponConfigurations : IEntityTypeConfiguration<Membershi
 {
     public void Configure(EntityTypeBuilder<MembershipCoupon> builder)
     {
-
         builder.HasOne(x => x.Target)
             .WithMany(x => x.Coupons)
             .HasForeignKey(x => x.TargetId);

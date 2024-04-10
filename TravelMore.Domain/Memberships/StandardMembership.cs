@@ -1,6 +1,6 @@
 ﻿
 using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Coupons.MembershipCoupons;
+using TravelMore.Domain.Memberships.Coupons;
 using TravelMore.Domain.Users.Guests;
 
 namespace TravelMore.Domain.Memberships;

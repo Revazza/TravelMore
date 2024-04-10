@@ -1,6 +1,6 @@
-﻿using TravelMore.Domain.Memberships;
+﻿using TravelMore.Domain.Coupons;
 
-namespace TravelMore.Domain.Coupons.MembershipCoupons;
+namespace TravelMore.Domain.Memberships.Coupons;
 
 public class MembershipCoupon : Coupon<Membership, Guid>
 {
