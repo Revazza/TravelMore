@@ -1,4 +1,4 @@
-﻿namespace TravelMore.Domain.Users.Guests.Exceptions;
+﻿namespace TravelMore.Domain.Guests.Exceptions;
 
 public class GuestInsufficientBalanceException : Exception
 {

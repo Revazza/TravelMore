@@ -1,8 +1,8 @@
 ﻿using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Coupons;
 using TravelMore.Domain.Discounts.Interfaces;
+using TravelMore.Domain.Guests;
 using TravelMore.Domain.Memberships.Coupons;
-using TravelMore.Domain.Users.Guests;
 
 namespace TravelMore.Domain.Memberships;
 

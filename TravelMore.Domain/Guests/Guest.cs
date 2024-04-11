@@ -1,20 +1,21 @@
 ﻿using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Memberships;
 using TravelMore.Domain.PaymentsDetails;
-using TravelMore.Domain.Users.Guests.Exceptions;
+using TravelMore.Domain.Users;
 
-namespace TravelMore.Domain.Users.Guests;
+namespace TravelMore.Domain.Guests;
 
 public class Guest : User
 {
     private readonly List<Booking> _bookings = [];
     public IReadOnlyCollection<Booking> Bookings => _bookings;
     public Money Balance { get; private set; } = 0;
-    public List<BookingPaymentDetails> Payments { get; set; } = [];
     public Guid MembershipId { get; set; }
     public Membership Membership { get; set; } = null!;
+    public List<BookingPaymentDetails> Payments { get; set; } = [];
 
     private Guest() : base(0, string.Empty, string.Empty, string.Empty)
     {

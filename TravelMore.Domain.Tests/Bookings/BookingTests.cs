@@ -2,12 +2,12 @@
 using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Guests;
+using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.Tests.TestsCommons;
-using TravelMore.Domain.Users.Guests;
-using TravelMore.Domain.Users.Guests.Exceptions;
 using TravelMore.Domain.Users.Hosts;
 using TravelMore.Domain.Users.Hosts.Exceptions;
 

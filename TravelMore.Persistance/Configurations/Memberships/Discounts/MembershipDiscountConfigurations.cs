@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TravelMore.Domain.Memberships.Discounts;
 
-namespace TravelMore.Persistance.Configurations.Discounts;
+namespace TravelMore.Persistance.Configurations.Memberships.Discounts;
 
 public class MembershipDiscountConfigurations : IEntityTypeConfiguration<MembershipDiscount>
 {

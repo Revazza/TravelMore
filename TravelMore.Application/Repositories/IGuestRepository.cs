@@ -1,4 +1,4 @@
-﻿using TravelMore.Domain.Users.Guests;
+﻿using TravelMore.Domain.Guests;
 
 namespace TravelMore.Application.Repositories;
 

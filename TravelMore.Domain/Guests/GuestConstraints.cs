@@ -1,4 +1,4 @@
-﻿namespace TravelMore.Domain.Users.Guests;
+﻿namespace TravelMore.Domain.Guests;
 
 public class GuestConstraints
 {

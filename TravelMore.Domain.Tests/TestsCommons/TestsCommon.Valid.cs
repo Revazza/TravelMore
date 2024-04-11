@@ -1,6 +1,6 @@
 ﻿using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Users.Guests;
+using TravelMore.Domain.Guests;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Tests.TestsCommons;

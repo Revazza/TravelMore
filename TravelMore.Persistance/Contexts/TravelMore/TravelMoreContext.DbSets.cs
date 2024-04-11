@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Discounts;
+using TravelMore.Domain.Guests;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Memberships;
 using TravelMore.Domain.PaymentsDetails;
 using TravelMore.Domain.Users;
-using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Persistance.Contexts.TravelMore;

@@ -1,7 +1,7 @@
 ﻿using System.IO.Pipes;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Guests;
 using TravelMore.Domain.PaymentsDetails.Enums;
-using TravelMore.Domain.Users.Guests;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.PaymentsDetails;

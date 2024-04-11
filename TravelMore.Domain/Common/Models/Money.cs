@@ -33,7 +33,7 @@ public record Money
     public static Money Create(decimal amount)
     {
         EnsureNonNegativeAmount(amount);
-        return new(amount);
+        return amount;
     }
 
     public static Money Default => 0;
