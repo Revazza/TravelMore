@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Diagnostics;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.PaymentsDetails;
+using TravelMore.Persistance.Configurations.Common;
 
 namespace TravelMore.Persistance.Configurations;
 
@@ -24,21 +25,9 @@ public class PaymentDetailsConfigurations : IEntityTypeConfiguration<BookingPaym
             .HasForeignKey(x => x.HostId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.ComplexProperty(x => x.TotalPayment, price =>
-        {
-            price.Property(x => x.Amount)
-                .HasPrecision(18, 10);
-        });
-        builder.ComplexProperty(x => x.Payment, price =>
-        {
-            price.Property(x => x.Amount)
-                .HasPrecision(18, 10);
-        });
-        builder.ComplexProperty(x => x.Fee, price =>
-        {
-            price.Property(x => x.Amount)
-                .HasPrecision(18, 10);
-        });
+        builder.ComplexProperty(x => x.TotalPayment, MoneyConfigurations.DefaultPrecision);
+        builder.ComplexProperty(x => x.Payment, MoneyConfigurations.DefaultPrecision);
+        builder.ComplexProperty(x => x.Fee, MoneyConfigurations.DefaultPrecision);
 
     }
 

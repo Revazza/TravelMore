@@ -8,12 +8,9 @@ public class MembershipDiscountConfigurations : IEntityTypeConfiguration<Members
 {
     public void Configure(EntityTypeBuilder<MembershipDiscount> builder)
     {
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id).ValueGeneratedNever();
-
-        builder.HasOne(x => x.Target)
+        builder.HasOne(x => x.Membership)
             .WithMany(x => x.Discounts)
-            .HasForeignKey(x => x.TargetId);
+            .HasForeignKey(x => x.MembershipId);
 
 
     }

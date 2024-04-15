@@ -3,15 +3,13 @@ using TravelMore.Domain.Discounts;
 
 namespace TravelMore.Domain.Memberships.Discounts;
 
-public class MembershipDiscount : Discount<Membership, Guid>
+public class MembershipDiscount : BaseDiscount
 {
-    public DateTime StartDate { get; set; }
-    public DateTime EndDate { get; set; }
+    public DateTime StartDate { get; protected set; }
+    public DateTime EndDate { get; protected set; }
+    public Guid MembershipId { get; protected set; }
+    public Membership Membership { get; protected set; } = null!;
     public override bool IsExpired => EndDate <= DateTime.UtcNow;
-
-    public MembershipDiscount(Guid id) : base(id)
-    {
-    }
 
     public override Money Apply(Money price)
     {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using TravelMore.Domain.Hotels;
+using TravelMore.Persistance.Configurations.Common;
 
 namespace TravelMore.Persistance.Configurations;
 
@@ -19,11 +20,7 @@ public class HotelConfigurations : IEntityTypeConfiguration<Hotel>
             .WithMany(x => x.Hotels)
             .HasForeignKey(x => x.HostId);
 
-        builder.ComplexProperty(x => x.PricePerDay, price =>
-        {
-            price.Property(x => x.Amount)
-                .HasPrecision(18, 10);
-        });
+        builder.ComplexProperty(x => x.PricePerDay, MoneyConfigurations.DefaultPrecision);
 
     }
 

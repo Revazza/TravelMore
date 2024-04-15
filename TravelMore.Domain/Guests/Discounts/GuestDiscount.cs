@@ -2,11 +2,10 @@
 
 namespace TravelMore.Domain.Guests.Discounts;
 
-public abstract class GuestDiscount : Discount<Guest, int>
+public abstract class GuestDiscount : BaseDiscount
 {
+    public int GuestId { get; protected set; }
+    public Guest Guest { get; protected set; } = null!;
 
-    protected GuestDiscount(int id) : base(id)
-    {
-    }
 
 }

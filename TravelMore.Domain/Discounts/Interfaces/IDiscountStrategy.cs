@@ -2,8 +2,7 @@
 
 namespace TravelMore.Domain.Discounts.Interfaces;
 
-public interface IDiscount
+public interface IDiscountStrategy
 {
-    bool IsExpired { get; }
-    public Money Apply(Money price);
+    Money Apply(Money amount);
 }
