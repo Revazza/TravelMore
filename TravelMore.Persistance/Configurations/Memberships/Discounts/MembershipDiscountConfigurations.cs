@@ -10,7 +10,8 @@ public class MembershipDiscountConfigurations : IEntityTypeConfiguration<Members
     {
         builder.HasOne(x => x.Membership)
             .WithMany(x => x.Discounts)
-            .HasForeignKey(x => x.MembershipId);
+            .HasForeignKey(x => x.MembershipId)
+            .OnDelete(DeleteBehavior.ClientSetNull);
 
 
     }

@@ -13,7 +13,5 @@ public class GuestConfigurations : IEntityTypeConfiguration<Guest>
             .IsUnique();
 
         builder.ComplexProperty(x => x.Balance, MoneyConfigurations.DefaultPrecision);
-        builder.HasMany(x => x.Discounts)
-            .WithOne();
     }
 }

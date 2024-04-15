@@ -108,8 +108,8 @@ namespace TravelMore.Persistance.Migrations
                     Type = table.Column<int>(type: "int", nullable: false),
                     Subject = table.Column<int>(type: "int", nullable: false),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
-                    GuestId = table.Column<int>(type: "int", nullable: true),
                     Amount_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
+                    GuestId = table.Column<int>(type: "int", nullable: true),
                     StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     MembershipId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
@@ -121,13 +121,13 @@ namespace TravelMore.Persistance.Migrations
                         name: "FK_Discount_Memberships_MembershipId",
                         column: x => x.MembershipId,
                         principalTable: "Memberships",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Discount_Users_GuestId",
                         column: x => x.GuestId,
                         principalTable: "Users",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(

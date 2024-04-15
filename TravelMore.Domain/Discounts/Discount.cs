@@ -1,6 +1,5 @@
 ﻿using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts.Enums;
-using TravelMore.Domain.Guests;
 
 namespace TravelMore.Domain.Discounts;
 

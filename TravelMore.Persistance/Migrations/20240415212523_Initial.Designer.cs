@@ -13,7 +13,7 @@ using TravelMore.Persistance.Contexts.TravelMore;
 namespace TravelMore.Persistance.Migrations
 {
     [DbContext(typeof(TravelMoreContext))]
-    [Migration("20240415201948_Initial")]
+    [Migration("20240415212523_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -86,9 +86,6 @@ namespace TravelMore.Persistance.Migrations
                         .HasMaxLength(21)
                         .HasColumnType("nvarchar(21)");
 
-                    b.Property<int?>("GuestId")
-                        .HasColumnType("int");
-
                     b.Property<int>("Subject")
                         .HasColumnType("int");
 
@@ -105,8 +102,6 @@ namespace TravelMore.Persistance.Migrations
                         });
 
                     b.HasKey("Id");
-
-                    b.HasIndex("GuestId");
 
                     b.ToTable("Discount");
 
@@ -314,6 +309,18 @@ namespace TravelMore.Persistance.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("TravelMore.Domain.Guests.Discounts.GuestDiscount", b =>
+                {
+                    b.HasBaseType("TravelMore.Domain.Discounts.Discount");
+
+                    b.Property<int>("GuestId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("GuestId");
+
+                    b.HasDiscriminator().HasValue("GuestDiscount");
+                });
+
             modelBuilder.Entity("TravelMore.Domain.Memberships.Discounts.MembershipDiscount", b =>
                 {
                     b.HasBaseType("TravelMore.Domain.Discounts.Discount");
@@ -388,13 +395,6 @@ namespace TravelMore.Persistance.Migrations
                     b.Navigation("PaymentDetails");
                 });
 
-            modelBuilder.Entity("TravelMore.Domain.Discounts.Discount", b =>
-                {
-                    b.HasOne("TravelMore.Domain.Guests.Guest", null)
-                        .WithMany("Discounts")
-                        .HasForeignKey("GuestId");
-                });
-
             modelBuilder.Entity("TravelMore.Domain.Hotels.Hotel", b =>
                 {
                     b.HasOne("TravelMore.Domain.Users.Hosts.Host", "Host")
@@ -447,12 +447,22 @@ namespace TravelMore.Persistance.Migrations
                     b.Navigation("Payer");
                 });
 
+            modelBuilder.Entity("TravelMore.Domain.Guests.Discounts.GuestDiscount", b =>
+                {
+                    b.HasOne("TravelMore.Domain.Guests.Guest", "Guest")
+                        .WithMany("Discounts")
+                        .HasForeignKey("GuestId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .IsRequired();
+
+                    b.Navigation("Guest");
+                });
+
             modelBuilder.Entity("TravelMore.Domain.Memberships.Discounts.MembershipDiscount", b =>
                 {
                     b.HasOne("TravelMore.Domain.Memberships.Membership", "Membership")
                         .WithMany("Discounts")
                         .HasForeignKey("MembershipId")
-                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Membership");

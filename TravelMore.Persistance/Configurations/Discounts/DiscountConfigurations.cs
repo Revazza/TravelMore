@@ -5,7 +5,7 @@ using TravelMore.Persistance.Configurations.Common;
 
 namespace TravelMore.Persistance.Configurations.Discounts;
 
-public class BaseDiscountConfigurations : IEntityTypeConfiguration<Discount>
+public class DiscountConfigurations : IEntityTypeConfiguration<Discount>
 {
     public void Configure(EntityTypeBuilder<Discount> builder)
     {
