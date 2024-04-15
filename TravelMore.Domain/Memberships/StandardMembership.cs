@@ -1,37 +1,32 @@
-﻿
-using TravelMore.Domain.Common.Models;
+﻿using TravelMore.Domain.Discounts.Enums;
 using TravelMore.Domain.Guests;
-using TravelMore.Domain.Memberships.Coupons;
+using TravelMore.Domain.Memberships.Discounts;
 
 namespace TravelMore.Domain.Memberships;
 
 public class StandardMembership : Membership
 {
-    private StandardMembership(Guid id) : base(id)
-    {
 
+    private StandardMembership(Guest guest) : base()
+    {
+        PricePerMonth = 10;
+        PricePerYear = 100;
+        Guest = guest;
     }
 
-    private StandardMembership(
-        Guid id,
-        Money pricePerMonth,
-        Money pricePerYear,
-        Guest guest,
-        List<MembershipCoupon> membershipCoupons)
-            : base(id, pricePerMonth, pricePerYear, guest, membershipCoupons)
+    public static StandardMembership Create(Guest guest)
     {
 
+        return new StandardMembership(guest);
     }
 
-    public static StandardMembership Create(
-        Guid id,
-        Money pricePerMonth,
-        Money pricePerYear,
-        Guest guest,
-        List<MembershipCoupon> membershipCoupons)
-    {
 
-        return new(id, pricePerMonth, pricePerYear, guest, membershipCoupons);
+    private List<MembershipDiscount> GetInitialDiscounts()
+    {
+        return
+            [
+                new MembershipDiscount(DiscountType.Percentage,DateTime.UtcNow,DateTime.UtcNow.AddDays(30),this)
+            ];
     }
 
 }

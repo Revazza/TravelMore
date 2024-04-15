@@ -13,11 +13,10 @@ public class GuestBookingDiscount : GuestDiscount
     {
     }
 
-    public GuestBookingDiscount(int limit, DiscountType type, Money amount, Guest guest)
+    public GuestBookingDiscount(int limit, DiscountType type, Guest guest)
     {
         _limit = limit;
         Type = type;
-        Amount = amount;
         Guest = guest;
     }
 

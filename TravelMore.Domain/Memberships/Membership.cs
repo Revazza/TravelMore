@@ -16,20 +16,12 @@ public abstract class Membership : Entity<Guid>
     public IReadOnlyCollection<MembershipCoupon> Coupons => _coupons;
     public IReadOnlyCollection<MembershipDiscount> Discounts => _discounts;
 
-    protected Membership(
-        Guid id,
-        Money pricePerMonth,
-        Money pricePerYear,
-        Guest guest,
-        List<MembershipCoupon> coupons) : base(id)
+
+    protected Membership() : base(Guid.NewGuid())
     {
-        PricePerMonth = pricePerMonth;
-        PricePerYear = pricePerYear;
-        Guest = guest;
-        _coupons = coupons;
     }
 
-    protected Membership(Guid id) : base(id)
+    protected Membership(Guest guest) : base(Guid.NewGuid())
     {
     }
 

@@ -1,8 +1,4 @@
-﻿using TravelMore.Domain.Common.Models;
-using TravelMore.Domain.Coupons;
-using TravelMore.Domain.Discounts.Interfaces;
-using TravelMore.Domain.Guests;
-using TravelMore.Domain.Memberships.Coupons;
+﻿using TravelMore.Domain.Guests;
 
 namespace TravelMore.Domain.Memberships;
 
@@ -11,29 +7,18 @@ public class PremiumMembership : Membership
 
     private PremiumMembership(Guid id) : base(id)
     {
-        
+
     }
 
-    private PremiumMembership(
-        Guid id,
-        Money pricePerMonth,
-        Money pricePerYear,
-        Guest guest,
-        List<MembershipCoupon> membershipCoupons)
-            : base(id, pricePerMonth, pricePerYear, guest, membershipCoupons)
+    private PremiumMembership(Guest guest) : base(guest)
     {
 
     }
 
-    public static PremiumMembership Create(
-        Guid id,
-        Money pricePerMonth,
-        Money pricePerYear,
-        Guest guest,
-        List<MembershipCoupon> membershipCoupons)
+    public static PremiumMembership Create(Guest guest)
     {
 
-        return new(id, pricePerMonth, pricePerYear, guest, membershipCoupons);
+        return new(guest);
     }
 
 }
