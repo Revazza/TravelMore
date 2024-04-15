@@ -2,7 +2,6 @@
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
-using TravelMore.Domain.Guests.Discounts;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Memberships;
 using TravelMore.Domain.PaymentsDetails;
@@ -18,7 +17,7 @@ public class Guest : User
     public Guid MembershipId { get; set; }
     public Membership Membership { get; set; } = null!;
     public List<BookingPaymentDetails> Payments { get; set; } = [];
-    public List<GuestDiscount> Discounts { get; set; } = [];
+    public List<Discount> Discounts { get; set; } = [];
 
 
     private Guest() : base(0, string.Empty, string.Empty, string.Empty)

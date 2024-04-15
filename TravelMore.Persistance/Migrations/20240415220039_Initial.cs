@@ -47,24 +47,23 @@ namespace TravelMore.Persistance.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "GuestDiscount",
+                name: "DiscountGuest",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    GuestId = table.Column<int>(type: "int", nullable: false),
-                    DiscountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    DiscountsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GuestId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GuestDiscount", x => x.Id);
+                    table.PrimaryKey("PK_DiscountGuest", x => new { x.DiscountsId, x.GuestId });
                     table.ForeignKey(
-                        name: "FK_GuestDiscount_Discounts_DiscountId",
-                        column: x => x.DiscountId,
+                        name: "FK_DiscountGuest_Discounts_DiscountsId",
+                        column: x => x.DiscountsId,
                         principalTable: "Discounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_GuestDiscount_Users_GuestId",
+                        name: "FK_DiscountGuest_Users_GuestId",
                         column: x => x.GuestId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -215,13 +214,8 @@ namespace TravelMore.Persistance.Migrations
                 column: "PaymentDetailsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_GuestDiscount_DiscountId",
-                table: "GuestDiscount",
-                column: "DiscountId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_GuestDiscount_GuestId",
-                table: "GuestDiscount",
+                name: "IX_DiscountGuest_GuestId",
+                table: "DiscountGuest",
                 column: "GuestId");
 
             migrationBuilder.CreateIndex(
@@ -264,7 +258,7 @@ namespace TravelMore.Persistance.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
-                name: "GuestDiscount");
+                name: "DiscountGuest");
 
             migrationBuilder.DropTable(
                 name: "MembershipCoupon");

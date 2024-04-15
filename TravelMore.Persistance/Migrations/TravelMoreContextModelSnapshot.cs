@@ -23,6 +23,21 @@ namespace TravelMore.Persistance.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("DiscountGuest", b =>
+                {
+                    b.Property<Guid>("DiscountsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("GuestId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DiscountsId", "GuestId");
+
+                    b.HasIndex("GuestId");
+
+                    b.ToTable("DiscountGuest");
+                });
+
             modelBuilder.Entity("TravelMore.Domain.Bookings.Booking", b =>
                 {
                     b.Property<Guid>("Id")
@@ -105,27 +120,6 @@ namespace TravelMore.Persistance.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("Discount");
 
                     b.UseTphMappingStrategy();
-                });
-
-            modelBuilder.Entity("TravelMore.Domain.Guests.Discounts.GuestDiscount", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("DiscountId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("GuestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DiscountId");
-
-                    b.HasIndex("GuestId");
-
-                    b.ToTable("GuestDiscount");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Hotels.Hotel", b =>
@@ -376,6 +370,21 @@ namespace TravelMore.Persistance.Migrations
                     b.HasDiscriminator().HasValue("Host");
                 });
 
+            modelBuilder.Entity("DiscountGuest", b =>
+                {
+                    b.HasOne("TravelMore.Domain.Discounts.Discount", null)
+                        .WithMany()
+                        .HasForeignKey("DiscountsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("TravelMore.Domain.Guests.Guest", null)
+                        .WithMany()
+                        .HasForeignKey("GuestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("TravelMore.Domain.Bookings.Booking", b =>
                 {
                     b.HasOne("TravelMore.Domain.Hotels.Hotel", "BookedHotel")
@@ -401,25 +410,6 @@ namespace TravelMore.Persistance.Migrations
                     b.Navigation("Guest");
 
                     b.Navigation("PaymentDetails");
-                });
-
-            modelBuilder.Entity("TravelMore.Domain.Guests.Discounts.GuestDiscount", b =>
-                {
-                    b.HasOne("TravelMore.Domain.Discounts.Discount", "Discount")
-                        .WithMany()
-                        .HasForeignKey("DiscountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TravelMore.Domain.Guests.Guest", "Guest")
-                        .WithMany("Discounts")
-                        .HasForeignKey("GuestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Discount");
-
-                    b.Navigation("Guest");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Hotels.Hotel", b =>
@@ -487,8 +477,6 @@ namespace TravelMore.Persistance.Migrations
             modelBuilder.Entity("TravelMore.Domain.Guests.Guest", b =>
                 {
                     b.Navigation("Bookings");
-
-                    b.Navigation("Discounts");
 
                     b.Navigation("Membership")
                         .IsRequired();
