@@ -19,8 +19,6 @@ public partial class TravelMoreContext : DbContext
     public virtual DbSet<Hotel> Hotels { get; set; }
     public virtual DbSet<Booking> Bookings { get; set; }
     public virtual DbSet<Membership> Memberships { get; set; }
-    public virtual DbSet<StandardMembership> StandardMemberships { get; set; }
-    public virtual DbSet<PremiumMembership> PremiumMemberships { get; set; }
 
 
 }

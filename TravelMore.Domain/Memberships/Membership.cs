@@ -5,7 +5,7 @@ using TravelMore.Domain.Memberships.Discounts;
 
 namespace TravelMore.Domain.Memberships;
 
-public abstract class Membership : Entity<Guid>
+public class Membership : Entity<Guid>
 {
     protected readonly List<MembershipCoupon> _coupons = [];
     protected readonly List<MembershipDiscount> _discounts = [];

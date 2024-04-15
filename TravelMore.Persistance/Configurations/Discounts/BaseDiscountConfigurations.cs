@@ -5,9 +5,9 @@ using TravelMore.Persistance.Configurations.Common;
 
 namespace TravelMore.Persistance.Configurations.Discounts;
 
-public class BaseDiscountConfigurations : IEntityTypeConfiguration<BaseDiscount>
+public class BaseDiscountConfigurations : IEntityTypeConfiguration<Discount>
 {
-    public void Configure(EntityTypeBuilder<BaseDiscount> builder)
+    public void Configure(EntityTypeBuilder<Discount> builder)
     {
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedNever();

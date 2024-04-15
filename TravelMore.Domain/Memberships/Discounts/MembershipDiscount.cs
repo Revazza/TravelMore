@@ -4,7 +4,7 @@ using TravelMore.Domain.Discounts.Enums;
 
 namespace TravelMore.Domain.Memberships.Discounts;
 
-public class MembershipDiscount : BaseDiscount
+public class MembershipDiscount : Discount
 {
     public DateTime StartDate { get; protected set; }
     public DateTime EndDate { get; protected set; }
@@ -12,11 +12,16 @@ public class MembershipDiscount : BaseDiscount
     public Membership Membership { get; protected set; } = null!;
     public override bool IsExpired => EndDate <= DateTime.UtcNow;
 
+    public MembershipDiscount()
+    {
+        
+    }
+
     public MembershipDiscount(
         DiscountType type,
         DateTime startDate,
         DateTime endDate,
-        Membership membership) : base(type)
+        Membership membership) 
     {
         StartDate = startDate;
         EndDate = endDate;
