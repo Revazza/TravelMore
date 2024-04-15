@@ -13,7 +13,7 @@ using TravelMore.Persistance.Contexts.TravelMore;
 namespace TravelMore.Persistance.Migrations
 {
     [DbContext(typeof(TravelMoreContext))]
-    [Migration("20240415213946_Initial")]
+    [Migration("20240415214439_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -81,6 +81,11 @@ namespace TravelMore.Persistance.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
+
                     b.Property<int>("Subject")
                         .HasColumnType("int");
 
@@ -98,7 +103,11 @@ namespace TravelMore.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Discount");
+                    b.ToTable("Discounts");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Discount");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Guests.Discounts.GuestDiscount", b =>
@@ -319,6 +328,26 @@ namespace TravelMore.Persistance.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("User");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("TravelMore.Domain.Discounts.LimitedUseDiscount", b =>
+                {
+                    b.HasBaseType("TravelMore.Domain.Discounts.Discount");
+
+                    b.Property<int>("RemainingUses")
+                        .HasColumnType("int");
+
+                    b.HasDiscriminator().HasValue("LimitedUseDiscount");
+                });
+
+            modelBuilder.Entity("TravelMore.Domain.Discounts.TimeLimitedDiscount", b =>
+                {
+                    b.HasBaseType("TravelMore.Domain.Discounts.Discount");
+
+                    b.Property<DateTime>("ExpireDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasDiscriminator().HasValue("TimeLimitedDiscount");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Guests.Guest", b =>

@@ -12,17 +12,20 @@ namespace TravelMore.Persistance.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Discount",
+                name: "Discounts",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Type = table.Column<int>(type: "int", nullable: false),
                     Subject = table.Column<int>(type: "int", nullable: false),
-                    Amount_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false)
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
+                    Amount_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
+                    RemainingUses = table.Column<int>(type: "int", nullable: true),
+                    ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Discount", x => x.Id);
+                    table.PrimaryKey("PK_Discounts", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -55,9 +58,9 @@ namespace TravelMore.Persistance.Migrations
                 {
                     table.PrimaryKey("PK_GuestDiscount", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_GuestDiscount_Discount_DiscountId",
+                        name: "FK_GuestDiscount_Discounts_DiscountId",
                         column: x => x.DiscountId,
-                        principalTable: "Discount",
+                        principalTable: "Discounts",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -273,7 +276,7 @@ namespace TravelMore.Persistance.Migrations
                 name: "PaymentsDetails");
 
             migrationBuilder.DropTable(
-                name: "Discount");
+                name: "Discounts");
 
             migrationBuilder.DropTable(
                 name: "Memberships");
