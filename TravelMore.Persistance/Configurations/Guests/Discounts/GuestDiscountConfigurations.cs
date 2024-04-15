@@ -10,8 +10,11 @@ public class GuestDiscountConfigurations : IEntityTypeConfiguration<GuestDiscoun
     {
         builder.HasOne(x => x.Guest)
             .WithMany(x => x.Discounts)
-            .HasForeignKey(x => x.GuestId)
-            .OnDelete(DeleteBehavior.SetNull);
+            .HasForeignKey(x => x.GuestId);
+
+        builder.HasOne(x => x.Discount)
+            .WithMany()
+            .HasForeignKey(x => x.DiscountId);
 
     }
 }

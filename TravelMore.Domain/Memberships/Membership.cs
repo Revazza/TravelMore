@@ -14,7 +14,7 @@ public class Membership : Entity<Guid>
     public int GuestId { get; set; }
     public Guest Guest { get; set; } = null!;
     public IReadOnlyCollection<MembershipCoupon> Coupons => _coupons;
-    public IReadOnlyCollection<MembershipDiscount> Discounts => _discounts;
+    //public IReadOnlyCollection<MembershipDiscount> Discounts => _discounts;
 
 
     protected Membership() : base(Guid.NewGuid())

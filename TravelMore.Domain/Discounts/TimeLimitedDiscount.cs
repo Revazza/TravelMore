@@ -1,9 +1,15 @@
 ﻿
+using TravelMore.Domain.Common.Models;
+
 namespace TravelMore.Domain.Discounts;
 
-public abstract class TimeLimitedDiscount : Discount
+public class TimeLimitedDiscount : Discount
 {
     public DateTime ExpireDate { get; private set; }
     public override bool IsExpired => DateTime.UtcNow >= ExpireDate;
 
+    public override Money Apply(Money price)
+    {
+        throw new NotImplementedException();
+    }
 }

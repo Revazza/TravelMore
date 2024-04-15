@@ -12,6 +12,20 @@ namespace TravelMore.Persistance.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "Discount",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Subject = table.Column<int>(type: "int", nullable: false),
+                    Amount_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Discount", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -27,6 +41,31 @@ namespace TravelMore.Persistance.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "GuestDiscount",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    GuestId = table.Column<int>(type: "int", nullable: false),
+                    DiscountId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GuestDiscount", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_GuestDiscount_Discount_DiscountId",
+                        column: x => x.DiscountId,
+                        principalTable: "Discount",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_GuestDiscount_Users_GuestId",
+                        column: x => x.GuestId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -98,36 +137,6 @@ namespace TravelMore.Persistance.Migrations
                         column: x => x.PayerId,
                         principalTable: "Users",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Discount",
-                columns: table => new
-                {
-                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    Type = table.Column<int>(type: "int", nullable: false),
-                    Subject = table.Column<int>(type: "int", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
-                    Amount_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
-                    GuestId = table.Column<int>(type: "int", nullable: true),
-                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    MembershipId = table.Column<Guid>(type: "uniqueidentifier", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Discount", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Discount_Memberships_MembershipId",
-                        column: x => x.MembershipId,
-                        principalTable: "Memberships",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Discount_Users_GuestId",
-                        column: x => x.GuestId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -203,14 +212,14 @@ namespace TravelMore.Persistance.Migrations
                 column: "PaymentDetailsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Discount_GuestId",
-                table: "Discount",
-                column: "GuestId");
+                name: "IX_GuestDiscount_DiscountId",
+                table: "GuestDiscount",
+                column: "DiscountId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Discount_MembershipId",
-                table: "Discount",
-                column: "MembershipId");
+                name: "IX_GuestDiscount_GuestId",
+                table: "GuestDiscount",
+                column: "GuestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Hotels_HostId",
@@ -252,7 +261,7 @@ namespace TravelMore.Persistance.Migrations
                 name: "Bookings");
 
             migrationBuilder.DropTable(
-                name: "Discount");
+                name: "GuestDiscount");
 
             migrationBuilder.DropTable(
                 name: "MembershipCoupon");
@@ -262,6 +271,9 @@ namespace TravelMore.Persistance.Migrations
 
             migrationBuilder.DropTable(
                 name: "PaymentsDetails");
+
+            migrationBuilder.DropTable(
+                name: "Discount");
 
             migrationBuilder.DropTable(
                 name: "Memberships");
