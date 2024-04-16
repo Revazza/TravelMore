@@ -20,6 +20,10 @@ public class HotelConfigurations : IEntityTypeConfiguration<Hotel>
             .WithMany(x => x.Hotels)
             .HasForeignKey(x => x.HostId);
 
+        builder.HasOne(x => x.Discount)
+            .WithMany()
+            .HasForeignKey(x => x.DiscountId);
+
         builder.ComplexProperty(x => x.PricePerDay, MoneyConfigurations.DefaultPrecision);
 
     }

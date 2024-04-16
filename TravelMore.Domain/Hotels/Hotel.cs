@@ -2,6 +2,7 @@
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Extensions;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.Users.Hosts;
@@ -19,6 +20,8 @@ public class Hotel : Entity<Guid>
     public Money PricePerDay { get; set; } = Money.Create(0);
     public int HostId { get; }
     public Host Host { get; } = null!;
+    public Guid DiscountId { get; set; }
+    public Discount? Discount { get; set; }
 
     public Hotel(Guid id) : base(id)
     {
@@ -38,6 +41,16 @@ public class Hotel : Entity<Guid>
         PricePerDay = pricePerNight;
         Host = host;
         HostId = Host.Id;
+    }
+
+    public Money ApplyDiscount(Money money)
+    {
+        if (Discount is null)
+        {
+            return money;
+        }
+
+        return Discount.Apply(money);
     }
 
     public void SetPricePerDay(decimal price)

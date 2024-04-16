@@ -1,6 +1,7 @@
 ﻿using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
@@ -19,6 +20,7 @@ public sealed class Booking : Entity<Guid>
     public Guid BookedHotelId { get; private set; }
     public Hotel BookedHotel { get; private set; }
     public BookingStatus Status { get; private set; }
+    public List<Discount> AppliedDiscounts { get; set; }
 
 
     /// <summary>
@@ -29,6 +31,7 @@ public sealed class Booking : Entity<Guid>
         Details = null!;
         BookedHotel = null!;
         PaymentDetails = null!;
+        AppliedDiscounts = [];
     }
 
 

@@ -12,12 +12,14 @@ namespace TravelMore.Domain.Guests;
 public class Guest : User
 {
     private readonly List<Booking> _bookings = [];
+    private readonly List<BookingPaymentDetails> _bookingPaymentDetails = [];
+    private readonly List<Discount> _discounts = [];
     public IReadOnlyCollection<Booking> Bookings => _bookings;
+    public IReadOnlyCollection<BookingPaymentDetails> BookingPaymentDetails => _bookingPaymentDetails;
+    public IReadOnlyCollection<Discount> Discounts => _discounts;
     public Money Balance { get; private set; } = 0;
     public Guid MembershipId { get; set; }
     public Membership Membership { get; set; } = null!;
-    public List<BookingPaymentDetails> Payments { get; set; } = [];
-    public List<Discount> Discounts { get; set; } = [];
 
 
     private Guest() : base(0, string.Empty, string.Empty, string.Empty)
@@ -29,7 +31,7 @@ public class Guest : User
         : base(id, email, passwordHash, salt)
     {
         Balance = balance;
-        Discounts = [];
+        _discounts = [];
     }
 
     public virtual void EnsureCanBook(BookingDetails bookingDetails)
