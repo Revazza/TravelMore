@@ -1,12 +1,15 @@
 ﻿using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
+using TravelMore.Domain.Common.Calculators;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
+using TravelMore.Domain.Discounts.Calculators;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.PaymentsDetails;
 using TravelMore.Domain.PaymentsDetails.Enums;
+using TravelMore.Domain.PaymentsDetails.ValueObjects;
 using TravelMore.Domain.Users.Hosts.Exceptions;
 
 namespace TravelMore.Domain.Bookings;
@@ -14,7 +17,7 @@ namespace TravelMore.Domain.Bookings;
 public sealed class Booking : Entity<Guid>
 {
     public BookingDetails Details { get; private set; }
-    public BookingPaymentDetails PaymentDetails { get; private set; }
+    public BookingPaymentDetails? Payment { get; private set; }
     public int GuestId { get; private set; }
     public Guest Guest { get; private set; } = null!;
     public Guid BookedHotelId { get; private set; }
@@ -30,12 +33,13 @@ public sealed class Booking : Entity<Guid>
     {
         Details = null!;
         BookedHotel = null!;
-        PaymentDetails = null!;
+        Payment = null;
         AppliedDiscounts = [];
     }
 
 
     private Booking(
+        BookingPaymentDetails payment,
         BookingDetails details,
         Guest guest,
         Hotel bookedHotel) : base(Guid.NewGuid())
@@ -44,7 +48,7 @@ public sealed class Booking : Entity<Guid>
         Status = BookingStatus.Pending;
         Guest = guest;
         BookedHotel = bookedHotel;
-        PaymentDetails = null!;
+        Payment = payment;
     }
 
     public static Booking Create(
@@ -53,20 +57,34 @@ public sealed class Booking : Entity<Guid>
        short numberOfGuests,
        PaymentMethod paymentMethod,
        Guest guest,
-       Hotel hotel)
+       Hotel hotel,
+       List<Discount> guestDiscounts)
     {
         var schedule = BookingSchedule.Create(from, to);
-        var numberOfDays = schedule.GetDurationInDays();
+        var numberOfNights = schedule.GetDurationInDays();
 
         var bookingDetails = new BookingDetails(
             numberOfGuests,
-            numberOfDays,
+            numberOfNights,
             schedule);
 
         hotel.EnsureBookable(bookingDetails, paymentMethod);
         guest.EnsureCanBook(bookingDetails);
+        guest.EnsureHasDiscounts(guestDiscounts);
 
-        return new(bookingDetails, guest, hotel);
+        AddHotelDiscountIfExists(guestDiscounts, hotel.Discount);
+        var priceDetails = CalculatePriceDetails(hotel.GetPriceForNights(numberOfNights), guestDiscounts);
+        var payment = new BookingPaymentDetails(priceDetails, paymentMethod, guest);
+
+        return new(payment, bookingDetails, guest, hotel);
+    }
+
+    private static PriceDetails CalculatePriceDetails(Money price, List<Discount> discounts)
+    {
+        var discountedPrice = new DiscountsApplier(discounts).Apply(price);
+        var discountedAmount = price - discountedPrice;
+
+        return new(price, discountedAmount, discountedPrice);
     }
 
     public void Accept(int hostId)
@@ -91,19 +109,24 @@ public sealed class Booking : Entity<Guid>
 
     public void SetPaymentDetails(BookingPaymentDetails paymentDetails)
     {
-        PaymentDetails = paymentDetails;
+        Payment = paymentDetails;
     }
 
-    public bool IsPaymentMethodMatching(PaymentMethod paymentMethod) => paymentMethod == PaymentDetails!.PaymentMethod;
+    public bool IsPaymentMethodMatching(PaymentMethod paymentMethod) => paymentMethod == Payment!.PaymentMethod;
 
     public bool DoesOverLap(DateTime from, DateTime to) => Details.Schedule.From <= to && from <= Details.Schedule.To;
 
     public void EnsurePaymentCompleted()
     {
         //TODO: create custom exception 
-        if (PaymentDetails.PaymentStatus != PaymentStatus.Completed)
+
+        if (Payment is null)
         {
-            throw new Exception();
+            throw new Exception("Payment is not provided");
+        }
+        if (Payment.PaymentStatus != PaymentStatus.Completed)
+        {
+            throw new Exception("Payment status is not completed");
         }
     }
 
@@ -129,6 +152,14 @@ public sealed class Booking : Entity<Guid>
         if (BookedHotel.Host.Id != hostId)
         {
             throw new HostIdMismatchedException();
+        }
+    }
+
+    private static void AddHotelDiscountIfExists(List<Discount> discounts, Discount? hotelDiscount)
+    {
+        if (hotelDiscount is not null)
+        {
+            discounts.Add(hotelDiscount);
         }
     }
 

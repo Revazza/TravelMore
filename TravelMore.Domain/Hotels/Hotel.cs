@@ -17,7 +17,7 @@ public class Hotel : Entity<Guid>
     public IReadOnlyCollection<PaymentMethod> AcceptedPaymentMethods => _acceptedPaymentMethods;
     public string Description { get; } = string.Empty;
     public short MaxNumberOfGuests { get; set; }
-    public Money PricePerDay { get; set; } = Money.Create(0);
+    public Money PricePerNight { get; set; } = 0;
     public int HostId { get; }
     public Host Host { get; } = null!;
     public Guid DiscountId { get; set; }
@@ -38,10 +38,12 @@ public class Hotel : Entity<Guid>
     {
         Description = description;
         MaxNumberOfGuests = maxNumberOfGuests;
-        PricePerDay = pricePerNight;
+        PricePerNight = pricePerNight;
         Host = host;
         HostId = Host.Id;
     }
+
+    public Money GetPriceForNights(int nights) => PricePerNight * nights;
 
     public Money ApplyDiscount(Money money)
     {
@@ -55,7 +57,7 @@ public class Hotel : Entity<Guid>
 
     public void SetPricePerDay(decimal price)
     {
-        PricePerDay = Money.Create(price);
+        PricePerNight = Money.Create(price);
     }
 
     public void SetMaxNumberOfGuests(short numberOfGuests)

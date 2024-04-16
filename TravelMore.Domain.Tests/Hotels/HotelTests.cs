@@ -46,7 +46,7 @@ public class HotelTests
             Assert.That(result.Id, Is.EqualTo(hotelId));
             Assert.That(result.Description, Is.EqualTo(description));
             Assert.That(result.MaxNumberOfGuests, Is.EqualTo(maxNumberOfGuests));
-            Assert.That(result.PricePerDay, Is.EqualTo(pricePerNight));
+            Assert.That(result.PricePerNight, Is.EqualTo(pricePerNight));
             Assert.That(result.Host, Is.EqualTo(_host));
             Assert.That(result.Bookings, Is.Empty);
         });
@@ -59,15 +59,15 @@ public class HotelTests
         var pricePerNight = 10;
         _hotel.SetPricePerDay(pricePerNight);
 
-        Assert.That(_hotel.PricePerDay.Amount, Is.EqualTo(pricePerNight));
+        Assert.That(_hotel.PricePerNight.Amount, Is.EqualTo(pricePerNight));
     }
 
     public void SetPricePerNight_Should_ReturnFailureResult_When_NegativeParameterIsProvided()
     {
         var invalidPricePerNight = -1;
-        var initialPricePerNight = _hotel.PricePerDay;
+        var initialPricePerNight = _hotel.PricePerNight;
         Assert.Throws<NegativeAmountException>(() => _hotel.SetPricePerDay(invalidPricePerNight));
-        Assert.That(_hotel.PricePerDay, Is.EqualTo(initialPricePerNight));
+        Assert.That(_hotel.PricePerNight, Is.EqualTo(initialPricePerNight));
     }
 
 }

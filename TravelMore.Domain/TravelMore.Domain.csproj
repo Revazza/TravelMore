@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Common\Intefaces\" />
-    <Folder Include="Guests\Helpers\" />
   </ItemGroup>
 
 </Project>

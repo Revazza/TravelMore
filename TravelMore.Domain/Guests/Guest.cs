@@ -1,4 +1,5 @@
-﻿using TravelMore.Domain.Bookings;
+﻿using System.Numerics;
+using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
@@ -14,12 +15,12 @@ public class Guest : User
     private readonly List<Booking> _bookings = [];
     private readonly List<BookingPaymentDetails> _bookingPaymentDetails = [];
     private readonly List<Discount> _discounts = [];
-    public IReadOnlyCollection<Booking> Bookings => _bookings;
-    public IReadOnlyCollection<BookingPaymentDetails> BookingPaymentDetails => _bookingPaymentDetails;
-    public IReadOnlyCollection<Discount> Discounts => _discounts;
     public Money Balance { get; private set; } = 0;
     public Guid MembershipId { get; set; }
     public Membership Membership { get; set; } = null!;
+    public IReadOnlyCollection<Booking> Bookings => _bookings;
+    public IReadOnlyCollection<BookingPaymentDetails> BookingPaymentDetails => _bookingPaymentDetails;
+    public IReadOnlyCollection<Discount> Discounts => _discounts;
 
 
     private Guest() : base(0, string.Empty, string.Empty, string.Empty)
@@ -33,6 +34,18 @@ public class Guest : User
         Balance = balance;
         _discounts = [];
     }
+
+    public void EnsureHasDiscounts(List<Discount> discounts) => discounts.ForEach(EnsureHasDiscount);
+
+    public void EnsureHasDiscount(Discount discount)
+    {
+        if (!HasDiscount(discount))
+        {
+            throw new Exception($"The discount with {discount.Id} could not be found for the guest");
+        }
+    }
+
+    public bool HasDiscount(Discount discount) => Discounts.Contains(discount) || Membership.HasDiscount(discount);
 
     public virtual void EnsureCanBook(BookingDetails bookingDetails)
     {
