@@ -1,15 +1,12 @@
 ﻿using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
-using TravelMore.Domain.Common.Calculators;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
-using TravelMore.Domain.Discounts.Calculators;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.PaymentsDetails;
 using TravelMore.Domain.PaymentsDetails.Enums;
-using TravelMore.Domain.PaymentsDetails.ValueObjects;
 using TravelMore.Domain.Users.Hosts.Exceptions;
 
 namespace TravelMore.Domain.Bookings;
@@ -39,7 +36,6 @@ public sealed class Booking : Entity<Guid>
 
 
     private Booking(
-        BookingPaymentDetails payment,
         BookingDetails details,
         Guest guest,
         Hotel bookedHotel) : base(Guid.NewGuid())
@@ -48,7 +44,6 @@ public sealed class Booking : Entity<Guid>
         Status = BookingStatus.Pending;
         Guest = guest;
         BookedHotel = bookedHotel;
-        Payment = payment;
     }
 
     public static Booking Create(
@@ -72,19 +67,7 @@ public sealed class Booking : Entity<Guid>
         guest.EnsureCanBook(bookingDetails);
         guest.EnsureHasDiscounts(guestDiscounts);
 
-        AddHotelDiscountIfExists(guestDiscounts, hotel.Discount);
-        var priceDetails = CalculatePriceDetails(hotel.GetPriceForNights(numberOfNights), guestDiscounts);
-        var payment = new BookingPaymentDetails(priceDetails, paymentMethod, guest);
-
-        return new(payment, bookingDetails, guest, hotel);
-    }
-
-    private static PriceDetails CalculatePriceDetails(Money price, List<Discount> discounts)
-    {
-        var discountedPrice = new DiscountsApplier(discounts).Apply(price);
-        var discountedAmount = price - discountedPrice;
-
-        return new(price, discountedAmount, discountedPrice);
+        return new(bookingDetails, guest, hotel);
     }
 
     public void Accept(int hostId)
@@ -152,14 +135,6 @@ public sealed class Booking : Entity<Guid>
         if (BookedHotel.Host.Id != hostId)
         {
             throw new HostIdMismatchedException();
-        }
-    }
-
-    private static void AddHotelDiscountIfExists(List<Discount> discounts, Discount? hotelDiscount)
-    {
-        if (hotelDiscount is not null)
-        {
-            discounts.Add(hotelDiscount);
         }
     }
 
