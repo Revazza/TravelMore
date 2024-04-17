@@ -16,18 +16,17 @@ public class PaymentDetailsConfigurations : IEntityTypeConfiguration<BookingPaym
             .ValueGeneratedNever();
 
         builder.HasOne(x => x.Payer)
-            .WithMany(x => x.Payments)
+            .WithMany(x => x.BookingPayments)
             .HasForeignKey(x => x.PayerId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne(x => x.Host)
-            .WithMany(x => x.ReceivedPayments)
-            .HasForeignKey(x => x.HostId)
-            .OnDelete(DeleteBehavior.NoAction);
+        builder.ComplexProperty(x => x.PriceDetails, priceDetails =>
+        {
+            priceDetails.ComplexProperty(x => x.ActualPayment, MoneyConfigurations.DefaultPrecision);
+            priceDetails.ComplexProperty(x => x.InitialPrice, MoneyConfigurations.DefaultPrecision);
+            priceDetails.ComplexProperty(x => x.DiscountedPrice, MoneyConfigurations.DefaultPrecision);
+        });
 
-        builder.ComplexProperty(x => x.TotalPayment, MoneyConfigurations.DefaultPrecision);
-        builder.ComplexProperty(x => x.Payment, MoneyConfigurations.DefaultPrecision);
-        builder.ComplexProperty(x => x.DiscountedAmount, MoneyConfigurations.DefaultPrecision);
 
     }
 

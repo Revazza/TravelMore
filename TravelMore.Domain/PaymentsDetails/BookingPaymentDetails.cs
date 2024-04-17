@@ -1,4 +1,5 @@
-﻿using TravelMore.Domain.Guests;
+﻿using TravelMore.Domain.Bookings;
+using TravelMore.Domain.Guests;
 using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.PaymentsDetails.ValueObjects;
 using TravelMore.Domain.Users.Hosts;
@@ -9,8 +10,8 @@ public class BookingPaymentDetails : BasePaymentDetails
 {
     public int PayerId { get; private set; }
     public Guest Payer { get; set; } = null!;
-    public int HostId { get; set; }
-    public Host Host { get; set; } = null!;
+    public Guid BookingId { get; set; }
+    public Booking Booking { get; set; } = null!;
 
     private BookingPaymentDetails()
     {
@@ -18,12 +19,13 @@ public class BookingPaymentDetails : BasePaymentDetails
     }
 
     public BookingPaymentDetails(
-        PriceDetails priceDetails,
         PaymentMethod paymentMethod,
-        Guest payer) : base(paymentMethod)
+        PriceDetails priceDetails,
+        Guest payer,
+        Guid bookingId) : base(paymentMethod)
     {
         Payer = payer;
-        Host = null!;
+        BookingId = bookingId;
         PriceDetails = priceDetails;
     }
 

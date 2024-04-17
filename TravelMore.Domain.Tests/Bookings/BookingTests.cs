@@ -2,6 +2,7 @@
 using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
@@ -19,6 +20,7 @@ public class BookingTests
     private Guest _guest;
     private Host _host;
     private Booking _booking;
+    private List<Discount> _discounts;
 
     [SetUp]
     public void SetUp()
@@ -37,9 +39,10 @@ public class BookingTests
             from: TestsCommon.FirstOfApril2023,
             to: TestsCommon.FifteenthOfApril2023,
             numberOfGuests: TestsCommon.Valid.NumberOfGuests,
-            paymentMethod:PaymentMethod.Visa,
+            paymentMethod: PaymentMethod.Visa,
             guest: _guest,
-            hotel: _hotel);
+            hotel: _hotel,
+            );
 
         _host.AddHotel(_hotel);
 
@@ -85,7 +88,7 @@ public class BookingTests
             from: schedule.From,
             to: schedule.To,
             numberOfGuests: TestsCommon.Valid.NumberOfGuests,
-            paymentMethod:PaymentMethod.Visa,
+            paymentMethod: PaymentMethod.Visa,
             guest: _guest,
             hotel: _hotel));
 
@@ -101,7 +104,7 @@ public class BookingTests
             from: schedule.From,
             to: schedule.To,
             numberOfGuests: TestsCommon.Valid.NumberOfGuests,
-            paymentMethod:PaymentMethod.Visa,
+            paymentMethod: PaymentMethod.Visa,
             guest: _guest,
             hotel: _hotel));
 
@@ -116,7 +119,7 @@ public class BookingTests
             from: schedule.From,
             to: schedule.To,
             numberOfGuests: TestsCommon.Valid.NumberOfGuests,
-            paymentMethod:PaymentMethod.Visa,
+            paymentMethod: PaymentMethod.Visa,
             guest: _guest,
             hotel: _hotel);
 
@@ -139,7 +142,7 @@ public class BookingTests
             schedule.From,
             schedule.To,
             TestsCommon.Valid.NumberOfGuests,
-            paymentMethod:PaymentMethod.Visa,
+            paymentMethod: PaymentMethod.Visa,
             _guest,
             _hotel);
 

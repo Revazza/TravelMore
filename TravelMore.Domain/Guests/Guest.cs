@@ -19,9 +19,8 @@ public class Guest : User
     public Guid MembershipId { get; set; }
     public Membership Membership { get; set; } = null!;
     public IReadOnlyCollection<Booking> Bookings => _bookings;
-    public IReadOnlyCollection<BookingPaymentDetails> BookingPaymentDetails => _bookingPaymentDetails;
+    public IReadOnlyCollection<BookingPaymentDetails> BookingPayments => _bookingPaymentDetails;
     public IReadOnlyCollection<Discount> Discounts => _discounts;
-
 
     private Guest() : base(0, string.Empty, string.Empty, string.Empty)
     {
@@ -54,7 +53,7 @@ public class Guest : User
 
     public void SetBalance(decimal amount)
     {
-        Balance = Money.Create(amount);
+        Balance = amount;
     }
 
     public bool AnyBookingsScheduleOverlaps(BookingSchedule schedule) => _bookings.Any(booking => booking.DoesOverLap(schedule.From, schedule.To));

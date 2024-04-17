@@ -2,11 +2,13 @@
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
+using TravelMore.Domain.Discounts.Calculators;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.PaymentsDetails;
 using TravelMore.Domain.PaymentsDetails.Enums;
+using TravelMore.Domain.PaymentsDetails.ValueObjects;
 using TravelMore.Domain.Users.Hosts.Exceptions;
 
 namespace TravelMore.Domain.Bookings;
@@ -36,14 +38,18 @@ public sealed class Booking : Entity<Guid>
 
 
     private Booking(
+        Guid id,
+        PaymentMethod paymentMethod,
+        PriceDetails priceDetails,
         BookingDetails details,
         Guest guest,
-        Hotel bookedHotel) : base(Guid.NewGuid())
+        Hotel bookedHotel) : base(id)
     {
         Details = details;
         Status = BookingStatus.Pending;
         Guest = guest;
         BookedHotel = bookedHotel;
+        Payment = new BookingPaymentDetails(paymentMethod, priceDetails, guest, id);
     }
 
     public static Booking Create(
@@ -67,7 +73,24 @@ public sealed class Booking : Entity<Guid>
         guest.EnsureCanBook(bookingDetails);
         guest.EnsureHasDiscounts(guestDiscounts);
 
-        return new(bookingDetails, guest, hotel);
+        var priceDetails = CreatePriceDetails(numberOfNights, hotel, guestDiscounts);
+
+        return new(Guid.NewGuid(), paymentMethod, priceDetails, bookingDetails, guest, hotel);
+    }
+
+    private static PriceDetails CreatePriceDetails(short numberOfNights, Hotel hotel, List<Discount> guestDiscounts)
+    {
+        var price = hotel.GetPriceForNights(numberOfNights);
+        var hotelDiscount = hotel.Discount;
+
+        if (hotelDiscount is not null)
+        {
+            guestDiscounts.Add(hotelDiscount);
+        }
+
+        var discountdiosedPrice = DiscountsApplier.Apply(price, guestDiscounts);
+
+        return new(price - discountdiosedPrice, price, discountdiosedPrice);
     }
 
     public void Accept(int hostId)
