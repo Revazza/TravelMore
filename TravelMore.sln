@@ -15,6 +15,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TravelMore.Application", "T
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{00F927F3-CF5B-44F9-8C4D-2CBA3CD1C3BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TravelMore.Domain.Tests", "TravelMore.Domain.Tests\TravelMore.Domain.Tests.csproj", "{6AED828B-B5E1-4FF0-8E8A-742786B3710E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,9 +43,16 @@ Global
 		{6C8ACBAD-0784-4F79-A1D3-9F41AC46F605}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6C8ACBAD-0784-4F79-A1D3-9F41AC46F605}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6C8ACBAD-0784-4F79-A1D3-9F41AC46F605}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AED828B-B5E1-4FF0-8E8A-742786B3710E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AED828B-B5E1-4FF0-8E8A-742786B3710E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AED828B-B5E1-4FF0-8E8A-742786B3710E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AED828B-B5E1-4FF0-8E8A-742786B3710E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6AED828B-B5E1-4FF0-8E8A-742786B3710E} = {00F927F3-CF5B-44F9-8C4D-2CBA3CD1C3BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {03BCAC17-FF91-4C1A-AA6E-B9ACCE33B993}
