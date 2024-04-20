@@ -4,5 +4,5 @@ namespace TravelMore.Domain.Discounts.Interfaces;
 
 public interface IDiscountStrategy
 {
-    Money Apply(Money amount);
+    Money Apply();
 }

@@ -9,12 +9,12 @@ namespace TravelMore.Domain.Discounts.Factories;
 public class DiscountStrategyFactory
 {
 
-    public static IDiscountStrategy Create(Money value, DiscountType discountType)
+    public static IDiscountStrategy Create(Money price, Money value, DiscountType discountType)
     {
         return discountType switch
         {
-            DiscountType.FixedPrice => new FixedAmountDiscount(value),
-            DiscountType.Percentage => new PercentageDiscount(value),
+            DiscountType.FixedPrice => new FixedAmountDiscount(price, value),
+            DiscountType.Percentage => new PercentageDiscount(price, value),
             _ => throw new DiscountStrategyCreationException(),
         };
     }

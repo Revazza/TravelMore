@@ -12,19 +12,19 @@ public class DiscountStrategyFactoryTests
     [Theory]
     [InlineData(DiscountType.FixedPrice, typeof(FixedAmountDiscount))]
     [InlineData(DiscountType.Percentage, typeof(PercentageDiscount))]
-    public void Create_Should_ReturnCorrespondingStrategy(DiscountType discountType, Type expectedDiscountStrategyType)
+    public void Create_Should_Return_CorrespondingStrategy(DiscountType discountType, Type expectedDiscountStrategyType)
     {
-        var result = DiscountStrategyFactory.Create(Money.Default, discountType);
+        var result = DiscountStrategyFactory.Create(Money.Default, Money.Default, discountType);
 
         Assert.IsAssignableFrom(expectedDiscountStrategyType, result);
     }
 
     [Fact]
-    public void Create_InvalidDiscountType_ThrowsException()
+    public void Create_Should_Throw_DiscountStrategyCreationException_When_PassedInvalidDiscountType()
     {
         var discountType = (DiscountType)int.MaxValue; // Invalid discount type
 
-        Assert.Throws<DiscountStrategyCreationException>(() => DiscountStrategyFactory.Create(Money.Default, discountType));
+        Assert.Throws<DiscountStrategyCreationException>(() => DiscountStrategyFactory.Create(Money.Default, Money.Default, discountType));
     }
 
 }
