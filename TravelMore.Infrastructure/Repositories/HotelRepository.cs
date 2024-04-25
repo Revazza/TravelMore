@@ -7,6 +7,9 @@ namespace TravelMore.Infrastructure.Repositories;
 
 public class HotelRepository(TravelMoreContext context) : GenericRepository<Hotel, Guid>(context), IHotelRepository
 {
+    public async Task<bool> DoesHotelExistsByIdAsync(Guid hotelId)
+        => await _context.Hotels.AsNoTracking().AnyAsync(hotel => hotel.Id == hotelId);
+
     public async Task<Hotel?> GetHotelByIdWithBookingsAsync(Guid hotelId)
     {
         return await _context

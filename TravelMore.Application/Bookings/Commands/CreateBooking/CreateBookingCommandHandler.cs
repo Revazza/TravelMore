@@ -1,9 +1,11 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TravelMore.Application.Common.Results;
 using TravelMore.Application.Discounts.Commands.ApplyDiscounts;
-using TravelMore.Application.Guests.Queries.DoesGuestExistByEmail;
 using TravelMore.Application.Guests.Queries.DoesGuestExistById;
+using TravelMore.Application.Hotels.Queries.DoesHotelExistsById;
+using TravelMore.Application.Hotels.Queries.GetHotelByIdWithIncludes;
 using TravelMore.Application.Repositories;
 using TravelMore.Application.Services;
 using TravelMore.Domain.Bookings;
@@ -12,6 +14,7 @@ using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
+using TravelMore.Domain.Hotels.Exceptions;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
 
@@ -32,24 +35,11 @@ public class CreateBookingCommandHandler(
 
     public async Task<Result<Booking>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var guest = await _guestRepository
-            .AsQuery()
-            .Include(guest => guest.Discounts)
-            .Include(guest => guest.Membership)
-            .Include(guest => guest.Bookings)
-            .Include(guest => guest.BookingPayments)
-            .FirstOrDefaultAsync(guest => guest.Id == _userIdentityService.GetUserId());
+        var guestId = _userIdentityService.GetUserId();
+        await EnsureGuestAndHotelExistsAsync(guestId, request.HotelId);
 
-        if (guest is null)
-        {
-            return Result.Failure<Booking>(Error.None);
-        }
-
-        var hotel = await _hotelRepository.GetHotelByIdWithBookingsAsync(request.HotelId);
-        if (hotel is null)
-        {
-            return Result.Failure<Booking>(Error.None);
-        }
+        var guest = await GetGuestAsync(guestId);
+        var hotel = await GetHotelAsync(request.HotelId);
 
         var discounts = GetDiscounts(guest, hotel);
         var priceDetails = _sender.Send(new ApplyDiscountsCommand(Money.Default, discounts), cancellationToken);
@@ -83,7 +73,13 @@ public class CreateBookingCommandHandler(
         return discounts;
     }
 
-    private async Task EnsureGuestExists(int guestId)
+    private async Task EnsureGuestAndHotelExistsAsync(int guestId, Guid hotelId)
+    {
+        await EnsureGuestExistsAsync(guestId);
+        await EnsureHotelExistsAsync(hotelId);
+    }
+
+    private async Task EnsureGuestExistsAsync(int guestId)
     {
         var guestExistsResult = await _sender.Send(new DoesGuestExistByIdQuery(guestId));
 
@@ -93,9 +89,29 @@ public class CreateBookingCommandHandler(
         }
     }
 
-    private async Task EnsureHotelExists(Guid hotelId)
+    private async Task EnsureHotelExistsAsync(Guid hotelId)
     {
+        var hotelExistsResult = await _sender.Send(new DoesHotelExistsByIdQuery(hotelId));
 
+        if (!hotelExistsResult.Value)
+        {
+            throw new HotelNotFoundException();
+        }
+    }
+
+    private async Task<Guest> GetGuestAsync(int guestId)
+        => await _guestRepository
+        .AsQuery()
+        .Include(guest => guest.Discounts)
+        .Include(guest => guest.Membership)
+        .Include(guest => guest.Bookings)
+        .Include(guest => guest.BookingPayments)
+        .FirstAsync(guest => guest.Id == guestId);
+
+    private async Task<Hotel> GetHotelAsync(Guid hotelId)
+    {
+        var hotelResult = await _sender.Send(new GetHotelByIdWithIncludesQuery(hotelId, IncludeAcceptedPaymentMethods: true, IncludeBookings: true, IncludeDiscount: true, IncludeHost: true));
+        return hotelResult.Value!;
     }
 
 }

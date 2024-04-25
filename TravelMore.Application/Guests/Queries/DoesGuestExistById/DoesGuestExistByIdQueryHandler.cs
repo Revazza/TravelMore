@@ -4,8 +4,6 @@ using TravelMore.Application.Repositories;
 
 namespace TravelMore.Application.Guests.Queries.DoesGuestExistById;
 
-public record DoesGuestExistByIdQuery(int GuestId) : IRequest<Result<bool>>;
-
 public class DoesGuestExistByIdQueryHandler(IGuestRepository guestRepository) : IRequestHandler<DoesGuestExistByIdQuery, Result<bool>>
 {
     private readonly IGuestRepository _guestRepository = guestRepository;

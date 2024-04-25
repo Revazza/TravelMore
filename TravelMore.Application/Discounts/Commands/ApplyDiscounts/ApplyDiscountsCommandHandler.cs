@@ -5,8 +5,6 @@ using TravelMore.Domain.PaymentsDetails.ValueObjects;
 
 namespace TravelMore.Application.Discounts.Commands.ApplyDiscounts;
 
-public record ApplyDiscountsCommand(Money Price, List<Discount> Discounts) : IRequest<PriceDetails>;
-
 internal class ApplyDiscountsCommandHandler : IRequestHandler<ApplyDiscountsCommand, PriceDetails>
 {
 
