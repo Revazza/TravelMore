@@ -7,7 +7,9 @@ namespace TravelMore.Infrastructure.Repositories;
 
 public class GuestRepository(TravelMoreContext context) : GenericRepository<Guest, int>(context), IGuestRepository
 {
-    public async Task<bool> DoesGuestExistByEmail(string email) 
+    public async Task<bool> DoesGuestExistByEmail(string email)
         => await _context.Guests.AnyAsync(guest => guest.Email == email);
 
+    public async Task<bool> DoesGuestExistById(int id)
+        => await _context.Guests.AnyAsync(guest => guest.Id == id);
 }

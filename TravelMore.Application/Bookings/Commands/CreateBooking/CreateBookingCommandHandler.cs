@@ -2,6 +2,8 @@
 using Microsoft.EntityFrameworkCore;
 using TravelMore.Application.Common.Results;
 using TravelMore.Application.Discounts.Commands.ApplyDiscounts;
+using TravelMore.Application.Guests.Queries.DoesGuestExistByEmail;
+using TravelMore.Application.Guests.Queries.DoesGuestExistById;
 using TravelMore.Application.Repositories;
 using TravelMore.Application.Services;
 using TravelMore.Domain.Bookings;
@@ -34,6 +36,7 @@ public class CreateBookingCommandHandler(
             .Include(guest => guest.Discounts)
             .Include(guest => guest.Membership)
             .Include(guest => guest.Bookings)
+            .Include(guest => guest.BookingPayments)
             .FirstOrDefaultAsync(guest => guest.Id == _userIdentityService.GetUserId());
 
         if (guest is null)
@@ -77,6 +80,16 @@ public class CreateBookingCommandHandler(
 
         discounts.AddRange(guest.Discounts);
         return discounts;
+    }
+
+    private async Task EnsureGuestExists(int guestId)
+    {
+        var guestExistsResult = await _sender.Send(new DoesGuestExistByIdQuery(guestId));
+
+        if (!guestExistsResult.IsSuccess)
+        {
+            throw new 
+        }
     }
 
 }
