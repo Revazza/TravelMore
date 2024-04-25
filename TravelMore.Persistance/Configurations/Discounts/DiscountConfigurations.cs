@@ -12,7 +12,7 @@ public class DiscountConfigurations : IEntityTypeConfiguration<Discount>
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id).ValueGeneratedNever();
 
-        builder.ComplexProperty(x => x.Amount, MoneyConfigurations.DefaultPrecision);
+        builder.ComplexProperty(x => x.Value, MoneyConfigurations.DefaultPrecision);
 
     }
 }

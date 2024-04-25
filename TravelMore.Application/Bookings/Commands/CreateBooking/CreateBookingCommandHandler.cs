@@ -1,5 +1,7 @@
 ﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using TravelMore.Application.Common.Results;
+using TravelMore.Application.Discounts.Commands.ApplyDiscounts;
 using TravelMore.Application.Repositories;
 using TravelMore.Application.Services;
 using TravelMore.Domain.Bookings;
@@ -15,17 +17,25 @@ public class CreateBookingCommandHandler(
     IBookingRepository bookingRepository,
     IUnitOfWork unitOfWork,
     IHotelRepository hotelRepository,
-    IGuestRepository guestRepository) : IRequestHandler<CreateBookingCommand, Result<Booking>>
+    IGuestRepository guestRepository,
+    ISender sender) : IRequestHandler<CreateBookingCommand, Result<Booking>>
 {
     private readonly IUserIdentityService _userIdentityService = userIdentityService;
     private readonly IBookingRepository _bookingRepository = bookingRepository;
     private readonly IGuestRepository _guestRepository = guestRepository;
     private readonly IHotelRepository _hotelRepository = hotelRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
+    private readonly ISender _sender = sender;
 
     public async Task<Result<Booking>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
-        var guest = await _guestRepository.GetByIdAsync(_userIdentityService.GetUserId());
+        var guest = await _guestRepository
+            .AsQuery()
+            .Include(guest => guest.Discounts)
+            .Include(guest => guest.Membership)
+            .Include(guest => guest.Bookings)
+            .FirstOrDefaultAsync(guest => guest.Id == _userIdentityService.GetUserId());
+
         if (guest is null)
         {
             return Result.Failure<Booking>(Error.None);
@@ -38,6 +48,8 @@ public class CreateBookingCommandHandler(
         }
 
         var discounts = GetDiscounts(guest, hotel);
+        var priceDetails = _sender.Send(new ApplyDiscountsCommand(Money.Default, discounts), cancellationToken);
+
 
         var booking = Booking.Create(
             request.CheckIn,

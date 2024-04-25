@@ -22,9 +22,9 @@ public class PaymentDetailsConfigurations : IEntityTypeConfiguration<BookingPaym
 
         builder.ComplexProperty(x => x.PriceDetails, priceDetails =>
         {
-            priceDetails.ComplexProperty(x => x.ActualPayment, MoneyConfigurations.DefaultPrecision);
-            priceDetails.ComplexProperty(x => x.InitialPrice, MoneyConfigurations.DefaultPrecision);
             priceDetails.ComplexProperty(x => x.DiscountedPrice, MoneyConfigurations.DefaultPrecision);
+            priceDetails.ComplexProperty(x => x.InitialPrice, MoneyConfigurations.DefaultPrecision);
+            priceDetails.ComplexProperty(x => x.DiscountedAmount, MoneyConfigurations.DefaultPrecision);
         });
 
 

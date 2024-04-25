@@ -2,7 +2,6 @@
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
-using TravelMore.Domain.Discounts.Calculators;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
@@ -88,9 +87,7 @@ public sealed class Booking : Entity<Guid>
             guestDiscounts.Add(hotelDiscount);
         }
 
-        var discountdiosedPrice = DiscountsApplier.Apply(price, guestDiscounts);
-
-        return new(price - discountdiosedPrice, price, discountdiosedPrice);
+        return new(Money.Default, price);
     }
 
     public void Accept(int hostId)

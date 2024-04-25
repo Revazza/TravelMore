@@ -1,5 +1,5 @@
-﻿
-using TravelMore.Domain.Common.Models;
+﻿using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Discounts.Factories;
 
 namespace TravelMore.Domain.Discounts;
 
@@ -10,6 +10,8 @@ public class LimitedUseDiscount : Discount
 
     public override Money Apply(Money price)
     {
-        throw new NotImplementedException();
+        EnsureNotExpired();
+        RemainingUses--;
+        return DiscountStrategyFactory.Create(price, Value, Type).Apply();
     }
 }

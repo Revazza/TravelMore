@@ -11,7 +11,7 @@ public abstract class Discount : Entity<Guid>
 
     public DiscountType Type { get; init; }
     public DiscountSubject Subject { get; init; }
-    public Money Amount { get; init; } = 0;
+    public Money Value { get; init; } = 0;
     public virtual bool IsExpired { get; }
 
     public abstract Money Apply(Money price);
