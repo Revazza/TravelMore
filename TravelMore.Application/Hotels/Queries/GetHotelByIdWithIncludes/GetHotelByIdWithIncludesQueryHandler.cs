@@ -7,14 +7,6 @@ using TravelMore.Domain.Hotels;
 
 namespace TravelMore.Application.Hotels.Queries.GetHotelByIdWithIncludes;
 
-public record GetHotelByIdWithIncludesQuery(
-    Guid HotelId,
-    bool IncludeAcceptedPaymentMethods = false,
-    bool IncludeBookings = false,
-    bool IncludeDiscount = false,
-    bool IncludeHost = false) : IRequest<Result<Hotel?>>;
-
-
 public class GetHotelByIdWithIncludesQueryHandler(IHotelRepository hotelRepository) : IRequestHandler<GetHotelByIdWithIncludesQuery, Result<Hotel?>>
 {
     private readonly IHotelRepository _hotelRepository = hotelRepository;

@@ -1,9 +1,8 @@
 ﻿using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using TravelMore.Application.Common.Results;
 using TravelMore.Application.Discounts.Commands.ApplyDiscounts;
 using TravelMore.Application.Guests.Queries.DoesGuestExistById;
+using TravelMore.Application.Guests.Queries.GetGuestByIdWithIncludes;
 using TravelMore.Application.Hotels.Queries.DoesHotelExistsById;
 using TravelMore.Application.Hotels.Queries.GetHotelByIdWithIncludes;
 using TravelMore.Application.Repositories;
@@ -22,14 +21,10 @@ public class CreateBookingCommandHandler(
     IUserIdentityService userIdentityService,
     IBookingRepository bookingRepository,
     IUnitOfWork unitOfWork,
-    IHotelRepository hotelRepository,
-    IGuestRepository guestRepository,
     ISender sender) : IRequestHandler<CreateBookingCommand, Result<Booking>>
 {
     private readonly IUserIdentityService _userIdentityService = userIdentityService;
     private readonly IBookingRepository _bookingRepository = bookingRepository;
-    private readonly IGuestRepository _guestRepository = guestRepository;
-    private readonly IHotelRepository _hotelRepository = hotelRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly ISender _sender = sender;
 
@@ -100,17 +95,30 @@ public class CreateBookingCommandHandler(
     }
 
     private async Task<Guest> GetGuestAsync(int guestId)
-        => await _guestRepository
-        .AsQuery()
-        .Include(guest => guest.Discounts)
-        .Include(guest => guest.Membership)
-        .Include(guest => guest.Bookings)
-        .Include(guest => guest.BookingPayments)
-        .FirstAsync(guest => guest.Id == guestId);
+    {
+        var query = new GetGuestByIdWithIncludesQuery(
+            guestId,
+            IncludeDiscounts: true,
+            IncludeBookings: true,
+            IncludeBookingPayments: true,
+            IncludeMembership: true);
+
+        var guestResult = await _sender.Send(query);
+
+        return guestResult.Value!;
+    }
 
     private async Task<Hotel> GetHotelAsync(Guid hotelId)
     {
-        var hotelResult = await _sender.Send(new GetHotelByIdWithIncludesQuery(hotelId, IncludeAcceptedPaymentMethods: true, IncludeBookings: true, IncludeDiscount: true, IncludeHost: true));
+        var query = new GetHotelByIdWithIncludesQuery(
+            hotelId,
+            IncludeAcceptedPaymentMethods: true,
+            IncludeBookings: true,
+            IncludeDiscount: true,
+            IncludeHost: true);
+
+        var hotelResult = await _sender.Send(query);
+
         return hotelResult.Value!;
     }
 
