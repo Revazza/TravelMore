@@ -10,6 +10,7 @@ using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
+using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
@@ -86,10 +87,15 @@ public class CreateBookingCommandHandler(
     {
         var guestExistsResult = await _sender.Send(new DoesGuestExistByIdQuery(guestId));
 
-        if (!guestExistsResult.IsSuccess)
+        if (guestExistsResult.IsFailure)
         {
-            throw new 
+            throw new GuestNotFoundByIdException(guestId);
         }
+    }
+
+    private async Task EnsureHotelExists(Guid hotelId)
+    {
+
     }
 
 }

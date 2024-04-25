@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using TravelMore.Domain.Common.Exceptions;
 
 namespace TravelMore.Domain.Guests.Exceptions;
-internal class GuestNotFoundException
+
+public abstract class GuestNotFoundException : DomainException
 {
+    public GuestNotFoundException(string message) : base($"Guest not found {message}")
+    {
+    }
 }

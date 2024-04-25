@@ -1,6 +1,8 @@
-﻿namespace TravelMore.Domain.Guests.Exceptions;
+﻿using TravelMore.Domain.Common.Exceptions;
 
-public class GuestInsufficientBalanceException : Exception
+namespace TravelMore.Domain.Guests.Exceptions;
+
+public class GuestInsufficientBalanceException : DomainException
 {
     public GuestInsufficientBalanceException() : base("Not enough balance in the account")
     {

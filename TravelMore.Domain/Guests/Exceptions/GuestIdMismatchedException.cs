@@ -1,6 +1,8 @@
-﻿namespace TravelMore.Domain.Guests.Exceptions;
+﻿using TravelMore.Domain.Common.Exceptions;
 
-public class GuestIdMismatchedException : Exception
+namespace TravelMore.Domain.Guests.Exceptions;
+
+public class GuestIdMismatchedException : DomainException
 {
     public GuestIdMismatchedException() : base("The provided guest id does not match the guest id of the hotel")
     {
