@@ -35,10 +35,6 @@ public class CreateBookingCommandHandler(
         var guest = await GetGuestAsync(guestId);
         var hotel = await GetHotelAsync(request.HotelId);
 
-        var schedule = BookingSchedule.Create(request.CheckIn, request.CheckOut);
-        var initialPrice = hotel.CalculatePriceForNights(schedule.GetDurationInDays());
-        var discountedPrice = guest.ApplyDiscounts(initialPrice, request.AppliedDiscountIds);
-
         var booking = Booking.Create(
             request.CheckIn,
             request.CheckOut,
@@ -46,7 +42,7 @@ public class CreateBookingCommandHandler(
             request.PaymentMethod,
             guest,
             hotel,
-            new List<Discount>());
+            request.AppliedDiscountIds);
 
         await _bookingRepository.AddAsync(booking);
         await _unitOfWork.SaveChangesAsync(cancellationToken);

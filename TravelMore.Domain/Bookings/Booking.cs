@@ -15,7 +15,7 @@ namespace TravelMore.Domain.Bookings;
 public sealed class Booking : Entity<Guid>
 {
     public BookingDetails Details { get; private set; }
-    public BookingPaymentDetails? Payment { get; private set; }
+    public BookingPaymentDetails Payment { get; private set; }
     public int GuestId { get; private set; }
     public Guest Guest { get; private set; } = null!;
     public Guid BookedHotelId { get; private set; }
@@ -31,7 +31,7 @@ public sealed class Booking : Entity<Guid>
     {
         Details = null!;
         BookedHotel = null!;
-        Payment = null;
+        Payment = null!;
         AppliedDiscounts = [];
     }
 
@@ -58,36 +58,25 @@ public sealed class Booking : Entity<Guid>
        PaymentMethod paymentMethod,
        Guest guest,
        Hotel hotel,
-       List<Discount> guestDiscounts)
+       List<Guid> guesAppliedDiscountIds)
     {
         var schedule = BookingSchedule.Create(from, to);
         var numberOfNights = schedule.GetDurationInDays();
 
         var bookingDetails = new BookingDetails(
-            numberOfGuests,
-            numberOfNights,
-            schedule);
+         numberOfGuests,
+         numberOfNights,
+         schedule);
 
         hotel.EnsureBookable(bookingDetails, paymentMethod);
         guest.EnsureCanBook(bookingDetails);
-        guest.EnsureHasDiscounts(guestDiscounts);
 
-        var priceDetails = CreatePriceDetails(numberOfNights, hotel, guestDiscounts);
+        var appliedDiscounts = guest.GetFilteredDiscountsByIds(guesAppliedDiscountIds);
+        var initialPrice = hotel.CalculatePriceForNights(schedule.GetDurationInDays());
+        var discountedPrice = guest.ApplyDiscounts(initialPrice, guesAppliedDiscountIds);
+        var priceDetails = new PriceDetails(discountedPrice, initialPrice);
 
         return new(Guid.NewGuid(), paymentMethod, priceDetails, bookingDetails, guest, hotel);
-    }
-
-    private static PriceDetails CreatePriceDetails(short numberOfNights, Hotel hotel, List<Discount> guestDiscounts)
-    {
-        var price = hotel.CalculatePriceForNights(numberOfNights);
-        var hotelDiscount = hotel.Discount;
-
-        if (hotelDiscount is not null)
-        {
-            guestDiscounts.Add(hotelDiscount);
-        }
-
-        return new(Money.Default, price);
     }
 
     public void Accept(int hostId)
