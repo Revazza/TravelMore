@@ -79,7 +79,7 @@ public sealed class Booking : Entity<Guid>
 
     private static PriceDetails CreatePriceDetails(short numberOfNights, Hotel hotel, List<Discount> guestDiscounts)
     {
-        var price = hotel.GetPriceForNights(numberOfNights);
+        var price = hotel.CalculatePriceForNights(numberOfNights);
         var hotelDiscount = hotel.Discount;
 
         if (hotelDiscount is not null)

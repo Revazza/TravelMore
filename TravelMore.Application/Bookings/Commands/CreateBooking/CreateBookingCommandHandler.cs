@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Results;
-using TravelMore.Application.Discounts.Commands.ApplyDiscounts;
 using TravelMore.Application.Guests.Queries.DoesGuestExistById;
 using TravelMore.Application.Guests.Queries.GetGuestByIdWithIncludes;
 using TravelMore.Application.Hotels.Queries.DoesHotelExistsById;
@@ -8,7 +7,7 @@ using TravelMore.Application.Hotels.Queries.GetHotelByIdWithIncludes;
 using TravelMore.Application.Repositories;
 using TravelMore.Application.Services;
 using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
@@ -36,9 +35,9 @@ public class CreateBookingCommandHandler(
         var guest = await GetGuestAsync(guestId);
         var hotel = await GetHotelAsync(request.HotelId);
 
-        var discounts = GetDiscounts(guest, hotel);
-        var priceDetails = _sender.Send(new ApplyDiscountsCommand(Money.Default, discounts), cancellationToken);
-
+        var schedule = BookingSchedule.Create(request.CheckIn, request.CheckOut);
+        var initialPrice = hotel.CalculatePriceForNights(schedule.GetDurationInDays());
+        var discountedPrice = guest.ApplyDiscounts(initialPrice, request.AppliedDiscountIds);
 
         var booking = Booking.Create(
             request.CheckIn,
@@ -47,25 +46,12 @@ public class CreateBookingCommandHandler(
             request.PaymentMethod,
             guest,
             hotel,
-            discounts);
+            new List<Discount>());
 
         await _bookingRepository.AddAsync(booking);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return booking;
-    }
-
-    private static List<Discount> GetDiscounts(Guest guest, Hotel hotel)
-    {
-        var discounts = new List<Discount>();
-
-        if (hotel.Discount is not null)
-        {
-            discounts.Add(hotel.Discount);
-        }
-
-        discounts.AddRange(guest.Discounts);
-        return discounts;
     }
 
     private async Task EnsureGuestAndHotelExistsAsync(int guestId, Guid hotelId)

@@ -12,6 +12,11 @@ public record PriceDetails
         DiscountedAmount = initialPrice - discountedPrice;
     }
 
+    public PriceDetails(Money initialPrice)
+    {
+        InitialPrice = initialPrice;
+    }
+
     public Money DiscountedPrice { get; init; } = 0;
     public Money InitialPrice { get; init; } = 0;
     public Money DiscountedAmount { get; init; } = 0;

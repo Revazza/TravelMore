@@ -1,8 +1,11 @@
-﻿using System.Numerics;
+﻿using System.Collections.Immutable;
+using System.Numerics;
+using System.Reflection;
 using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
+using TravelMore.Domain.Discounts.Extensions;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Memberships;
 using TravelMore.Domain.PaymentsDetails;
@@ -33,6 +36,11 @@ public class Guest : User
         Balance = balance;
         _discounts = [];
     }
+
+    public Money ApplyDiscounts(Money price, IEnumerable<Guid> discountIds)
+        => GetMembershipDiscounts()
+        .Concat(GetFilteredDiscountsByIds(discountIds))
+        .ApplyAll(price);
 
     public void EnsureHasDiscounts(List<Discount> discounts) => discounts.ForEach(EnsureHasDiscount);
 
@@ -65,6 +73,17 @@ public class Guest : User
             throw new GuestOverlapBookingScheduleException();
         }
     }
+
+    public IReadOnlyCollection<Discount> GetAllDiscounts()
+        => Discounts
+        .Concat(GetMembershipDiscounts())
+        .ToList()
+        .AsReadOnly();
+
+    public IReadOnlyCollection<Discount> GetMembershipDiscounts() => Membership.Discounts;
+
+    private IEnumerable<Discount> GetFilteredDiscountsByIds(IEnumerable<Guid> discountIds)
+        => _discounts.Where(discount => discountIds.Any(discountId => discountId == discount.Id));
 
     protected void EnsureBalanaceIsEnough(Money payment)
     {

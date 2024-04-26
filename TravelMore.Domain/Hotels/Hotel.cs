@@ -5,6 +5,7 @@ using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.PaymentsDetails.Enums;
+using TravelMore.Domain.PaymentsDetails.ValueObjects;
 using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.Hotels;
@@ -43,7 +44,17 @@ public class Hotel : Entity<Guid>
         HostId = Host.Id;
     }
 
-    public Money GetPriceForNights(int nights) => PricePerNight * nights;
+    public Money CalculatePriceForNights(int nights)
+    {
+        var price = PricePerNight * nights;
+
+        if (DiscountExist())
+        {
+            return Discount!.Apply(price);
+        }
+
+        return price;
+    }
 
     public Money ApplyDiscount(Money money)
     {
@@ -87,6 +98,8 @@ public class Hotel : Entity<Guid>
             throw new Exception("Hotel doesn't accept given payment method");
         }
     }
+
+    private bool DiscountExist() => Discount is not null;
 
     private void EnsureNoBookingsScheduleOverlaps(BookingSchedule schedule)
     {

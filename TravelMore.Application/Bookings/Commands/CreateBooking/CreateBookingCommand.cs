@@ -11,4 +11,4 @@ public record CreateBookingCommand(
     DateTime CheckOut,
     PaymentMethod PaymentMethod,
     Guid HotelId,
-    List<Guid>? AppliedDiscountIds = null) : IRequest<Result<Booking>>;
+    List<Guid> AppliedDiscountIds) : IRequest<Result<Booking>>;
