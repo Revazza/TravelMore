@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
+using TravelMore.Domain.Common.Extensions;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
@@ -43,11 +44,11 @@ public class DraftBooking : Booking
         hotel.EnsureBookable(bookingDetails, paymentMethod);
         guest.EnsureCanBook(bookingDetails);
 
-        var discountsToBeApplied = guest.GetFilteredDiscountsByIds(guestDiscountIds);
+        var appliedDiscounts = guest.GetFilteredDiscountsByIds(guestDiscountIds);
         var initialPrice = hotel.CalculatePriceForNights(bookingDetails.Schedule.GetDurationInDays());
-        var priceDetails = CalculatePriceDetails(initialPrice, guest, discountsToBeApplied);
+        var priceDetails = CalculatePriceDetails(initialPrice, guest, appliedDiscounts);
 
-        return new(paymentMethod, priceDetails, bookingDetails, guest, hotel, [.. discountsToBeApplied]);
+        return new(paymentMethod, priceDetails, bookingDetails, guest, hotel, [.. appliedDiscounts]);
     }
 
 

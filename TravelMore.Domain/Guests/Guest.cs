@@ -1,6 +1,4 @@
 ﻿using System.Collections.Immutable;
-using System.Numerics;
-using System.Reflection;
 using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
@@ -52,6 +50,12 @@ public class Guest : User
 
         return discounts.ApplyAll(price);
     }
+
+    public IReadOnlyCollection<Discount> GetAllAvailableDiscounts()
+        => GetMembershipDiscounts()
+        .Concat(Discounts)
+        .ToList()
+        .AsReadOnly();
 
     public void EnsureHasDiscounts(List<Discount> discounts) => discounts.ForEach(EnsureHasDiscount);
 

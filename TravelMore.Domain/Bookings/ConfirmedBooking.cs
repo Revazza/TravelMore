@@ -8,6 +8,14 @@ public class ConfirmedBooking : Booking
 {
     public BookingPaymentDetails Payment { get; private set; }
 
+    public static ConfirmedBooking Create(
+        DraftBooking draftBooking)
+    {
+        
+
+        return null;
+    }
+
     public void Accept(int hostId)
     {
         EnsureHotelHostIdMatches(hostId);
