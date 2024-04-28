@@ -9,6 +9,8 @@ public class LimitedUseDiscount : Discount
     public int RemainingUses { get; protected set; }
     public override bool IsExpired => RemainingUses == 0;
 
+    private LimitedUseDiscount() : base() { }
+
     private LimitedUseDiscount(
         Guid id,
         int remainingUses,

@@ -10,7 +10,7 @@ public class BookingPaymentDetails : BasePaymentDetails
     public int PayerId { get; init; }
     public Guest Payer { get; init; } = null!;
     public Guid BookingId { get; init; }
-    public Booking Booking { get; init; } = null!;
+    public ConfirmedBooking Booking { get; init; } = null!;
 
     private BookingPaymentDetails()
     {

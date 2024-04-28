@@ -79,12 +79,18 @@ namespace TravelMore.Persistance.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GuestId = table.Column<int>(type: "int", nullable: false),
-                    BookedHotelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    HotelId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     Details_NumberOfDays = table.Column<short>(type: "smallint", nullable: false),
                     Details_NumberOfGuests = table.Column<short>(type: "smallint", nullable: false),
                     Details_Schedule_From = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Details_Schedule_To = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Details_Schedule_To = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PriceDetails_DiscountedAmount_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
+                    PriceDetails_DiscountedPrice_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
+                    PriceDetails_InitialPrice_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -106,7 +112,7 @@ namespace TravelMore.Persistance.Migrations
                     BookingId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     Discriminator = table.Column<string>(type: "nvarchar(21)", maxLength: 21, nullable: false),
                     MembershipId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    Amount_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
+                    Value_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
                     RemainingUses = table.Column<int>(type: "int", nullable: true),
                     ExpireDate = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
@@ -133,7 +139,7 @@ namespace TravelMore.Persistance.Migrations
                     PayerId = table.Column<int>(type: "int", nullable: false),
                     BookingId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     HostId = table.Column<int>(type: "int", nullable: true),
-                    PriceDetails_ActualPayment_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
+                    PriceDetails_DiscountedAmount_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
                     PriceDetails_DiscountedPrice_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
                     PriceDetails_InitialPrice_Amount = table.Column<decimal>(type: "decimal(18,10)", precision: 18, scale: 10, nullable: false),
                     PaymentStatus = table.Column<int>(type: "int", nullable: false),
@@ -215,14 +221,14 @@ namespace TravelMore.Persistance.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Bookings_BookedHotelId",
-                table: "Bookings",
-                column: "BookedHotelId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Bookings_GuestId",
                 table: "Bookings",
                 column: "GuestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Bookings_HotelId",
+                table: "Bookings",
+                column: "HotelId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DiscountGuest_GuestId",
@@ -263,8 +269,7 @@ namespace TravelMore.Persistance.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentsDetails_BookingId",
                 table: "PaymentsDetails",
-                column: "BookingId",
-                unique: true);
+                column: "BookingId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentsDetails_HostId",
@@ -283,18 +288,30 @@ namespace TravelMore.Persistance.Migrations
                 unique: true);
 
             migrationBuilder.AddForeignKey(
-                name: "FK_Bookings_Hotels_BookedHotelId",
+                name: "FK_Bookings_Hotels_HotelId",
                 table: "Bookings",
-                column: "BookedHotelId",
+                column: "HotelId",
                 principalTable: "Hotels",
                 principalColumn: "Id");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Bookings_PaymentsDetails_Id",
+                table: "Bookings",
+                column: "Id",
+                principalTable: "PaymentsDetails",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropForeignKey(
-                name: "FK_Bookings_Hotels_BookedHotelId",
+                name: "FK_Bookings_Hotels_HotelId",
+                table: "Bookings");
+
+            migrationBuilder.DropForeignKey(
+                name: "FK_Bookings_PaymentsDetails_Id",
                 table: "Bookings");
 
             migrationBuilder.DropTable(
@@ -304,19 +321,19 @@ namespace TravelMore.Persistance.Migrations
                 name: "MembershipCoupon");
 
             migrationBuilder.DropTable(
-                name: "PaymentsDetails");
-
-            migrationBuilder.DropTable(
                 name: "Hotels");
 
             migrationBuilder.DropTable(
                 name: "Discounts");
 
             migrationBuilder.DropTable(
-                name: "Bookings");
+                name: "Memberships");
 
             migrationBuilder.DropTable(
-                name: "Memberships");
+                name: "PaymentsDetails");
+
+            migrationBuilder.DropTable(
+                name: "Bookings");
 
             migrationBuilder.DropTable(
                 name: "Users");

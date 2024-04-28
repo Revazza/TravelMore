@@ -1,7 +1,5 @@
-﻿using System.Security.Cryptography;
-using TravelMore.Domain.Bookings.Enums;
+﻿using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
-using TravelMore.Domain.Common.Extensions;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
@@ -16,6 +14,8 @@ public class DraftBooking : Booking
     public PriceDetails PriceDetails { get; private set; }
     public PaymentMethod PaymentMethod { get; private set; }
     public DateTime CreatedAt { get; init; }
+
+    private DraftBooking() : base(Guid.NewGuid()) { PriceDetails = null!; }
 
     private DraftBooking(
         PaymentMethod paymentMethod,

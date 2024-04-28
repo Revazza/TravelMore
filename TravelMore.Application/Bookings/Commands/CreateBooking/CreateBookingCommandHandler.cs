@@ -18,61 +18,21 @@ public class CreateBookingCommandHandler(
     IUserIdentityService userIdentityService,
     IBookingRepository bookingRepository,
     IUnitOfWork unitOfWork,
+    IDraftBookingRepository draftBookingRepository,
     ISender sender) : IRequestHandler<CreateBookingCommand, Result<Booking>>
 {
     private readonly IUserIdentityService _userIdentityService = userIdentityService;
     private readonly IBookingRepository _bookingRepository = bookingRepository;
+    private readonly IDraftBookingRepository _draftBookingRepository = draftBookingRepository;
     private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly ISender _sender = sender;
 
     public async Task<Result<Booking>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
         var guestId = _userIdentityService.GetUserId();
-        await EnsureGuestAndHotelExistsAsync(guestId, request.HotelId);
-
-        var guest = await GetGuestAsync(guestId);
-        var hotel = await GetHotelAsync(request.HotelId);
+        
 
         return null;
-        //var booking = Booking.Create(
-        //    request.CheckIn,
-        //    request.CheckOut,
-        //    request.NumberOfGuests,
-        //    request.PaymentMethod,
-        //    guest,
-        //    hotel,
-        //    request.AppliedDiscountIds);
-
-        //await _bookingRepository.AddAsync(booking);
-        //await _unitOfWork.SaveChangesAsync(cancellationToken);
-
-        //return booking;
-    }
-
-    private async Task EnsureGuestAndHotelExistsAsync(int guestId, Guid hotelId)
-    {
-        await EnsureGuestExistsAsync(guestId);
-        await EnsureHotelExistsAsync(hotelId);
-    }
-
-    private async Task EnsureGuestExistsAsync(int guestId)
-    {
-        var guestExistsResult = await _sender.Send(new DoesGuestExistByIdQuery(guestId));
-
-        if (guestExistsResult.IsFailure)
-        {
-            throw new GuestNotFoundByIdException(guestId);
-        }
-    }
-
-    private async Task EnsureHotelExistsAsync(Guid hotelId)
-    {
-        var hotelExistsResult = await _sender.Send(new DoesHotelExistsByIdQuery(hotelId));
-
-        if (!hotelExistsResult.Value)
-        {
-            throw new HotelNotFoundException();
-        }
     }
 
     private async Task<Guest> GetGuestAsync(int guestId)

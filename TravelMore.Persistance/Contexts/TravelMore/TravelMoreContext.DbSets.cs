@@ -22,6 +22,7 @@ public partial class TravelMoreContext : DbContext
     public virtual DbSet<Discount> Discounts { get; set; }
     public virtual DbSet<LimitedUseDiscount> LimitedUseDiscounts { get; set; }
     public virtual DbSet<TimeLimitedDiscount> TimeLimitedDiscounts { get; set; }
-
+    public virtual DbSet<DraftBooking> DraftBookings { get; set; }
+    public virtual DbSet<ConfirmedBooking> ConfirmedBookings { get; set; }
 
 }

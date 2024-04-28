@@ -1,23 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using TravelMore.Domain.PaymentsDetails;
+using TravelMore.Domain.Bookings;
 using TravelMore.Persistance.Configurations.Common;
 
-namespace TravelMore.Persistance.Configurations;
+namespace TravelMore.Persistance.Configurations.Bookings;
 
-public class PaymentDetailsConfigurations : IEntityTypeConfiguration<BookingPaymentDetails>
+public class DraftBookingConfigurations : IEntityTypeConfiguration<DraftBooking>
 {
-    public void Configure(EntityTypeBuilder<BookingPaymentDetails> builder)
+    public void Configure(EntityTypeBuilder<DraftBooking> builder)
     {
-        builder.HasKey(x => x.Id);
-        builder.Property(x => x.Id)
-            .ValueGeneratedNever();
-
-        builder.HasOne(x => x.Payer)
-            .WithMany(x => x.BookingPayments)
-            .HasForeignKey(x => x.PayerId)
-            .OnDelete(DeleteBehavior.NoAction);
-
         builder.ComplexProperty(x => x.PriceDetails, priceDetails =>
         {
             priceDetails.ComplexProperty(x => x.DiscountedPrice, MoneyConfigurations.DefaultPrecision);
@@ -25,7 +16,5 @@ public class PaymentDetailsConfigurations : IEntityTypeConfiguration<BookingPaym
             priceDetails.ComplexProperty(x => x.DiscountedAmount, MoneyConfigurations.DefaultPrecision);
         });
 
-
     }
-
 }

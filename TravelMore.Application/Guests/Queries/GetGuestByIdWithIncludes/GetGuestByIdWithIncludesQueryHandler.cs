@@ -7,13 +7,6 @@ using TravelMore.Domain.Guests;
 
 namespace TravelMore.Application.Guests.Queries.GetGuestByIdWithIncludes;
 
-public record GetGuestByIdWithIncludesQuery(
-    int GuestId,
-    bool IncludeDiscounts = false,
-    bool IncludeMembership = false,
-    bool IncludeBookings = false,
-    bool IncludeBookingPayments = false) : IRequest<Result<Guest?>>;
-
 public class GetGuestByIdWithIncludesQueryHandler(IGuestRepository guestRepository) : IRequestHandler<GetGuestByIdWithIncludesQuery, Result<Guest?>>
 {
     private readonly IGuestRepository _guestRepository = guestRepository;
@@ -26,12 +19,10 @@ public class GetGuestByIdWithIncludesQueryHandler(IGuestRepository guestReposito
         .Where(include => include.Key)
             .Aggregate(_guestRepository.AsQuery(), (guest, include) => guest.Include(include.Value));
 
-        var guest = await query.FirstOrDefaultAsync(guest => guest.Id == request.GuestId, cancellationToken);
-
-        return guest;
+        return await query.FirstOrDefaultAsync(guest => guest.Id == request.GuestId, cancellationToken);
     }
 
-    private Dictionary<bool, Expression<Func<Guest, object>>> GetIncludes(GetGuestByIdWithIncludesQuery request)
+    private static Dictionary<bool, Expression<Func<Guest, object>>> GetIncludes(GetGuestByIdWithIncludesQuery request)
     => new()
     {
             { request.IncludeDiscounts, guest => guest.Discounts },

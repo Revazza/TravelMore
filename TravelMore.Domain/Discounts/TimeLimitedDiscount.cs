@@ -10,6 +10,8 @@ public class TimeLimitedDiscount : Discount
     public DateTime ExpireDate { get; private set; }
     public override bool IsExpired => DateTime.UtcNow >= ExpireDate;
 
+    private TimeLimitedDiscount() : base() { }
+
     private TimeLimitedDiscount(
         Guid id,
         DateTime expireDate,

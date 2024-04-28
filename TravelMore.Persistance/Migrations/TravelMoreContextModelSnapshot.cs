@@ -43,11 +43,16 @@ namespace TravelMore.Persistance.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("BookedHotelId")
-                        .HasColumnType("uniqueidentifier");
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(21)
+                        .HasColumnType("nvarchar(21)");
 
                     b.Property<int>("GuestId")
                         .HasColumnType("int");
+
+                    b.Property<Guid>("HotelId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -76,11 +81,15 @@ namespace TravelMore.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookedHotelId");
-
                     b.HasIndex("GuestId");
 
+                    b.HasIndex("HotelId");
+
                     b.ToTable("Bookings");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("Booking");
+
+                    b.UseTphMappingStrategy();
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Discounts.Discount", b =>
@@ -105,7 +114,7 @@ namespace TravelMore.Persistance.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Amount", "TravelMore.Domain.Discounts.Discount.Amount#Money", b1 =>
+                    b.ComplexProperty<Dictionary<string, object>>("Value", "TravelMore.Domain.Discounts.Discount.Value#Money", b1 =>
                         {
                             b1.IsRequired();
 
@@ -274,7 +283,7 @@ namespace TravelMore.Persistance.Migrations
                         {
                             b1.IsRequired();
 
-                            b1.ComplexProperty<Dictionary<string, object>>("ActualPayment", "TravelMore.Domain.PaymentsDetails.BookingPaymentDetails.PriceDetails#PriceDetails.ActualPayment#Money", b2 =>
+                            b1.ComplexProperty<Dictionary<string, object>>("DiscountedAmount", "TravelMore.Domain.PaymentsDetails.BookingPaymentDetails.PriceDetails#PriceDetails.DiscountedAmount#Money", b2 =>
                                 {
                                     b2.IsRequired();
 
@@ -304,8 +313,7 @@ namespace TravelMore.Persistance.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookingId")
-                        .IsUnique();
+                    b.HasIndex("BookingId");
 
                     b.HasIndex("HostId");
 
@@ -346,6 +354,58 @@ namespace TravelMore.Persistance.Migrations
                     b.HasDiscriminator<string>("Discriminator").HasValue("User");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("TravelMore.Domain.Bookings.ConfirmedBooking", b =>
+                {
+                    b.HasBaseType("TravelMore.Domain.Bookings.Booking");
+
+                    b.HasDiscriminator().HasValue("ConfirmedBooking");
+                });
+
+            modelBuilder.Entity("TravelMore.Domain.Bookings.DraftBooking", b =>
+                {
+                    b.HasBaseType("TravelMore.Domain.Bookings.Booking");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.ComplexProperty<Dictionary<string, object>>("PriceDetails", "TravelMore.Domain.Bookings.DraftBooking.PriceDetails#PriceDetails", b1 =>
+                        {
+                            b1.IsRequired();
+
+                            b1.ComplexProperty<Dictionary<string, object>>("DiscountedAmount", "TravelMore.Domain.Bookings.DraftBooking.PriceDetails#PriceDetails.DiscountedAmount#Money", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<decimal>("Amount")
+                                        .HasPrecision(18, 10)
+                                        .HasColumnType("decimal(18,10)");
+                                });
+
+                            b1.ComplexProperty<Dictionary<string, object>>("DiscountedPrice", "TravelMore.Domain.Bookings.DraftBooking.PriceDetails#PriceDetails.DiscountedPrice#Money", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<decimal>("Amount")
+                                        .HasPrecision(18, 10)
+                                        .HasColumnType("decimal(18,10)");
+                                });
+
+                            b1.ComplexProperty<Dictionary<string, object>>("InitialPrice", "TravelMore.Domain.Bookings.DraftBooking.PriceDetails#PriceDetails.InitialPrice#Money", b2 =>
+                                {
+                                    b2.IsRequired();
+
+                                    b2.Property<decimal>("Amount")
+                                        .HasPrecision(18, 10)
+                                        .HasColumnType("decimal(18,10)");
+                                });
+                        });
+
+                    b.HasDiscriminator().HasValue("DraftBooking");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Discounts.LimitedUseDiscount", b =>
@@ -414,21 +474,21 @@ namespace TravelMore.Persistance.Migrations
 
             modelBuilder.Entity("TravelMore.Domain.Bookings.Booking", b =>
                 {
-                    b.HasOne("TravelMore.Domain.Hotels.Hotel", "BookedHotel")
-                        .WithMany("Bookings")
-                        .HasForeignKey("BookedHotelId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.HasOne("TravelMore.Domain.Guests.Guest", "Guest")
                         .WithMany("Bookings")
                         .HasForeignKey("GuestId")
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("BookedHotel");
+                    b.HasOne("TravelMore.Domain.Hotels.Hotel", "Hotel")
+                        .WithMany("Bookings")
+                        .HasForeignKey("HotelId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
                     b.Navigation("Guest");
+
+                    b.Navigation("Hotel");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Discounts.Discount", b =>
@@ -485,9 +545,9 @@ namespace TravelMore.Persistance.Migrations
 
             modelBuilder.Entity("TravelMore.Domain.PaymentsDetails.BookingPaymentDetails", b =>
                 {
-                    b.HasOne("TravelMore.Domain.Bookings.Booking", "Booking")
-                        .WithOne("Payment")
-                        .HasForeignKey("TravelMore.Domain.PaymentsDetails.BookingPaymentDetails", "BookingId")
+                    b.HasOne("TravelMore.Domain.Bookings.ConfirmedBooking", "Booking")
+                        .WithMany()
+                        .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -506,11 +566,20 @@ namespace TravelMore.Persistance.Migrations
                     b.Navigation("Payer");
                 });
 
+            modelBuilder.Entity("TravelMore.Domain.Bookings.ConfirmedBooking", b =>
+                {
+                    b.HasOne("TravelMore.Domain.PaymentsDetails.BookingPaymentDetails", "Payment")
+                        .WithOne()
+                        .HasForeignKey("TravelMore.Domain.Bookings.ConfirmedBooking", "Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Payment");
+                });
+
             modelBuilder.Entity("TravelMore.Domain.Bookings.Booking", b =>
                 {
                     b.Navigation("AppliedDiscounts");
-
-                    b.Navigation("Payment");
                 });
 
             modelBuilder.Entity("TravelMore.Domain.Hotels.Hotel", b =>

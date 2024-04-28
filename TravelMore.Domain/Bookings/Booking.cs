@@ -20,6 +20,7 @@ public abstract class Booking : Entity<Guid>
     public Hotel Hotel { get; init; }
     public BookingStatus Status { get; protected set; }
 
+    protected Booking(Guid id) : base(id) { }
 
     /// <summary>
     /// Private consturctor needed to create database migrations
