@@ -1,4 +1,8 @@
-﻿using TravelMore.Domain.Common.Models;
+﻿using TravelMore.Domain.Bookings.ValueObjects;
+using TravelMore.Domain.Common.Models;
+using TravelMore.Domain.Discounts;
+using TravelMore.Domain.Guests;
+using TravelMore.Domain.Hotels;
 using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.PaymentsDetails.ValueObjects;
 

@@ -7,8 +7,6 @@ using TravelMore.Application.Hotels.Queries.GetHotelByIdWithIncludes;
 using TravelMore.Application.Repositories;
 using TravelMore.Application.Services;
 using TravelMore.Domain.Bookings;
-using TravelMore.Domain.Bookings.ValueObjects;
-using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;

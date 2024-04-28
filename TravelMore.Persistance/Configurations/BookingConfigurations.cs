@@ -17,9 +17,9 @@ public class BookingConfigurations : IEntityTypeConfiguration<Booking>
             .HasForeignKey(x => x.GuestId)
             .OnDelete(DeleteBehavior.NoAction);
 
-        builder.HasOne(x => x.BookedHotel)
+        builder.HasOne(x => x.Hotel)
             .WithMany(x => x.Bookings)
-            .HasForeignKey(x => x.BookedHotelId)
+            .HasForeignKey(x => x.HotelId)
             .OnDelete(DeleteBehavior.NoAction);
 
         builder.ComplexProperty(x => x.Details);

@@ -6,5 +6,6 @@ public enum BookingStatus
     Accepted,
     Declined,
     Canceled,
-    WaitingPayment
+    WaitingPayment,
+    Draft
 }
