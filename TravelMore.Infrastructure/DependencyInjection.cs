@@ -40,6 +40,7 @@ public static class DependencyInjection
             .AddScoped<IBookingRepository, BookingRepository>()
             .AddScoped<IUserRepository, UserRepository>()
             .AddScoped<IUnitOfWork, UnitOfWork>()
+            .AddScoped<IDraftBookingRepository, DraftBookingRepository>()
             .AddScoped<IHostRepository, HostRepository>()
             .AddScoped<IGuestRepository, GuestRepository>()
             .AddScoped<IHotelRepository, HotelRepository>();

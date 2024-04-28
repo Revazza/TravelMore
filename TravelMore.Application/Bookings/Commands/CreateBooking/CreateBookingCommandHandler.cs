@@ -33,19 +33,20 @@ public class CreateBookingCommandHandler(
         var guest = await GetGuestAsync(guestId);
         var hotel = await GetHotelAsync(request.HotelId);
 
-        var booking = Booking.Create(
-            request.CheckIn,
-            request.CheckOut,
-            request.NumberOfGuests,
-            request.PaymentMethod,
-            guest,
-            hotel,
-            request.AppliedDiscountIds);
+        return null;
+        //var booking = Booking.Create(
+        //    request.CheckIn,
+        //    request.CheckOut,
+        //    request.NumberOfGuests,
+        //    request.PaymentMethod,
+        //    guest,
+        //    hotel,
+        //    request.AppliedDiscountIds);
 
-        await _bookingRepository.AddAsync(booking);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        //await _bookingRepository.AddAsync(booking);
+        //await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return booking;
+        //return booking;
     }
 
     private async Task EnsureGuestAndHotelExistsAsync(int guestId, Guid hotelId)
