@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Data.SqlTypes;
+using System.Runtime.InteropServices;
 using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
@@ -43,13 +44,15 @@ public sealed class Booking : Entity<Guid>
         PriceDetails priceDetails,
         BookingDetails details,
         Guest guest,
-        Hotel bookedHotel) : base(id)
+        Hotel bookedHotel,
+        List<Discount> appliedDiscounts) : base(id)
     {
         Details = details;
         Status = BookingStatus.Pending;
         Guest = guest;
         BookedHotel = bookedHotel;
         Payment = new BookingPaymentDetails(paymentMethod, priceDetails, guest, id);
+        AppliedDiscounts = appliedDiscounts;
     }
 
     public static Booking Create(
@@ -66,8 +69,10 @@ public sealed class Booking : Entity<Guid>
         hotel.EnsureBookable(bookingDetails, paymentMethod);
         guest.EnsureCanBook(bookingDetails);
 
-        var priceDetails = CalculatePriceDetails(hotel, guest, guestAppliedDiscountIds, bookingDetails.Schedule);
-        return new(Guid.NewGuid(), paymentMethod, priceDetails, bookingDetails, guest, hotel);
+        var appliedDiscounts = guest.GetFilteredDiscountsByIds(guestAppliedDiscountIds);
+        var priceDetails = CalculatePriceDetails(hotel, guest, appliedDiscounts, bookingDetails.Schedule);
+
+        return new(Guid.NewGuid(), paymentMethod, priceDetails, bookingDetails, guest, hotel, [.. appliedDiscounts]);
     }
 
     public void Accept(int hostId)
@@ -113,10 +118,9 @@ public sealed class Booking : Entity<Guid>
         }
     }
 
-    private static PriceDetails CalculatePriceDetails(Hotel hotel, Guest guest, IEnumerable<Guid> guestAppliedDiscountIds, BookingSchedule schedule)
+    private static PriceDetails CalculatePriceDetails(Hotel hotel, Guest guest, IEnumerable<Discount> appliedDiscounts, BookingSchedule schedule)
     {
         var initialPrice = hotel.CalculatePriceForNights(schedule.GetDurationInDays());
-        var appliedDiscounts = guest.GetFilteredDiscountsByIds(guestAppliedDiscountIds);
         var discountedPrice = guest.ApplyDiscounts(initialPrice, appliedDiscounts);
         return new(discountedPrice, initialPrice);
     }
