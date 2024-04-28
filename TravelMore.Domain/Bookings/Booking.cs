@@ -5,14 +5,14 @@ using TravelMore.Domain.Discounts;
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.Guests.Exceptions;
 using TravelMore.Domain.Hotels;
-using TravelMore.Domain.PaymentsDetails.Enums;
-using TravelMore.Domain.PaymentsDetails.ValueObjects;
 using TravelMore.Domain.Users.Hosts.Exceptions;
 
 namespace TravelMore.Domain.Bookings;
 
 public abstract class Booking : Entity<Guid>
 {
+    protected readonly List<Discount> _appliedDiscounts;
+    public IReadOnlyCollection<Discount> AppliedDiscounts => _appliedDiscounts;
     public BookingDetails Details { get; private set; }
     public int GuestId { get; init; }
     public Guest Guest { get; init; } = null!;
@@ -28,6 +28,7 @@ public abstract class Booking : Entity<Guid>
     {
         Details = null!;
         Hotel = null!;
+        _appliedDiscounts = [];
     }
 
 
@@ -35,12 +36,14 @@ public abstract class Booking : Entity<Guid>
         Guid id,
         BookingDetails details,
         Guest guest,
-        Hotel hotel) : base(id)
+        Hotel hotel,
+        List<Discount> appliedDiscounts) : base(id)
     {
         Status = BookingStatus.Pending;
         Guest = guest;
         Hotel = hotel;
         Details = details;
+        _appliedDiscounts = appliedDiscounts;
     }
 
     public bool DoesOverLap(DateTime from, DateTime to) => Details.Schedule.From <= to && from <= Details.Schedule.To;

@@ -7,10 +7,10 @@ namespace TravelMore.Domain.PaymentsDetails;
 
 public class BookingPaymentDetails : BasePaymentDetails
 {
-    public int PayerId { get; private set; }
-    public Guest Payer { get; set; } = null!;
-    public Guid BookingId { get; set; }
-    public Booking Booking { get; set; } = null!;
+    public int PayerId { get; init; }
+    public Guest Payer { get; init; } = null!;
+    public Guid BookingId { get; init; }
+    public Booking Booking { get; init; } = null!;
 
     private BookingPaymentDetails()
     {

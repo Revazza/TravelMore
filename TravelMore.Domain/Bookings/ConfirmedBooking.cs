@@ -1,5 +1,4 @@
 ﻿using TravelMore.Domain.Bookings.Enums;
-using TravelMore.Domain.Discounts;
 using TravelMore.Domain.PaymentsDetails;
 using TravelMore.Domain.PaymentsDetails.Enums;
 
@@ -8,8 +7,6 @@ namespace TravelMore.Domain.Bookings;
 public class ConfirmedBooking : Booking
 {
     public BookingPaymentDetails Payment { get; private set; }
-    public List<Discount> AppliedDiscounts { get; set; }
-
 
     public void Accept(int hostId)
     {

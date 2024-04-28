@@ -12,11 +12,9 @@ namespace TravelMore.Domain.Bookings;
 
 public class DraftBooking : Booking
 {
-    private readonly List<Discount> _discountsToApply;
     public PriceDetails PriceDetails { get; private set; }
     public PaymentMethod PaymentMethod { get; private set; }
     public DateTime CreatedAt { get; init; }
-    public IReadOnlyCollection<Discount> DiscountsToApply => _discountsToApply;
 
     private DraftBooking(
         PaymentMethod paymentMethod,
@@ -24,12 +22,11 @@ public class DraftBooking : Booking
         BookingDetails details,
         Guest guest,
         Hotel hotel,
-        List<Discount> discountsToApply) : base(Guid.NewGuid(), details, guest, hotel)
+        List<Discount> appliedDiscounts) : base(Guid.NewGuid(), details, guest, hotel, appliedDiscounts)
     {
         PaymentMethod = paymentMethod;
         PriceDetails = priceDetails;
         CreatedAt = DateTime.UtcNow;
-        _discountsToApply = discountsToApply;
     }
 
     public static DraftBooking Create(
