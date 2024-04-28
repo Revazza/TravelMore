@@ -4,7 +4,12 @@ namespace TravelMore.Domain.PaymentsDetails.ValueObjects;
 
 public record PriceDetails
 {
+    public Money DiscountedPrice { get; init; } = 0;
+    public Money InitialPrice { get; init; } = 0;
+    public Money DiscountedAmount { get; init; } = 0;
+
     public PriceDetails() { }
+
     public PriceDetails(Money discountedPrice, Money initialPrice)
     {
         DiscountedPrice = discountedPrice;
@@ -16,8 +21,4 @@ public record PriceDetails
     {
         InitialPrice = initialPrice;
     }
-
-    public Money DiscountedPrice { get; init; } = 0;
-    public Money InitialPrice { get; init; } = 0;
-    public Money DiscountedAmount { get; init; } = 0;
 }

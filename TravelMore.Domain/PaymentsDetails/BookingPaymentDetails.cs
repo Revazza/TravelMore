@@ -2,7 +2,6 @@
 using TravelMore.Domain.Guests;
 using TravelMore.Domain.PaymentsDetails.Enums;
 using TravelMore.Domain.PaymentsDetails.ValueObjects;
-using TravelMore.Domain.Users.Hosts;
 
 namespace TravelMore.Domain.PaymentsDetails;
 
@@ -22,11 +21,10 @@ public class BookingPaymentDetails : BasePaymentDetails
         PaymentMethod paymentMethod,
         PriceDetails priceDetails,
         Guest payer,
-        Guid bookingId) : base(paymentMethod)
+        Guid bookingId) : base(paymentMethod, priceDetails)
     {
         Payer = payer;
         BookingId = bookingId;
-        PriceDetails = priceDetails;
     }
 
 }

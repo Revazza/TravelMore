@@ -6,21 +6,23 @@ namespace TravelMore.Domain.PaymentsDetails;
 
 public abstract class BasePaymentDetails : Entity<Guid>
 {
-    public PaymentStatus PaymentStatus { get; private set; }
+    public PaymentStatus PaymentStatus { get; protected set; }
     public PaymentMethod PaymentMethod { get; init; }
-    public DateTime PaymentDate { get; init; }
+    public DateTime PaymentDate { get; protected set; }
     public DateTime CreatedAt { get; init; }
-    public PriceDetails PriceDetails { get; set; }
+    public PriceDetails PriceDetails { get; init; }
 
     protected BasePaymentDetails() : base(Guid.NewGuid())
     {
         PriceDetails = null!;
     }
 
-    protected BasePaymentDetails(PaymentMethod paymentMethod) : base(Guid.NewGuid())
+    protected BasePaymentDetails(PaymentMethod paymentMethod, PriceDetails priceDetails) : base(Guid.NewGuid())
     {
         PaymentMethod = paymentMethod;
-        PriceDetails = null!;
+        PriceDetails = priceDetails;
+        CreatedAt = DateTime.UtcNow;
+        PaymentStatus = PaymentStatus.Pending;
     }
 
 }

@@ -6,7 +6,8 @@ public record BookingDetails
     public short NumberOfGuests { get; init; }
     public short NumberOfDays { get; init; }
     public BookingSchedule Schedule { get; init; } = null!;
-    public BookingDetails(
+
+    private BookingDetails(
         short numberOfGuests,
         short numberOfDays,
         BookingSchedule schedule)
@@ -17,5 +18,19 @@ public record BookingDetails
     }
 
     private BookingDetails() { }
+
+    public static BookingDetails Create(
+        DateTime from,
+        DateTime to,
+        short numberOfGuests)
+    {
+        var schedule = BookingSchedule.Create(from, to);
+        var numberOfNights = schedule.GetDurationInDays();
+
+        return new BookingDetails(
+         numberOfGuests,
+         numberOfNights,
+         schedule);
+    }
 
 }

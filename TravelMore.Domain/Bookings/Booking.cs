@@ -1,4 +1,5 @@
-﻿using TravelMore.Domain.Bookings.Enums;
+﻿using System.Runtime.InteropServices;
+using TravelMore.Domain.Bookings.Enums;
 using TravelMore.Domain.Bookings.ValueObjects;
 using TravelMore.Domain.Common.Models;
 using TravelMore.Domain.Discounts;
@@ -58,24 +59,14 @@ public sealed class Booking : Entity<Guid>
        PaymentMethod paymentMethod,
        Guest guest,
        Hotel hotel,
-       List<Guid> guesAppliedDiscountIds)
+       IEnumerable<Guid> guestAppliedDiscountIds)
     {
-        var schedule = BookingSchedule.Create(from, to);
-        var numberOfNights = schedule.GetDurationInDays();
-
-        var bookingDetails = new BookingDetails(
-         numberOfGuests,
-         numberOfNights,
-         schedule);
+        var bookingDetails = BookingDetails.Create(from, to, numberOfGuests);
 
         hotel.EnsureBookable(bookingDetails, paymentMethod);
         guest.EnsureCanBook(bookingDetails);
 
-        var appliedDiscounts = guest.GetFilteredDiscountsByIds(guesAppliedDiscountIds);
-        var initialPrice = hotel.CalculatePriceForNights(schedule.GetDurationInDays());
-        var discountedPrice = guest.ApplyDiscounts(initialPrice, guesAppliedDiscountIds);
-        var priceDetails = new PriceDetails(discountedPrice, initialPrice);
-
+        var priceDetails = CalculatePriceDetails(hotel, guest, guestAppliedDiscountIds, bookingDetails.Schedule);
         return new(Guid.NewGuid(), paymentMethod, priceDetails, bookingDetails, guest, hotel);
     }
 
@@ -120,6 +111,14 @@ public sealed class Booking : Entity<Guid>
         {
             throw new Exception("Payment status is not completed");
         }
+    }
+
+    private static PriceDetails CalculatePriceDetails(Hotel hotel, Guest guest, IEnumerable<Guid> guestAppliedDiscountIds, BookingSchedule schedule)
+    {
+        var initialPrice = hotel.CalculatePriceForNights(schedule.GetDurationInDays());
+        var appliedDiscounts = guest.GetFilteredDiscountsByIds(guestAppliedDiscountIds);
+        var discountedPrice = guest.ApplyDiscounts(initialPrice, appliedDiscounts);
+        return new(discountedPrice, initialPrice);
     }
 
     private void EnsureNotAccepted()

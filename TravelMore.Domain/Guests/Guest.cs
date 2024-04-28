@@ -42,9 +42,15 @@ public class Guest : User
         var discounts = GetMembershipDiscounts()
             .Concat(GetFilteredDiscountsByIds(discountIds));
 
-        var discountedPrice = discounts.ApplyAll(price);
+        return discounts.ApplyAll(price);
+    }
 
-        return Money.Default;
+    public Money ApplyDiscounts(Money price, IEnumerable<Discount> providedDiscounts)
+    {
+        EnsureHasDiscounts(providedDiscounts.ToList());
+        var discounts = GetMembershipDiscounts().Concat(providedDiscounts);
+
+        return discounts.ApplyAll(price);
     }
 
     public void EnsureHasDiscounts(List<Discount> discounts) => discounts.ForEach(EnsureHasDiscount);
@@ -79,16 +85,13 @@ public class Guest : User
         }
     }
 
-    public IReadOnlyCollection<Discount> GetAllDiscounts()
-        => Discounts
-        .Concat(GetMembershipDiscounts())
-        .ToList()
-        .AsReadOnly();
-
     public IReadOnlyCollection<Discount> GetMembershipDiscounts() => Membership.Discounts;
 
-    public IEnumerable<Discount> GetFilteredDiscountsByIds(IEnumerable<Guid> discountIds)
-        => _discounts.Where(discount => discountIds.Any(discountId => discountId == discount.Id));
+    public IReadOnlyCollection<Discount> GetFilteredDiscountsByIds(IEnumerable<Guid> discountIds)
+        => _discounts
+        .Where(discount => discountIds.Any(discountId => discountId == discount.Id))
+        .ToList()
+        .AsReadOnly();
 
     protected void EnsureBalanaceIsEnough(Money payment)
     {
