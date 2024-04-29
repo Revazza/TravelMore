@@ -1,9 +1,7 @@
 ﻿using MediatR;
 using TravelMore.Application.Common.Results;
 using TravelMore.Application.Guests.Queries.DoesGuestExistById;
-using TravelMore.Application.Guests.Queries.GetGuestByIdWithIncludes;
 using TravelMore.Application.Hotels.Queries.DoesHotelExistsById;
-using TravelMore.Application.Hotels.Queries.GetHotelByIdWithIncludes;
 using TravelMore.Application.Services;
 using TravelMore.Domain.Bookings;
 using TravelMore.Domain.Guests.Exceptions;
@@ -11,18 +9,23 @@ using TravelMore.Domain.Hotels.Exceptions;
 using TravelMore.Domain.Hotels;
 using TravelMore.Domain.Guests;
 using TravelMore.Application.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace TravelMore.Application.Bookings.Commands.CreateDraftBooking;
 
 public class CreateDraftBookingCommandHandler(
     IUserIdentityService userIdentityService,
     IDraftBookingRepository draftBookingRepository,
+    IGuestRepository guestRepository,
+    IHotelRepository hotelRepository,
     IUnitOfWork unitOfWork,
     ISender sender) : IRequestHandler<CreateDraftBookingCommand, Result<DraftBooking>>
 {
-    private readonly IUserIdentityService _userIdentityService = userIdentityService;
-    private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly IDraftBookingRepository _draftBookingRepository = draftBookingRepository;
+    private readonly IUserIdentityService _userIdentityService = userIdentityService;
+    private readonly IGuestRepository _guestRepository = guestRepository;
+    private readonly IHotelRepository _hotelRepository = hotelRepository;
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
     private readonly ISender _sender = sender;
 
     public async Task<Result<DraftBooking>> Handle(CreateDraftBookingCommand request, CancellationToken cancellationToken)
@@ -76,27 +79,25 @@ public class CreateDraftBookingCommandHandler(
 
     private async Task<Guest> GetGuestAsync(int guestId)
     {
-        var query = new GetGuestByIdWithIncludesQuery(
-            guestId,
-            IncludeDiscounts: true,
-            IncludeBookings: true,
-            IncludeMembership: true);
+        var guest = await _guestRepository
+            .AsQuery()
+            .Include(guest => guest.Discounts)
+            .Include(guest => guest.Bookings)
+            .Include(guest => guest.Membership)
+            .FirstOrDefaultAsync(guest => guest.Id == guestId);
 
-        var guestResult = await _sender.Send(query);
-
-        return guestResult.Value!;
+        return guest!;
     }
 
     private async Task<Hotel> GetHotelAsync(Guid hotelId)
     {
-        var query = new GetHotelByIdWithIncludesQuery(
-            hotelId,
-            IncludeAcceptedPaymentMethods: true,
-            IncludeBookings: true,
-            IncludeDiscount: true);
+        var hotel = await _hotelRepository
+            .AsQuery()
+            .Include(hotel => hotel.AcceptedPaymentMethods)
+            .Include(hotel => hotel.Bookings)
+            .Include(hotel => hotel.Discount)
+            .FirstOrDefaultAsync(hotel => hotel.Id == hotelId);
 
-        var hotelResult = await _sender.Send(query);
-
-        return hotelResult.Value!;
+        return hotel!;
     }
 }
