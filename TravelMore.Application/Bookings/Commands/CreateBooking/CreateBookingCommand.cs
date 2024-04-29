@@ -1,8 +1,9 @@
 ﻿using MediatR;
+using TravelMore.Application.Common.PaymentMethodDatas.Interfaces;
 using TravelMore.Application.Common.Results;
 using TravelMore.Domain.Bookings;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
 
-public record CreateBookingCommand(
-    Guid DraftBookingId) : IRequest<Result<Booking>>;
+public record CreateBookingCommand(Guid DraftBookingId, IPaymentMethodData Data) : IRequest<Result<Booking>>;
+
