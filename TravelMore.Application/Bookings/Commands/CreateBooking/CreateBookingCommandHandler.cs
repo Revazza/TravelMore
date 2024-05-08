@@ -1,8 +1,10 @@
 ﻿using MediatR;
 using Microsoft.EntityFrameworkCore;
+using TravelMore.Application.Bookings.Commands.ProcessBookingPayment;
 using TravelMore.Application.Common.Results;
 using TravelMore.Application.Repositories;
 using TravelMore.Application.Services;
+using TravelMore.Application.Services.Payments;
 using TravelMore.Domain.Bookings;
 
 namespace TravelMore.Application.Bookings.Commands.CreateBooking;
@@ -40,6 +42,12 @@ public class CreateBookingCommandHandler(
             ?? throw new Exception("Draft couldn't be found");
 
         return draftBooking;
+    }
+
+    private async Task ProcessPaymentAsync(DraftBooking draftBooking, IPaymentMethodData paymentData)
+    {
+        var result = await _sender.Send(new ProcessBookingPaymentCommand(draftBooking, paymentData));
+
     }
 
 }
