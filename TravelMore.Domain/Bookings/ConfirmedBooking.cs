@@ -11,7 +11,8 @@ public class ConfirmedBooking : Booking
     public static ConfirmedBooking Create(
         DraftBooking draftBooking)
     {
-        
+            
+        // Something
 
         return null;
     }
